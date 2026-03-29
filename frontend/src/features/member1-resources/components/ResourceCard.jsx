@@ -18,7 +18,7 @@ export default function ResourceCard({ resource }) {
             {resource.type}
           </span>
           <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-slate-700">
-            Capacity: {resource.capacity}
+            Capacity of Resource: {resource.capacity}
           </span>
           <span
             className={
