@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 
 import ResourcesPage from "./features/member1-resources/pages/ResourcesPage";
 import ResourceDetailsPage from "./features/member1-resources/pages/ResourceDetailsPage";
@@ -9,15 +9,28 @@ import AdminLoginPage from "./features/member1-resources/pages/AdminLoginPage";
 import AdminRoute from "./shared/auth/AdminRoute";
 import { useAdminAuth } from "./shared/auth/AdminAuthContext";
 import HomePage from "./shared/pages/HomePage";
+import SmartCampusLandingPage from "./shared/pages/SmartCampusLandingPage";
 import PlaceholderModulePage from "./shared/pages/PlaceholderModulePage";
 import CreateBookingPage from "./features/member2-bookings/pages/CreateBookingPage";
 import MyBookingsPage from "./features/member2-bookings/pages/MyBookingsPage";
 import AdminBookingsPage from "./features/member2-bookings/pages/AdminBookingsPage";
 import BookingHomePage from "./features/member2-bookings/pages/BookingHomePage";
+import IncidentsHomePage from "./features/member3-incidents/pages/IncidentsHomePage";
+import CreateTicketPage from "./features/member3-incidents/pages/CreateTicketPage";
+import MyTicketsPage from "./features/member3-incidents/pages/MyTicketsPage";
+import AdminTicketsPage from "./features/member3-incidents/pages/AdminTicketsPage";
+import AdminTicketDetailsPage from "./features/member3-incidents/pages/AdminTicketDetailsPage";
 
 
 export default function App() {
   const { isAdmin, logout } = useAdminAuth();
+
+  const location = useLocation();
+
+  // Show the full-screen Smart Campus landing page on the root route
+  if (location.pathname === "/") {
+    return <SmartCampusLandingPage />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -46,6 +59,20 @@ export default function App() {
               Resources
             </Link>
 
+            <Link
+              to="/bookings"
+              className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              Bookings
+            </Link>
+
+            <Link
+              to="/incidents/create"
+              className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+            >
+              Incidents
+            </Link>
+
             {isAdmin ? (
               <>
                 <Link
@@ -53,6 +80,13 @@ export default function App() {
                   className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
                 >
                   Admin
+                </Link>
+
+                <Link
+                  to="/incidents/admin"
+                  className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                >
+                  Admin Tickets
                 </Link>
                 <Link
                   to="/admin/resources/new"
@@ -120,6 +154,28 @@ export default function App() {
                 element={
                   <AdminRoute>
                     <AdminBookingsPage />
+                  </AdminRoute>
+                }
+              />
+            </Route>
+
+            <Route path="/incidents" element={<IncidentsHomePage />}>
+              <Route index element={<CreateTicketPage />} />
+              <Route path="create" element={<CreateTicketPage />} />
+              <Route path="my" element={<MyTicketsPage />} />
+              <Route
+                path="admin"
+                element={
+                  <AdminRoute>
+                    <AdminTicketsPage />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="admin/:id"
+                element={
+                  <AdminRoute>
+                    <AdminTicketDetailsPage />
                   </AdminRoute>
                 }
               />
