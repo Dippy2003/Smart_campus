@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllResources } from "../../features/member1-resources/services/resourceApi";
-import Navigation from "../components/Navigation";
 import {
   Building2,
   CalendarClock,
@@ -20,6 +19,17 @@ import {
 } from "lucide-react";
 
 function SmartCampusLandingPage() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { label: "Home", type: "anchor", href: "#home" },
+    { label: "Resources", type: "route", to: "/resources" },
+    { label: "Bookings", type: "route", to: "/bookings" },
+    { label: "Tickets", type: "route", to: "/incidents/create" },
+    { label: "Features", type: "anchor", href: "#features" },
+    { label: "About", type: "anchor", href: "#about" },
+  ];
+
   const features = [
     {
       icon: Building2,
@@ -168,12 +178,102 @@ function SmartCampusLandingPage() {
     { label: "User Guide", href: "#resources" },
     { label: "Feature Overview", href: "#features" },
     { label: "Project Documentation", href: "#about" },
-    { label: "Support", href: "#contact" },
   ];
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50" id="home">
-      <Navigation variant="landing" />
+      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 lg:px-8">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 shadow-lg shadow-blue-500/30">
+              <Monitor className="h-5 w-5 text-slate-950" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold tracking-wide text-blue-400">
+                SMART CAMPUS
+              </span>
+              <span className="text-sm font-medium text-slate-100">
+                Operations Hub
+              </span>
+            </div>
+          </div>
+
+          <div className="hidden items-center gap-8 md:flex">
+            <div className="flex items-center gap-6 text-sm font-medium text-slate-200">
+              {navLinks.map((link) =>
+                link.type === "route" ? (
+                  <Link
+                    key={link.label}
+                    to={link.to}
+                    className="transition-colors hover:text-blue-400"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="transition-colors hover:text-blue-400"
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
+            </div>
+            <Link
+              to="/admin/login"
+              className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md shadow-blue-500/30 transition hover:bg-blue-400"
+            >
+              <LogIn className="h-4 w-4" />
+              <span>Login</span>
+            </Link>
+          </div>
+
+          <button
+            className="inline-flex items-center justify-center rounded-lg border border-slate-800 p-2 text-slate-200 md:hidden"
+            onClick={() => setMobileOpen((prev) => !prev)}
+            aria-label="Toggle navigation"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </nav>
+
+        {mobileOpen && (
+          <div className="border-t border-slate-800 bg-slate-950/95 px-4 pb-4 pt-2 md:hidden">
+            <div className="flex flex-col gap-3 text-sm font-medium text-slate-200">
+              {navLinks.map((link) =>
+                link.type === "route" ? (
+                  <Link
+                    key={link.label}
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-lg px-2 py-2 transition hover:bg-slate-900 hover:text-blue-400"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-lg px-2 py-2 transition hover:bg-slate-900 hover:text-blue-400"
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
+              <Link
+                to="/admin/login"
+                onClick={() => setMobileOpen(false)}
+                className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md shadow-blue-500/30 transition hover:bg-blue-400"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Login</span>
+              </Link>
+            </div>
+          </div>
+        )}
+      </header>
 
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-10 md:px-6 lg:px-8 lg:pt-14">
         <section className="grid gap-10 md:grid-cols-2 md:items-center lg:gap-16">
@@ -198,7 +298,7 @@ function SmartCampusLandingPage() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 to="/resources"
-                className="inline-flex items-center justify-center rounded-full bg-blue-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-blue-500/30 transition hover:bg-blue-400"
+                className="inline-flex items-center justify-center rounded-full bg-blue-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-blue-500/40 transition hover:bg-blue-400"
               >
                 Get Started
               </Link>
@@ -224,8 +324,8 @@ function SmartCampusLandingPage() {
           </div>
 
           <div className="relative">
-            <div className="absolute -inset-6 -z-10 bg-gradient-to-br from-blue-500/10 via-sky-400/5 to-blue-900/10 blur-3xl" />
-            <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 shadow-2xl shadow-blue-900/40">
+            <div className="absolute -inset-6 -z-10 bg-gradient-to-br from-blue-500/10 via-sky-400/05 to-blue-900/10 blur-3xl" />
+            <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 shadow-2xl shadow-blue-900/40 md:p-10">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-4">
                   <div className="rounded-2xl bg-slate-900/80 p-4 shadow-lg shadow-slate-950/80">
@@ -468,39 +568,6 @@ function SmartCampusLandingPage() {
         </section>
 
         <section className="mt-16 md:mt-20">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-50 sm:text-2xl">
-                Operational Snapshot
-              </h2>
-              <p className="mt-2 max-w-xl text-sm text-slate-300">
-                Key indicators that demonstrate how effectively the campus is
-                utilizing resources and resolving issues.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-7 grid gap-5 md:grid-cols-4">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5 text-center shadow-md shadow-slate-950/60"
-              >
-                <p className="text-2xl font-semibold text-blue-300">
-                  {stat.value}
-                </p>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  {stat.label}
-                </p>
-                <p className="mt-1 text-[11px] text-slate-400">
-                  {stat.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-16 md:mt-20">
           <div className="relative overflow-hidden rounded-3xl border border-blue-500/30 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-7 shadow-2xl shadow-blue-900/40 md:p-10">
             <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl" />
             <div className="relative grid gap-6 md:grid-cols-[2fr,1fr] md:items-center">
@@ -567,23 +634,12 @@ function SmartCampusLandingPage() {
               future production-ready deployments.
             </p>
           </div>
-          <div id="contact">
-            <h2 className="text-lg font-semibold text-slate-50">
-              Contact & Collaboration
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-300">
-              This project can be extended with authentication integration,
-              calendar sync, advanced analytics, and mobile-friendly interfaces.
-              For academic supervision, evaluation, or collaboration, please reach
-              out through your institution&apos;s official communication channels.
-            </p>
-          </div>
         </section>
       </main>
 
       <footer className="border-t border-slate-800 bg-slate-950/95">
         <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-3">
             <div className="space-y-3 md:col-span-2">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 shadow-lg shadow-blue-500/40">
@@ -617,18 +673,6 @@ function SmartCampusLandingPage() {
                 ))}
               </ul>
             </div>
-
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-300">
-                Contact
-              </h3>
-              <ul className="mt-3 space-y-2 text-xs text-slate-400">
-                <li>Academic Supervisor: [Name Placeholder]</li>
-                <li>Department: Information Technology / Computer Science</li>
-                <li>Campus: [University Name Placeholder]</li>
-                <li>Email: smartcampus.operations@example.edu</li>
-              </ul>
-            </div>
           </div>
 
           <div className="mt-6 border-t border-slate-800 pt-4 text-center text-[11px] text-slate-500">
@@ -642,4 +686,3 @@ function SmartCampusLandingPage() {
 }
 
 export default SmartCampusLandingPage;
-

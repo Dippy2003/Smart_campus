@@ -9,6 +9,7 @@ import AdminLoginPage from "./features/member1-resources/pages/AdminLoginPage";
 import AdminRoute from "./shared/auth/AdminRoute";
 import HomePage from "./shared/pages/HomePage";
 import SmartCampusLandingPage from "./shared/pages/SmartCampusLandingPage";
+import AdminDashboard from "./shared/pages/AdminDashboard";
 import PlaceholderModulePage from "./shared/pages/PlaceholderModulePage";
 import Navigation from "./shared/components/Navigation";
 import CreateBookingPage from "./features/member2-bookings/pages/CreateBookingPage";
@@ -44,6 +45,15 @@ export default function App() {
             <Route path="/resources/:id" element={<ResourceDetailsPage />} />
 
             <Route path="/admin/login" element={<AdminLoginPage />} />
+
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
 
             <Route
               path="/admin/resources"
