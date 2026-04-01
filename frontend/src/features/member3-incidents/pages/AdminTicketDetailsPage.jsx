@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import TicketThread from "../components/TicketThread";
 import {
@@ -12,6 +12,7 @@ const STATUSES = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
 
 export default function AdminTicketDetailsPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const ticketId = Number(id);
 
   const [ticket, setTicket] = useState(null);
@@ -44,6 +45,9 @@ export default function AdminTicketDetailsPage() {
       const updated = await updateTicketStatus(ticketId, status);
       if (!updated) throw new Error("Ticket not found");
       setTicket(updated);
+      if (updated.status === "RESOLVED" || updated.status === "CLOSED") {
+        navigate("/incidents/admin-resolved");
+      }
     } catch (err) {
       setError("Could not update status.");
     } finally {
@@ -120,6 +124,12 @@ export default function AdminTicketDetailsPage() {
               className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
             >
               Back
+            </Link>
+            <Link
+              to="/incidents/admin-resolved"
+              className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Resolved Section
             </Link>
           </div>
         </div>

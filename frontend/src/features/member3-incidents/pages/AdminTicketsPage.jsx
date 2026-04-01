@@ -59,6 +59,14 @@ export default function AdminTicketsPage() {
         Review all incident tickets, update status, and send replies/notifications
         to the requester.
       </p>
+      <div className="mt-3">
+        <Link
+          to="/incidents/admin-resolved"
+          className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          Go to Resolved Section
+        </Link>
+      </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">

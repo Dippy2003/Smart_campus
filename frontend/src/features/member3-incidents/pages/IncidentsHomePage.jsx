@@ -38,10 +38,18 @@ export default function IncidentsHomePage() {
         <Link to="/incidents/my" className={tabStyle(isActive("/my"))}>
           My Tickets
         </Link>
+        <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
+          My Resolved
+        </Link>
         {isAdmin && (
-          <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
-            Admin Panel
-          </Link>
+          <>
+            <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
+              Admin Panel
+            </Link>
+            <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
+              Admin Resolved
+            </Link>
+          </>
         )}
       </div>
 
