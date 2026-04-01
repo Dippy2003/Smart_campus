@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllResources } from "../../features/member1-resources/services/resourceApi";
+import Navigation from "../components/Navigation";
 import {
   Building2,
   CalendarClock,
@@ -19,17 +20,6 @@ import {
 } from "lucide-react";
 
 function SmartCampusLandingPage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const navLinks = [
-    { label: "Home", type: "anchor", href: "#home" },
-    { label: "Resources", type: "route", to: "/resources" },
-    { label: "Bookings", type: "route", to: "/bookings" },
-    { label: "Features", type: "anchor", href: "#features" },
-    { label: "About", type: "anchor", href: "#about" },
-    { label: "Contact", type: "anchor", href: "#contact" },
-  ];
-
   const features = [
     {
       icon: Building2,
@@ -183,98 +173,7 @@ function SmartCampusLandingPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50" id="home">
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 lg:px-8">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 shadow-lg shadow-blue-500/30">
-              <Monitor className="h-5 w-5 text-slate-950" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold tracking-wide text-blue-400">
-                SMART CAMPUS
-              </span>
-              <span className="text-sm font-medium text-slate-100">
-                Operations Hub
-              </span>
-            </div>
-          </div>
-
-          <div className="hidden items-center gap-8 md:flex">
-            <div className="flex items-center gap-6 text-sm font-medium text-slate-200">
-              {navLinks.map((link) =>
-                link.type === "route" ? (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    className="transition-colors hover:text-blue-400"
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="transition-colors hover:text-blue-400"
-                  >
-                    {link.label}
-                  </a>
-                )
-              )}
-            </div>
-            <Link
-              to="/admin/login"
-              className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md shadow-blue-500/30 transition hover:bg-blue-400"
-            >
-              <LogIn className="h-4 w-4" />
-              <span>Login</span>
-            </Link>
-          </div>
-
-          <button
-            className="inline-flex items-center justify-center rounded-lg border border-slate-800 p-2 text-slate-200 md:hidden"
-            onClick={() => setMobileOpen((prev) => !prev)}
-            aria-label="Toggle navigation"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </nav>
-
-        {mobileOpen && (
-          <div className="border-t border-slate-800 bg-slate-950/95 px-4 pb-4 pt-2 md:hidden">
-            <div className="flex flex-col gap-3 text-sm font-medium text-slate-200">
-              {navLinks.map((link) =>
-                link.type === "route" ? (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-lg px-2 py-2 transition hover:bg-slate-900 hover:text-blue-400"
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-lg px-2 py-2 transition hover:bg-slate-900 hover:text-blue-400"
-                  >
-                    {link.label}
-                  </a>
-                )
-              )}
-              <Link
-                to="/admin/login"
-                onClick={() => setMobileOpen(false)}
-                className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md shadow-blue-500/30 transition hover:bg-blue-400"
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Login</span>
-              </Link>
-            </div>
-          </div>
-        )}
-      </header>
+      <Navigation variant="landing" />
 
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-10 md:px-6 lg:px-8 lg:pt-14">
         <section className="grid gap-10 md:grid-cols-2 md:items-center lg:gap-16">

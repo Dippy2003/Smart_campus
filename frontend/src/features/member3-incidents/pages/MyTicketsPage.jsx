@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import TicketListItem from "../components/TicketListItem";
 import TicketThread from "../components/TicketThread";
 import TicketStatusBadge from "../components/TicketStatusBadge";
+import { Link } from "react-router-dom";
 import {
   getMyTickets,
   markTicketNotificationsRead,
@@ -73,6 +74,14 @@ export default function MyTicketsPage() {
         Enter the email you used when reporting the incident. You will see your
         tickets, updates, and notifications here.
       </p>
+      <div className="mt-3">
+        <Link
+          to="/incidents/my-resolved"
+          className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+        >
+          Go to Resolved Section
+        </Link>
+      </div>
 
       <form onSubmit={fetchTickets} className="mt-6 flex flex-col gap-4 md:flex-row md:items-end">
         <label className="w-full md:flex-1 grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">

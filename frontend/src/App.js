@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import ResourcesPage from "./features/member1-resources/pages/ResourcesPage";
 import ResourceDetailsPage from "./features/member1-resources/pages/ResourceDetailsPage";
@@ -7,10 +7,10 @@ import AddResourcePage from "./features/member1-resources/pages/AddResourcePage"
 import EditResourcePage from "./features/member1-resources/pages/EditResourcePage";
 import AdminLoginPage from "./features/member1-resources/pages/AdminLoginPage";
 import AdminRoute from "./shared/auth/AdminRoute";
-import { useAdminAuth } from "./shared/auth/AdminAuthContext";
 import HomePage from "./shared/pages/HomePage";
 import SmartCampusLandingPage from "./shared/pages/SmartCampusLandingPage";
 import PlaceholderModulePage from "./shared/pages/PlaceholderModulePage";
+import Navigation from "./shared/components/Navigation";
 import CreateBookingPage from "./features/member2-bookings/pages/CreateBookingPage";
 import MyBookingsPage from "./features/member2-bookings/pages/MyBookingsPage";
 import AdminBookingsPage from "./features/member2-bookings/pages/AdminBookingsPage";
@@ -20,11 +20,11 @@ import CreateTicketPage from "./features/member3-incidents/pages/CreateTicketPag
 import MyTicketsPage from "./features/member3-incidents/pages/MyTicketsPage";
 import AdminTicketsPage from "./features/member3-incidents/pages/AdminTicketsPage";
 import AdminTicketDetailsPage from "./features/member3-incidents/pages/AdminTicketDetailsPage";
+import MyResolvedTicketsPage from "./features/member3-incidents/pages/MyResolvedTicketsPage";
+import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminResolvedTicketsPage";
 
 
 export default function App() {
-  const { isAdmin, logout } = useAdminAuth();
-
   const location = useLocation();
 
   // Show the full-screen Smart Campus landing page on the root route
@@ -35,83 +35,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-100">
       <div className="mx-auto max-w-6xl px-4 py-6 lg:py-10">
-        <header className="mb-8 flex flex-col gap-4 border-b border-slate-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-              Resource Management
-            </h1>
-            <p className="mt-1 text-sm text-slate-600">
-              Browse, administer, and keep track of all your resources.
-            </p>
-          </div>
-
-          <nav className="inline-flex flex-wrap items-center gap-1 rounded-full border border-slate-200 bg-white p-1 text-sm shadow-sm">
-            <Link
-              to="/"
-              className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-            >
-              Home
-            </Link>
-            <Link
-              to="/resources"
-              className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-            >
-              Resources
-            </Link>
-
-            <Link
-              to="/bookings"
-              className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-            >
-              Bookings
-            </Link>
-
-            <Link
-              to="/incidents/create"
-              className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-            >
-              Incidents
-            </Link>
-
-            {isAdmin ? (
-              <>
-                <Link
-                  to="/admin/resources"
-                  className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-                >
-                  Admin
-                </Link>
-
-                <Link
-                  to="/incidents/admin"
-                  className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-                >
-                  Admin Tickets
-                </Link>
-                <Link
-                  to="/admin/resources/new"
-                  className="rounded-full bg-emerald-600 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-emerald-500"
-                >
-                  Add resource
-                </Link>
-                <button
-                  type="button"
-                  onClick={logout}
-                  className="rounded-full px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800"
-                >
-                  Log out
-                </button>
-              </>
-            ) : (
-              <Link
-                to="/admin/login"
-                className="rounded-full px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
-              >
-                Admin login
-              </Link>
-            )}
-          </nav>
-        </header>
+        <Navigation />
 
         <main className="rounded-2xl border border-slate-200 bg-white p-4 shadow-md sm:p-6 lg:p-8">
           <Routes>
@@ -163,11 +87,20 @@ export default function App() {
               <Route index element={<CreateTicketPage />} />
               <Route path="create" element={<CreateTicketPage />} />
               <Route path="my" element={<MyTicketsPage />} />
+              <Route path="my-resolved" element={<MyResolvedTicketsPage />} />
               <Route
                 path="admin"
                 element={
                   <AdminRoute>
                     <AdminTicketsPage />
+                  </AdminRoute>
+                }
+              />
+              <Route
+                path="admin-resolved"
+                element={
+                  <AdminRoute>
+                    <AdminResolvedTicketsPage />
                   </AdminRoute>
                 }
               />
