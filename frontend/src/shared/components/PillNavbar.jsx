@@ -106,12 +106,12 @@ export default function PillNavbar() {
   };
 
   const headerClass = isLanding
-    ? "sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/95 backdrop-blur-md"
-    : "sticky top-0 z-50 border-b border-slate-200/80 bg-slate-100/95 backdrop-blur-sm";
+    ? "sticky top-0 z-50 bg-slate-950 backdrop-blur-md"
+    : "sticky top-0 z-50 bg-slate-100 backdrop-blur-sm";
 
   const pillClass = isLanding
-    ? "border border-slate-700/90 bg-slate-900/90 shadow-lg shadow-black/20"
-    : "border border-slate-200/90 bg-white shadow-sm";
+    ? "bg-slate-900/90 shadow-lg shadow-black/20"
+    : "bg-white shadow-sm";
 
   const linkIdle = isLanding
     ? "text-slate-300 hover:text-white"
