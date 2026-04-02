@@ -21,23 +21,23 @@ export default function AddResourcePage() {
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+          <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
             Add resource
           </h2>
-          <p className="mt-1 text-xs text-slate-600">
+          <p className="mt-1 text-xs text-slate-400">
             Fill in the details below to create a new resource.
           </p>
         </div>
         <Link
           to="/admin/resources"
-          className="text-xs font-medium text-emerald-700 hover:text-emerald-900"
+          className="text-xs font-medium text-blue-400 hover:text-blue-300"
         >
           ← Back to admin
         </Link>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <div className="rounded-xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
           {error}
         </div>
       )}

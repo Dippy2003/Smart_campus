@@ -2,52 +2,52 @@ import { Link } from "react-router-dom";
 
 export default function ResourceCard({ resource }) {
   return (
-    <div className="flex w-full max-w-sm flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+    <div className="flex w-full max-w-sm flex-col justify-between rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg transition hover:shadow-xl hover:border-slate-600">
       <div className="space-y-2">
 
-        <h3 className="text-base font-semibold tracking-tight text-slate-50">
+        <h3 className="text-base font-semibold tracking-tight text-white">
           {resource.name}
-          <h1 className="inline-flex items-center rounded-full bg-slate-900 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-300 ml-2">
+          <h1 className="inline-flex items-center rounded-full bg-slate-700 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-300 ml-2">
             ID: {resource.id}
           </h1>
         </h3>
 
 
         <div className="flex flex-wrap gap-2 text-xs">
-          <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-1 font-semibold uppercase tracking-wide text-[11px] text-slate-700">
+          <span className="inline-flex items-center rounded-full border border-slate-600 bg-slate-700 px-2 py-1 font-semibold uppercase tracking-wide text-[11px] text-slate-300">
             {resource.type}
           </span>
-          <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-slate-700">
+          <span className="inline-flex items-center rounded-full border border-slate-600 bg-slate-700 px-2 py-1 text-slate-300">
             Capacity of Resource: {resource.capacity}
           </span>
           <span
             className={
               "inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold " +
               (resource.status === "ACTIVE"
-                ? "bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200"
-                : "bg-amber-50 text-amber-900 ring-1 ring-amber-200")
+                ? "bg-emerald-900/50 text-emerald-300 ring-1 ring-emerald-700"
+                : "bg-amber-900/50 text-amber-300 ring-1 ring-amber-700")
             }
           >
             {resource.status}
           </span>
         </div>
 
-        <p className="mt-1 text-xs text-slate-600">
-          <span className="font-medium text-slate-800">Location:</span> {resource.location}
+        <p className="mt-1 text-xs text-slate-400">
+          <span className="font-medium text-slate-300">Location:</span> {resource.location}
         </p>
       </div>
 
-      <div className="mt-4 flex justify-between text-xs text-slate-600">
+      <div className="mt-4 flex justify-between text-xs text-slate-400">
         <div>
           <p className="text-[11px] uppercase tracking-wide text-slate-500">Availability</p>
-          <p className="font-medium text-slate-900">
+          <p className="font-medium text-white">
             {resource.availabilityStart} – {resource.availabilityEnd}
           </p>
         </div>
 
         <Link
           to={`/resources/${resource.id}`}
-          className="inline-flex items-center rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-white hover:bg-slate-700"
+          className="inline-flex items-center rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-500 transition-colors"
         >
           View details
         </Link>

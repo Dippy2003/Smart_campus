@@ -1,16 +1,40 @@
 import { Link } from "react-router-dom";
-import { useAdminAuth } from "../auth/AdminAuthContext";
+import { useState, useEffect } from "react";
 import {
   Users,
   Calendar,
   AlertTriangle,
   Settings,
   BarChart3,
-  LogOut,
 } from "lucide-react";
+import { dashboardService } from "../services/dashboardService";
 
 export default function AdminDashboard() {
-  const { logout } = useAdminAuth();
+  const [stats, setStats] = useState({
+    totalResources: 0,
+    totalBookings: 0,
+    totalTickets: 0,
+    totalUsers: 156
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await dashboardService.getDashboardStats();
+        setStats(prev => ({
+          ...prev,
+          ...data
+        }));
+      } catch (error) {
+        console.error('Failed to fetch dashboard stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const adminSections = [
     {
@@ -64,25 +88,77 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-950">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Admin Dashboard
             </h1>
-            <p className="mt-2 text-lg text-slate-600">
+            <p className="mt-2 text-lg text-slate-300">
               Manage campus operations and resources
             </p>
           </div>
-          <button
-            onClick={logout}
-            className="inline-flex items-center gap-2 rounded-full bg-red-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-600"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </button>
+        </div>
+
+        {/* Quick Stats - Moved to top */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-900/50 group-hover:bg-blue-800/70 transition-colors">
+                <Settings className="h-5 w-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white group-hover:text-blue-100 transition-colors">
+                  {loading ? "..." : stats.totalResources}
+                </p>
+                <p className="text-xs text-slate-400 group-hover:text-blue-200 transition-colors">Total Resources</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-900/50 group-hover:bg-emerald-800/70 transition-colors">
+                <Calendar className="h-5 w-5 text-emerald-400 group-hover:text-emerald-300 transition-colors" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white group-hover:text-emerald-100 transition-colors">
+                  {loading ? "..." : stats.totalBookings}
+                </p>
+                <p className="text-xs text-slate-400 group-hover:text-emerald-200 transition-colors">Total Bookings</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-900/50 group-hover:bg-amber-800/70 transition-colors">
+                <AlertTriangle className="h-5 w-5 text-amber-400 group-hover:text-amber-300 transition-colors" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white group-hover:text-amber-100 transition-colors">
+                  {loading ? "..." : stats.totalTickets}
+                </p>
+                <p className="text-xs text-slate-400 group-hover:text-amber-200 transition-colors">Total Tickets</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-900/50 group-hover:bg-purple-800/70 transition-colors">
+                <Users className="h-5 w-5 text-purple-400 group-hover:text-purple-300 transition-colors" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white group-hover:text-purple-100 transition-colors">
+                  {loading ? "..." : stats.totalUsers}
+                </p>
+                <p className="text-xs text-slate-400 group-hover:text-purple-200 transition-colors">Total Users</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Admin Sections Grid */}
@@ -90,17 +166,17 @@ export default function AdminDashboard() {
           {adminSections.map((section, index) => (
             <div
               key={index}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+              className="rounded-2xl p-6 shadow-lg transition-all hover:shadow-xl"
             >
               <div className="flex items-start gap-4">
                 <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${getColorClasses(section.color)} text-white shadow-lg`}>
                   <section.icon className="h-6 w-6" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-slate-900">
+                  <h2 className="text-xl font-semibold text-white">
                     {section.title}
                   </h2>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-2 text-sm text-slate-300 leading-relaxed">
                     {section.description}
                   </p>
                 </div>
@@ -111,7 +187,7 @@ export default function AdminDashboard() {
                   <Link
                     key={linkIndex}
                     to={link.to}
-                    className={`block rounded-lg bg-gradient-to-r ${getColorClasses(section.color)} px-4 py-3 text-center text-sm font-medium text-white shadow-sm transition hover:shadow-md`}
+                    className={`block rounded-lg bg-gradient-to-r ${getColorClasses(section.color)} px-4 py-3 text-center text-sm font-medium text-white shadow-lg transition-all hover:shadow-md hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900`}
                   >
                     {link.label}
                   </Link>
@@ -121,57 +197,7 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Quick Stats */}
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-                <Settings className="h-5 w-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-slate-900">24</p>
-                <p className="text-xs text-slate-600">Total Resources</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100">
-                <Calendar className="h-5 w-5 text-emerald-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-slate-900">18</p>
-                <p className="text-xs text-slate-600">Active Bookings</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-                <AlertTriangle className="h-5 w-5 text-amber-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-slate-900">7</p>
-                <p className="text-xs text-slate-600">Open Tickets</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-                <Users className="h-5 w-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold text-slate-900">156</p>
-                <p className="text-xs text-slate-600">Total Users</p>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
   );
 }

@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 
 const thClass =
-  "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600";
+  "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400";
 
 export default function ResourceTable({ resources, showAdminActions, onDelete }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-slate-700 bg-slate-800 shadow-lg">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200 text-sm">
-          <thead className="bg-slate-50">
+        <table className="min-w-full divide-y divide-slate-700 text-sm">
+          <thead className="bg-slate-900">
             <tr>
               <th className={thClass}>ID</th>
               <th className={thClass}>Name</th>
@@ -27,20 +27,20 @@ export default function ResourceTable({ resources, showAdminActions, onDelete })
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-slate-200 bg-white">
+          <tbody className="divide-y divide-slate-700 bg-slate-800">
             {resources.map((r) => (
-              <tr key={r.id} className="transition-colors hover:bg-slate-50">
-                <td className="whitespace-nowrap px-4 py-3 text-slate-600">{r.id}</td>
-                <td className="whitespace-nowrap px-4 py-3 font-medium text-slate-900">{r.name}</td>
+              <tr key={r.id} className="transition-colors hover:bg-slate-700">
+                <td className="whitespace-nowrap px-4 py-3 text-slate-400">{r.id}</td>
+                <td className="whitespace-nowrap px-4 py-3 font-medium text-white">{r.name}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-xs font-semibold">
-                  <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] uppercase tracking-wide text-slate-700">
+                  <span className="inline-flex rounded-full border border-slate-600 bg-slate-700 px-2 py-1 text-[11px] uppercase tracking-wide text-slate-300">
                     {r.type}
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-4 py-3 text-slate-600">{r.capacity}</td>
-                <td className="whitespace-nowrap px-4 py-3 text-slate-600">{r.location}</td>
-                <td className="whitespace-nowrap px-4 py-3 text-slate-600">
-                  <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-800">
+                <td className="whitespace-nowrap px-4 py-3 text-slate-400">{r.capacity}</td>
+                <td className="whitespace-nowrap px-4 py-3 text-slate-400">{r.location}</td>
+                <td className="whitespace-nowrap px-4 py-3 text-slate-400">
+                  <span className="rounded-full border border-slate-600 bg-slate-700 px-2 py-1 text-xs text-slate-300">
                     {r.availabilityStart} – {r.availabilityEnd}
                   </span>
                 </td>
@@ -49,8 +49,8 @@ export default function ResourceTable({ resources, showAdminActions, onDelete })
                     className={
                       "inline-flex rounded-full px-2 py-1 text-xs font-semibold " +
                       (r.status === "ACTIVE"
-                        ? "bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200"
-                        : "bg-amber-50 text-amber-900 ring-1 ring-amber-200")
+                        ? "bg-emerald-900/50 text-emerald-300 ring-1 ring-emerald-700"
+                        : "bg-amber-900/50 text-amber-300 ring-1 ring-amber-700")
                     }
                   >
                     {r.status}
@@ -59,7 +59,7 @@ export default function ResourceTable({ resources, showAdminActions, onDelete })
                 <td className="whitespace-nowrap px-4 py-3">
                   <Link
                     to={`/resources/${r.id}`}
-                    className="inline-flex items-center rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-white hover:bg-slate-700"
+                    className="inline-flex items-center rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-500 transition-colors"
                   >
                     Details
                   </Link>
@@ -70,7 +70,7 @@ export default function ResourceTable({ resources, showAdminActions, onDelete })
                     <td className="whitespace-nowrap px-4 py-3">
                       <Link
                         to={`/admin/resources/${r.id}/edit`}
-                        className="inline-flex items-center rounded-full border border-slate-300 px-3 py-1 text-xs font-medium text-slate-800 hover:bg-slate-50"
+                        className="inline-flex items-center rounded-full border border-slate-600 bg-slate-700 px-3 py-1 text-xs font-medium text-slate-300 hover:bg-slate-600 transition-colors"
                       >
                         Edit
                       </Link>
@@ -79,7 +79,7 @@ export default function ResourceTable({ resources, showAdminActions, onDelete })
                       <button
                         type="button"
                         onClick={() => onDelete?.(r.id)}
-                        className="inline-flex items-center rounded-full bg-rose-600 px-3 py-1 text-xs font-medium text-white shadow-sm hover:bg-rose-500"
+                        className="inline-flex items-center rounded-full bg-red-600 px-3 py-1 text-xs font-medium text-white shadow-sm hover:bg-red-500 transition-colors"
                       >
                         Delete
                       </button>
@@ -93,7 +93,7 @@ export default function ResourceTable({ resources, showAdminActions, onDelete })
               <tr>
                 <td
                   colSpan={showAdminActions ? 10 : 8}
-                  className="px-4 py-10 text-center text-sm text-slate-500"
+                  className="px-4 py-10 text-center text-sm text-slate-400"
                 >
                   No resources found. Try adjusting your filters.
                 </td>

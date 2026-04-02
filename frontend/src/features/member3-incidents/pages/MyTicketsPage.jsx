@@ -66,25 +66,25 @@ export default function MyTicketsPage() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+    <div className="rounded-2xl border border-slate-700 bg-slate-800 p-5 shadow-lg">
+      <h2 className="text-xl font-semibold tracking-tight text-white">
         My Tickets
       </h2>
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="mt-1 text-sm text-slate-400">
         Enter the email you used when reporting the incident. You will see your
         tickets, updates, and notifications here.
       </p>
       <div className="mt-3">
         <Link
           to="/incidents/my-resolved"
-          className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+          className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
         >
           Go to Resolved Section
         </Link>
       </div>
 
       <form onSubmit={fetchTickets} className="mt-6 flex flex-col gap-4 md:flex-row md:items-end">
-        <label className="w-full md:flex-1 grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+        <label className="w-full md:flex-1 grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
           Email *
           <input
             value={email}
@@ -92,7 +92,7 @@ export default function MyTicketsPage() {
             type="email"
             required
             placeholder="you@example.com"
-            className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
           />
         </label>
         <button
@@ -104,14 +104,14 @@ export default function MyTicketsPage() {
       </form>
 
       {error && (
-        <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <div className="mt-4 rounded-2xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
           {error}
         </div>
       )}
 
       {submitted && !loading && tickets.length === 0 && (
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
-          No tickets found for <span className="font-semibold">{email}</span>.
+        <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-800 p-6 text-sm text-slate-400">
+          No tickets found for <span className="font-semibold text-white">{email}</span>.
           Create a new incident ticket first.
         </div>
       )}
@@ -119,11 +119,11 @@ export default function MyTicketsPage() {
       {tickets.length > 0 && (
         <div className="mt-6 space-y-4">
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
               {tickets.length} ticket(s)
             </p>
             {unreadCount > 0 && (
-              <div className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+              <div className="rounded-full border border-blue-600 bg-blue-900/50 px-3 py-1 text-xs font-semibold text-blue-300">
                 {unreadCount} new notification(s)
               </div>
             )}
@@ -140,30 +140,30 @@ export default function MyTicketsPage() {
               ))}
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4">
               {!openedTicket ? (
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-slate-400">
                   Select a ticket to view its updates and notifications.
                 </p>
               ) : (
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-base font-semibold text-slate-900">
+                      <h3 className="text-base font-semibold text-white">
                         {openedTicket.title}
                       </h3>
                       <TicketStatusBadge status={openedTicket.status} />
-                      <span className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700">
+                      <span className="rounded-full border border-slate-600 bg-slate-700 px-2 py-0.5 text-[10px] font-semibold text-slate-300">
                         {openedTicket.category}
                       </span>
-                      <span className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700">
+                      <span className="rounded-full border border-slate-600 bg-slate-700 px-2 py-0.5 text-[10px] font-semibold text-slate-300">
                         #{openedTicket.id}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600">
-                      Location: <span className="font-semibold">{openedTicket.location}</span>
+                    <p className="text-xs text-slate-400">
+                      Location: <span className="font-semibold text-white">{openedTicket.location}</span>
                     </p>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-slate-400">
                       Submitted:{" "}
                       {new Date(openedTicket.createdAt).toLocaleString()}
                     </p>

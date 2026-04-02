@@ -14,7 +14,7 @@ const SORTS = [
 ];
 
 const inputClass =
-  "h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30";
+  "h-9 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400";
 
 export default function ResourcesPage() {
   const [resources, setResources] = useState([]);
@@ -109,39 +109,39 @@ export default function ResourcesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight text-slate-900 sm:text-xl">
+          <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
             Resources
           </h2>
-          <p className="mt-1 text-xs text-slate-600">
+          <p className="mt-1 text-xs text-slate-400">
             Search and filter across all available resources.
           </p>
         </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             Total resources
           </p>
-          <p className="mt-1 text-2xl font-semibold text-slate-900">{stats.total}</p>
+          <p className="mt-1 text-2xl font-semibold text-white">{stats.total}</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             Active
           </p>
-          <p className="mt-1 text-2xl font-semibold text-emerald-600">{stats.active}</p>
+          <p className="mt-1 text-2xl font-semibold text-emerald-400">{stats.active}</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             Out of service
           </p>
-          <p className="mt-1 text-2xl font-semibold text-amber-600">{stats.out}</p>
+          <p className="mt-1 text-2xl font-semibold text-amber-400">{stats.out}</p>
         </div>
       </div>
 
-      <div className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-[2fr,1.2fr] sm:p-5">
+      <div className="grid gap-4 rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg sm:grid-cols-[2fr,1.2fr] sm:p-5">
         <div className="space-y-3">
-          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
             Keyword
             <input
               placeholder="Search by name or location…"
@@ -152,7 +152,7 @@ export default function ResourcesPage() {
           </label>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
               Type
               <select value={type} onChange={(e) => setType(e.target.value)} className={inputClass}>
                 {TYPES.map((t) => (
@@ -163,7 +163,7 @@ export default function ResourcesPage() {
               </select>
             </label>
 
-            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
               Status
               <select
                 value={status}
@@ -178,7 +178,7 @@ export default function ResourcesPage() {
               </select>
             </label>
 
-            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
               Location
               <input
                 placeholder="Filter by location"
@@ -190,7 +190,7 @@ export default function ResourcesPage() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+            <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
               Sort
               <select
                 value={sortKey}
@@ -214,8 +214,8 @@ export default function ResourcesPage() {
                   className={
                     "inline-flex flex-1 items-center justify-center rounded-full px-4 py-1.5 text-xs font-semibold transition " +
                     (view === "table"
-                      ? "bg-emerald-600 text-white shadow-sm"
-                      : "border border-slate-300 text-slate-700 hover:bg-slate-50")
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "border border-slate-600 text-slate-300 hover:bg-slate-700")
                   }
                 >
                   Table
@@ -226,8 +226,8 @@ export default function ResourcesPage() {
                   className={
                     "inline-flex flex-1 items-center justify-center rounded-full px-4 py-1.5 text-xs font-semibold transition " +
                     (view === "cards"
-                      ? "bg-emerald-600 text-white shadow-sm"
-                      : "border border-slate-300 text-slate-700 hover:bg-slate-50")
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "border border-slate-600 text-slate-300 hover:bg-slate-700")
                   }
                 >
                   Cards
@@ -238,8 +238,8 @@ export default function ResourcesPage() {
         </div>
 
         <div className="flex flex-col justify-between gap-3">
-          <div className="text-xs text-slate-600">
-            <p className="font-medium text-slate-800">Filters</p>
+          <div className="text-xs text-slate-400">
+            <p className="font-medium text-white">Filters</p>
             <p className="mt-1">
               Keyword searches name & location. Type, status, and location filters apply together.
             </p>
@@ -250,7 +250,7 @@ export default function ResourcesPage() {
               type="button"
               onClick={clear}
               disabled={loading}
-              className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-700 px-4 py-1.5 text-xs font-semibold text-slate-300 hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Clear filters
             </button>
@@ -258,10 +258,10 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      {loading && <p className="text-xs text-slate-600">Fetching resources…</p>}
+      {loading && <p className="text-xs text-slate-400">Fetching resources…</p>}
 
       {error && (
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <div className="rounded-2xl border border-red-800 bg-red-900/20 px-4 py-3 text-sm text-red-300">
           {error}
         </div>
       )}
@@ -272,7 +272,7 @@ export default function ResourcesPage() {
             <ResourceCard key={r.id} resource={r} />
           ))}
           {sortedResources.length === 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600 sm:col-span-2 lg:col-span-3">
+            <div className="rounded-2xl border border-slate-700 bg-slate-800 p-6 text-sm text-slate-400 sm:col-span-2 lg:col-span-3">
               No resources found. Try adjusting your filters.
             </div>
           )}

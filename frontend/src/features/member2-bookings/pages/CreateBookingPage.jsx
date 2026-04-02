@@ -65,34 +65,40 @@ export default function CreateBookingPage() {
   };
 
   return (
-    <div style={{ maxWidth: 540, margin: "0 auto" }}>
-      <h2 style={{ marginBottom: 6, fontSize: "20px", fontWeight: 600 }}>
+    <div className="mx-auto max-w-md">
+      <h2 className="mb-2 text-xl font-semibold text-white">
         Create a Booking
       </h2>
-      <p style={{ marginBottom: 24, color: "#6b7280", fontSize: "14px" }}>
+      <p className="mb-6 text-sm text-slate-400">
         Select a resource and choose your time slot.
       </p>
 
       {message && (
-        <div style={alertStyle("green")}>{message}</div>
+        <div className="mb-4 rounded-xl border border-green-700 bg-green-900/20 px-4 py-3 text-sm text-green-300">
+          {message}
+        </div>
       )}
       {error && (
-        <div style={alertStyle("red")}>{error}</div>
+        <div className="mb-4 rounded-xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
+          {error}
+        </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label style={labelStyle}>Resource *</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1">
+            Resource *
+          </label>
           <select
             name="resourceId"
             value={form.resourceId}
             onChange={handleChange}
             required
-            style={inputStyle}
+            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
           >
-            <option value="">— Select a resource —</option>
+            <option value="" className="bg-slate-800">— Select a resource —</option>
             {resources.map((r) => (
-              <option key={r.id} value={r.id}>
+              <option key={r.id} value={r.id} className="bg-slate-800">
                 {r.name} ({r.type}) — {r.location}
               </option>
             ))}
@@ -100,7 +106,9 @@ export default function CreateBookingPage() {
         </div>
 
         <div>
-          <label style={labelStyle}>Your Email *</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1">
+            Your Email *
+          </label>
           <input
             name="bookedByEmail"
             type="email"
@@ -108,24 +116,28 @@ export default function CreateBookingPage() {
             value={form.bookedByEmail}
             onChange={handleChange}
             required
-            style={inputStyle}
+            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
           />
         </div>
 
         <div>
-          <label style={labelStyle}>Purpose *</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1">
+            Purpose *
+          </label>
           <input
             name="purpose"
             placeholder="e.g. Group study, Lecture, Meeting"
             value={form.purpose}
             onChange={handleChange}
             required
-            style={inputStyle}
+            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
           />
         </div>
 
         <div>
-          <label style={labelStyle}>Number of Attendees</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1">
+            Number of Attendees
+          </label>
           <input
             name="attendees"
             type="number"
@@ -133,41 +145,45 @@ export default function CreateBookingPage() {
             placeholder="e.g. 10"
             value={form.attendees}
             onChange={handleChange}
-            style={inputStyle}
+            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
           />
         </div>
 
         <div>
-          <label style={labelStyle}>Booking Date *</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1">
+            Booking Date *
+          </label>
           <input
             name="bookingDate"
             type="date"
             value={form.bookingDate}
             onChange={handleChange}
             required
-            style={inputStyle}
+            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
           />
         </div>
 
         <div>
-          <label style={labelStyle}>Time Range *</label>
-          <div style={{ display: "flex", gap: 10 }}>
+          <label className="block text-sm font-semibold text-slate-300 mb-1">
+            Time Range *
+          </label>
+          <div className="flex gap-2.5">
             <input
               name="startTime"
               type="time"
               value={form.startTime}
               onChange={handleChange}
               required
-              style={{ ...inputStyle, flex: 1 }}
+              className="flex-1 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
             />
-            <span style={{ alignSelf: "center", color: "#6b7280" }}>to</span>
+            <span className="self-center text-slate-400 text-sm">to</span>
             <input
               name="endTime"
               type="time"
               value={form.endTime}
               onChange={handleChange}
               required
-              style={{ ...inputStyle, flex: 1 }}
+              className="flex-1 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
             />
           </div>
         </div>
@@ -175,17 +191,7 @@ export default function CreateBookingPage() {
         <button
           type="submit"
           disabled={loading}
-          style={{
-            marginTop: 6,
-            padding: "12px",
-            borderRadius: "8px",
-            background: loading ? "#93c5fd" : "#2563eb",
-            color: "#fff",
-            border: "none",
-            fontSize: "15px",
-            fontWeight: 600,
-            cursor: loading ? "not-allowed" : "pointer",
-          }}
+          className="mt-2 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-blue-700"
         >
           {loading ? "Submitting..." : "Submit Booking Request"}
         </button>
@@ -193,30 +199,3 @@ export default function CreateBookingPage() {
     </div>
   );
 }
-
-const inputStyle = {
-  padding: "10px 14px",
-  borderRadius: "8px",
-  border: "1px solid #d1d5db",
-  fontSize: "14px",
-  width: "100%",
-  boxSizing: "border-box",
-};
-
-const labelStyle = {
-  display: "block",
-  fontSize: "13px",
-  fontWeight: 600,
-  marginBottom: "5px",
-  color: "#374151",
-};
-
-const alertStyle = (color) => ({
-  padding: "12px 16px",
-  borderRadius: "8px",
-  marginBottom: "16px",
-  background: color === "green" ? "#ecfdf5" : "#fef2f2",
-  color: color === "green" ? "#065f46" : "#991b1b",
-  border: `1px solid ${color === "green" ? "#6ee7b7" : "#fca5a5"}`,
-  fontSize: "14px",
-});

@@ -107,25 +107,25 @@ export default function PillNavbar() {
 
   const headerClass = isLanding
     ? "sticky top-0 z-50 bg-slate-950 backdrop-blur-md"
-    : "sticky top-0 z-50 bg-slate-100 backdrop-blur-sm";
+    : "sticky top-0 z-50 bg-slate-950 backdrop-blur-sm";
 
   const pillClass = isLanding
     ? "bg-slate-900/90 shadow-lg shadow-black/20"
-    : "bg-white shadow-sm";
+    : "bg-slate-900/90 shadow-lg shadow-black/20";
 
   const linkIdle = isLanding
     ? "text-slate-300 hover:text-white"
-    : "text-slate-700 hover:text-slate-900";
+    : "text-slate-300 hover:text-white";
 
   const linkActive = isLanding ? "text-white" : "text-white";
 
   const mobileBtnClass = isLanding
     ? "inline-flex rounded-full border border-slate-600 p-2 text-slate-200"
-    : "inline-flex rounded-full border border-slate-200 p-2 text-slate-700";
+    : "inline-flex rounded-full border border-slate-600 p-2 text-slate-200";
 
   const mobilePanelClass = isLanding
     ? "mt-3 flex flex-col gap-1 rounded-2xl border border-slate-700 bg-slate-900 p-3 shadow-lg sm:hidden"
-    : "mt-3 flex flex-col gap-1 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm sm:hidden";
+    : "mt-3 flex flex-col gap-1 rounded-2xl border border-slate-700 bg-slate-900 p-3 shadow-lg sm:hidden";
 
   const isRouteActive = (item, isActive) => {
     if (item.type !== "route") return false;

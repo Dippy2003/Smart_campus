@@ -15,35 +15,35 @@ export default function BookingHomePage() {
     (path === "/create" && location.pathname === "/bookings");
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "24px 20px" }}>
+    <div className="mx-auto max-w-4xl px-5 py-6">
       {/* Header */}
-      <div style={{ marginBottom: 24, paddingBottom: 16, borderBottom: "1px solid #e5e7eb" }}>
-        <h1 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: 700, color: "#111827" }}>
+      <div className="mb-6 pb-4 border-b border-slate-700">
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
           Booking Management
         </h1>
-        <p style={{ margin: 0, fontSize: "14px", color: "#6b7280" }}>
+        <p className="mt-1 text-sm text-slate-400">
           Book resources, view your requests, and manage approvals.
         </p>
       </div>
 
       {/* Tab navigation */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 28, flexWrap: "wrap" }}>
+      <div className="mb-7 flex flex-wrap gap-2">
         <Link
           to="/bookings/create"
-          style={tabStyle(isActive("/create"))}
+          className={tabClass(isActive("/create"))}
         >
           Create Booking
         </Link>
         <Link
           to="/bookings/my"
-          style={tabStyle(isActive("/my"))}
+          className={tabClass(isActive("/my"))}
         >
           My Bookings
         </Link>
         {isAdmin && (
           <Link
             to="/bookings/admin"
-            style={tabStyle(isActive("/admin"))}
+            className={tabClass(isActive("/admin"))}
           >
             Admin Panel
           </Link>
@@ -56,14 +56,9 @@ export default function BookingHomePage() {
   );
 }
 
-const tabStyle = (active) => ({
-  padding: "8px 20px",
-  borderRadius: "8px",
-  textDecoration: "none",
-  fontSize: "14px",
-  fontWeight: 600,
-  background: active ? "#2563eb" : "#f3f4f6",
-  color: active ? "#fff" : "#374151",
-  border: active ? "1px solid #2563eb" : "1px solid #e5e7eb",
-  transition: "all 0.15s",
-});
+const tabClass = (active) =>
+  `inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${
+    active
+      ? "bg-blue-600 text-white shadow-lg border border-blue-600"
+      : "border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:border-slate-500"
+  }`;
