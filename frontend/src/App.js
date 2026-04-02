@@ -27,7 +27,7 @@ import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminRe
 function MainShell() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-6 lg:pb-10">
-      <main className="rounded-2xl border border-slate-200 bg-white p-4 shadow-md sm:p-6 lg:p-8">
+      <main className="rounded-2xl bg-slate-900 p-4 shadow-md sm:p-6 lg:p-8">
         <Outlet />
       </main>
     </div>
@@ -36,7 +36,7 @@ function MainShell() {
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-950">
       <PillNavbar />
       <Routes>
         <Route path="/" element={<SmartCampusLandingPage />} />

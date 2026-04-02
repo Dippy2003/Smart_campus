@@ -42,17 +42,17 @@ export default function MyBookingsPage() {
   };
 
   return (
-    <div style={{ maxWidth: 740, margin: "0 auto" }}>
-      <h2 style={{ marginBottom: 6, fontSize: "20px", fontWeight: 600 }}>
+    <div className="mx-auto max-w-2xl">
+      <h2 className="mb-2 text-xl font-semibold text-white">
         My Bookings
       </h2>
-      <p style={{ marginBottom: 20, color: "#6b7280", fontSize: "14px" }}>
+      <p className="mb-5 text-sm text-slate-400">
         Enter your email to view all your booking requests.
       </p>
 
       <form
         onSubmit={fetchBookings}
-        style={{ display: "flex", gap: 10, marginBottom: 24 }}
+        className="mb-6 flex gap-2.5"
       >
         <input
           type="email"
@@ -60,91 +60,60 @@ export default function MyBookingsPage() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           required
-          style={{
-            flex: 1,
-            padding: "10px 14px",
-            borderRadius: "8px",
-            border: "1px solid #d1d5db",
-            fontSize: "14px",
-          }}
+          className="flex-1 rounded-lg border border-slate-600 bg-slate-700 px-3.5 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
         />
         <button
           type="submit"
-          style={{
-            padding: "10px 24px",
-            borderRadius: "8px",
-            background: "#2563eb",
-            color: "#fff",
-            border: "none",
-            fontWeight: 600,
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
+          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"
         >
           Search
         </button>
       </form>
 
       {error && (
-        <div style={{ color: "#991b1b", background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: "8px", padding: "10px 14px", marginBottom: 16, fontSize: "14px" }}>
+        <div className="rounded-xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300 mb-4">
           {error}
         </div>
       )}
 
-      {loading && <p style={{ color: "#6b7280" }}>Loading...</p>}
+      {loading && <p className="text-slate-400">Loading...</p>}
 
       {searched && !loading && bookings.length === 0 && (
-        <div style={{ textAlign: "center", padding: "40px 20px", color: "#6b7280" }}>
-          <p style={{ fontSize: "15px" }}>No bookings found for <strong>{email}</strong></p>
-          <p style={{ fontSize: "13px" }}>Try creating a booking first.</p>
+        <div className="py-10 text-center text-slate-400">
+          <p className="text-base">No bookings found for <strong className="text-white">{email}</strong></p>
+          <p className="text-sm mt-1">Try creating a booking first.</p>
         </div>
       )}
 
       {bookings.map((b) => (
         <div
           key={b.id}
-          style={{
-            background: "#fff",
-            border: "1px solid #e5e7eb",
-            borderRadius: "10px",
-            padding: "16px 20px",
-            marginBottom: "12px",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-          }}
+          className="mb-3 rounded-xl border border-slate-700 bg-slate-800 p-5 shadow-lg transition hover:shadow-xl hover:border-slate-600"
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <div style={{ flex: 1 }}>
-              <p style={{ margin: "0 0 4px", fontWeight: 600, fontSize: "15px" }}>
+          <div className="flex justify-between items-start gap-4">
+            <div className="flex-1">
+              <p className="mb-1 text-base font-semibold text-white">
                 {b.resource?.name || "Resource"} — {b.resource?.location}
               </p>
-              <p style={{ margin: "0 0 4px", color: "#6b7280", fontSize: "13px" }}>
+              <p className="mb-1 text-sm text-slate-400">
                 {b.bookingDate} &nbsp;·&nbsp; {b.startTime} – {b.endTime}
               </p>
-              <p style={{ margin: "0 0 6px", color: "#374151", fontSize: "13px" }}>
+              <p className="mb-1.5 text-sm text-slate-300">
                 {b.purpose}
                 {b.attendees ? ` · ${b.attendees} attendees` : ""}
               </p>
               {b.adminReason && (
-                <p style={{ margin: 0, fontSize: "12px", color: "#6b7280", fontStyle: "italic" }}>
+                <p className="text-xs italic text-slate-400">
                   Admin note: {b.adminReason}
                 </p>
               )}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, marginLeft: 16 }}>
+            <div className="flex flex-col items-end gap-2 ml-4">
               <BookingStatusBadge status={b.status} />
               {(b.status === "PENDING" || b.status === "APPROVED") && (
                 <button
                   onClick={() => handleCancel(b.id)}
-                  style={{
-                    padding: "5px 12px",
-                    borderRadius: "6px",
-                    background: "#fef2f2",
-                    color: "#991b1b",
-                    border: "1px solid #fca5a5",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                    fontWeight: 600,
-                  }}
+                  className="rounded-lg border border-red-600 bg-red-900/50 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-800/50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-800"
                 >
                   Cancel
                 </button>

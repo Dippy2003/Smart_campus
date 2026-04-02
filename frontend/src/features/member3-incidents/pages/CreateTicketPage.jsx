@@ -75,18 +75,18 @@ export default function CreateTicketPage() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+    <div className="rounded-2xl border border-slate-700 bg-slate-800 p-5 shadow-lg">
+      <h2 className="text-xl font-semibold tracking-tight text-white">
         Create an Incident Ticket
       </h2>
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="mt-1 text-sm text-slate-400">
         Submit an issue with clear details so the maintenance team can respond
-        quickly. Use your email to track updates in “My Tickets”.
+        quickly. Use your email to track updates in "My Tickets".
       </p>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
             Your Email *
             <input
               name="requesterEmail"
@@ -95,17 +95,17 @@ export default function CreateTicketPage() {
               onChange={handleChange}
               placeholder="you@example.com"
               required
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
             />
           </label>
 
-          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
             Priority
             <select
               name="priority"
               value={form.priority}
               onChange={handleChange}
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
             >
               {PRIORITIES.map((p) => (
                 <option key={p} value={p}>
@@ -117,13 +117,13 @@ export default function CreateTicketPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
             Category
             <select
               name="category"
               value={form.category}
               onChange={handleChange}
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -133,7 +133,7 @@ export default function CreateTicketPage() {
             </select>
           </label>
 
-          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
             Location *
             <input
               name="location"
@@ -141,12 +141,12 @@ export default function CreateTicketPage() {
               onChange={handleChange}
               placeholder="e.g. Block C, Level 2 – Lecture Hall A"
               required
-              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
             />
           </label>
         </div>
 
-        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
           Title *
           <input
             name="title"
@@ -154,11 +154,11 @@ export default function CreateTicketPage() {
             onChange={handleChange}
             placeholder="e.g. Projector not turning on"
             required
-            className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
           />
         </label>
 
-        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
           Description *
           <textarea
             name="description"
@@ -167,18 +167,18 @@ export default function CreateTicketPage() {
             placeholder="Include what happened, when it started, and any troubleshooting steps already tried."
             required
             rows={5}
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            className="rounded-lg border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
           />
         </label>
 
         {error && (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          <div className="rounded-2xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
             {error}
           </div>
         )}
 
         {successId && (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          <div className="rounded-2xl border border-green-700 bg-green-900/20 px-4 py-3 text-sm text-green-300">
             Ticket created successfully. Ticket ID:{" "}
             <span className="font-semibold">#{successId}</span>
           </div>
@@ -195,7 +195,7 @@ export default function CreateTicketPage() {
           <button
             type="button"
             onClick={() => navigate("/incidents/my")}
-            className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-700 px-6 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-600"
           >
             View My Tickets
           </button>

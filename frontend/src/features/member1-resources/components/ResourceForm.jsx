@@ -6,7 +6,7 @@ const STATUSES = ["ACTIVE", "OUT_OF_SERVICE"];
 const normTime = (v) => (v ? String(v).slice(0, 8) : "09:00:00"); // HH:mm:ss
 
 const fieldClass =
-  "h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30";
+  "h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400";
 
 export default function ResourceForm({ initialValues, onSubmit, submitText }) {
   const [form, setForm] = useState(
@@ -44,12 +44,12 @@ export default function ResourceForm({ initialValues, onSubmit, submitText }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid max-w-xl gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6"
+      className="grid max-w-xl gap-4 rounded-2xl border border-slate-700 bg-slate-800 p-5 shadow-lg sm:p-6"
     >
       <div className="grid gap-2">
 
         <label className="text-xs font-medium uppercase tracking-wide text-slate-400">
-          Namess
+          Name
         </label>
 
         <input
@@ -63,7 +63,7 @@ export default function ResourceForm({ initialValues, onSubmit, submitText }) {
 
       <div className="grid gap-2 sm:grid-cols-2">
         <div className="grid gap-2">
-          <label className="text-xs font-medium uppercase tracking-wide text-slate-600">Type</label>
+          <label className="text-xs font-medium uppercase tracking-wide text-slate-400">Type</label>
           <select
             value={form.type}
             onChange={(e) => change("type", e.target.value)}
@@ -78,7 +78,7 @@ export default function ResourceForm({ initialValues, onSubmit, submitText }) {
         </div>
 
         <div className="grid gap-2">
-          <label className="text-xs font-medium uppercase tracking-wide text-slate-600">
+          <label className="text-xs font-medium uppercase tracking-wide text-slate-400">
             Capacity
           </label>
           <input
@@ -154,7 +154,7 @@ export default function ResourceForm({ initialValues, onSubmit, submitText }) {
       <div className="mt-2 flex justify-end gap-3">
         <button
           type="submit"
-          className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          className="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
         >
           {submitText || "Save resource"}
         </button>
