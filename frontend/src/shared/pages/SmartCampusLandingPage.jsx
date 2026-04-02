@@ -7,8 +7,6 @@ import {
   AlertTriangle,
   Bell,
   LogIn,
-  Menu,
-  X,
   User,
   ShieldCheck,
   Wrench,
@@ -19,17 +17,6 @@ import {
 } from "lucide-react";
 
 function SmartCampusLandingPage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const navLinks = [
-    { label: "Home", type: "anchor", href: "#home" },
-    { label: "Resources", type: "route", to: "/resources" },
-    { label: "Bookings", type: "route", to: "/bookings" },
-    { label: "Tickets", type: "route", to: "/incidents/create" },
-    { label: "Features", type: "anchor", href: "#features" },
-    { label: "About", type: "anchor", href: "#about" },
-  ];
-
   const features = [
     {
       icon: Building2,
@@ -167,13 +154,6 @@ function SmartCampusLandingPage() {
       ? previewResources
       : fallbackResources;
 
-  const stats = [
-    { label: "Resources", value: "150+", description: "Registered rooms & assets" },
-    { label: "Bookings", value: "320+", description: "Processed booking requests" },
-    { label: "Open Tickets", value: "45", description: "Incidents under resolution" },
-    { label: "Satisfaction", value: "98%", description: "Positive feedback from users" },
-  ];
-
   const quickLinks = [
     { label: "User Guide", href: "#resources" },
     { label: "Feature Overview", href: "#features" },
@@ -182,100 +162,7 @@ function SmartCampusLandingPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50" id="home">
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-6 lg:px-8">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 shadow-lg shadow-blue-500/30">
-              <Monitor className="h-5 w-5 text-slate-950" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold tracking-wide text-blue-400">
-                SMART CAMPUS
-              </span>
-              <span className="text-sm font-medium text-slate-100">
-                Operations Hub
-              </span>
-            </div>
-          </div>
-
-          <div className="hidden items-center gap-8 md:flex">
-            <div className="flex items-center gap-6 text-sm font-medium text-slate-200">
-              {navLinks.map((link) =>
-                link.type === "route" ? (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    className="transition-colors hover:text-blue-400"
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="transition-colors hover:text-blue-400"
-                  >
-                    {link.label}
-                  </a>
-                )
-              )}
-            </div>
-            <Link
-              to="/admin/login"
-              className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md shadow-blue-500/30 transition hover:bg-blue-400"
-            >
-              <LogIn className="h-4 w-4" />
-              <span>Login</span>
-            </Link>
-          </div>
-
-          <button
-            className="inline-flex items-center justify-center rounded-lg border border-slate-800 p-2 text-slate-200 md:hidden"
-            onClick={() => setMobileOpen((prev) => !prev)}
-            aria-label="Toggle navigation"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </nav>
-
-        {mobileOpen && (
-          <div className="border-t border-slate-800 bg-slate-950/95 px-4 pb-4 pt-2 md:hidden">
-            <div className="flex flex-col gap-3 text-sm font-medium text-slate-200">
-              {navLinks.map((link) =>
-                link.type === "route" ? (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-lg px-2 py-2 transition hover:bg-slate-900 hover:text-blue-400"
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-lg px-2 py-2 transition hover:bg-slate-900 hover:text-blue-400"
-                  >
-                    {link.label}
-                  </a>
-                )
-              )}
-              <Link
-                to="/admin/login"
-                onClick={() => setMobileOpen(false)}
-                className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-md shadow-blue-500/30 transition hover:bg-blue-400"
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Login</span>
-              </Link>
-            </div>
-          </div>
-        )}
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 pb-16 pt-10 md:px-6 lg:px-8 lg:pt-14">
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-8 md:px-6 lg:px-8 lg:pt-12">
         <section className="grid gap-10 md:grid-cols-2 md:items-center lg:gap-16">
           <div className="space-y-6">
             <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-300">
@@ -407,7 +294,7 @@ function SmartCampusLandingPage() {
           </div>
         </section>
 
-        <section id="features" className="mt-16 space-y-8 md:mt-20">
+        <section id="features" className="scroll-mt-28 mt-16 space-y-8 md:mt-20">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-xl font-semibold text-slate-50 sm:text-2xl">
@@ -620,7 +507,7 @@ function SmartCampusLandingPage() {
 
         <section
           id="about"
-          className="mt-16 grid gap-8 border-y border-slate-800 py-10 md:grid-cols-2"
+          className="scroll-mt-28 mt-16 grid gap-8 border-y border-slate-800 py-10 md:grid-cols-2"
         >
           <div>
             <h2 className="text-lg font-semibold text-slate-50">
@@ -637,7 +524,7 @@ function SmartCampusLandingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-800 bg-slate-950/95">
+      <footer id="contact" className="scroll-mt-28 border-t border-slate-800 bg-slate-950/95">
         <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-3">
             <div className="space-y-3 md:col-span-2">
