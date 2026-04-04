@@ -16,6 +16,7 @@ Lecture Halls
 Labs
 
 Meeting Rooms
+yess
 
 Equipment
 
