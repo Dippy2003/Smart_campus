@@ -16,7 +16,6 @@ Lecture Halls
 Labs
 
 Meeting Rooms
-yess
 
 Equipment
 
@@ -47,16 +46,10 @@ Frontend (React)
 
 Java 23
 
-Spring Boot 4
-
-
 MySQL
-
-
-
 
 React (Vite)
 
 Axios
 
-REST API
+
