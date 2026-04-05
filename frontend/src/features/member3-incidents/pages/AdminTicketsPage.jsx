@@ -51,85 +51,85 @@ export default function AdminTicketsPage() {
   }, [tickets, statusFilter, keyword]);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg shadow-slate-950/60">
+      <h2 className="text-xl font-semibold tracking-tight text-slate-50">
         Admin: Ticket Management
       </h2>
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="mt-1 text-sm text-slate-300">
         Review all incident tickets, update status, and send replies/notifications
         to the requester.
       </p>
       <div className="mt-3">
         <Link
           to="/incidents/admin-resolved"
-          className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+          className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
         >
           Go to Resolved Section
         </Link>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
           Filter by Status
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
           >
-            <option value="">All statuses</option>
+            <option value="" className="bg-slate-800">All statuses</option>
             {STATUSES.map((s) => (
-              <option key={s} value={s}>
+              <option key={s} value={s} className="bg-slate-800">
                 {s}
               </option>
             ))}
           </select>
         </label>
 
-        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
           Search (ID / Email / Title / Location)
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="e.g. projector, @example.com, #12"
-            className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
           />
         </label>
       </div>
 
       {error && (
-        <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+        <div className="mt-4 rounded-2xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
           {error}
         </div>
       )}
 
       {loading ? (
-        <p className="mt-4 text-sm text-slate-600">Loading tickets…</p>
+        <p className="mt-4 text-sm text-slate-400">Loading tickets…</p>
       ) : (
         <div className="mt-6 overflow-auto">
           {filtered.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
+            <div className="rounded-2xl border border-slate-700 bg-slate-800 p-6 text-sm text-slate-300">
               No tickets match your filters.
             </div>
           ) : (
             <table className="w-full min-w-[720px] border-separate border-spacing-0">
               <thead>
                 <tr>
-                  <th className="border-b border-slate-200 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="border-b border-slate-700 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Ticket
                   </th>
-                  <th className="border-b border-slate-200 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="border-b border-slate-700 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Requester
                   </th>
-                  <th className="border-b border-slate-200 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="border-b border-slate-700 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Title
                   </th>
-                  <th className="border-b border-slate-200 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="border-b border-slate-700 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Location
                   </th>
-                  <th className="border-b border-slate-200 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="border-b border-slate-700 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Status
                   </th>
-                  <th className="border-b border-slate-200 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="border-b border-slate-700 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Actions
                   </th>
                 </tr>
@@ -137,30 +137,30 @@ export default function AdminTicketsPage() {
               <tbody>
                 {filtered.map((t) => (
                   <tr key={t.id} className="align-top">
-                    <td className="border-b border-slate-100 py-4">
-                      <div className="text-sm font-semibold text-slate-900">
+                    <td className="border-b border-slate-700 py-4">
+                      <div className="text-sm font-semibold text-slate-50">
                         #{t.id}
                       </div>
-                      <div className="text-[11px] text-slate-500">
+                      <div className="text-[11px] text-slate-400">
                         {new Date(t.createdAt).toLocaleDateString()} • {t.category}
                       </div>
                       {countUnread(t) > 0 && (
-                        <div className="mt-2 inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
+                        <div className="mt-2 inline-flex items-center rounded-full border border-blue-600 bg-blue-900/50 px-2 py-0.5 text-[10px] font-semibold text-blue-300">
                           {countUnread(t)} new
                         </div>
                       )}
                     </td>
-                    <td className="border-b border-slate-100 py-4">
-                      <div className="text-sm text-slate-700">{t.requesterEmail}</div>
-                      <div className="mt-1 text-[11px] text-slate-500">
+                    <td className="border-b border-slate-700 py-4">
+                      <div className="text-sm text-slate-300">{t.requesterEmail}</div>
+                      <div className="mt-1 text-[11px] text-slate-400">
                         Priority: {t.priority}
                       </div>
                     </td>
-                    <td className="border-b border-slate-100 py-4">
-                      <div className="text-sm text-slate-800">{t.title}</div>
+                    <td className="border-b border-slate-700 py-4">
+                      <div className="text-sm text-slate-50">{t.title}</div>
                     </td>
-                    <td className="border-b border-slate-100 py-4">
-                      <div className="text-sm text-slate-700">{t.location}</div>
+                    <td className="border-b border-slate-700 py-4">
+                      <div className="text-sm text-slate-300">{t.location}</div>
                     </td>
                     <td className="border-b border-slate-100 py-4">
                       <TicketStatusBadge status={t.status} />
@@ -185,7 +185,7 @@ export default function AdminTicketsPage() {
         <button
           type="button"
           onClick={load}
-          className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+          className="rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
         >
           Refresh
         </button>

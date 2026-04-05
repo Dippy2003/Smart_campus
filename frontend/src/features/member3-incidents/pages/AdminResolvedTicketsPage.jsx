@@ -26,28 +26,28 @@ export default function AdminResolvedTicketsPage() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg shadow-slate-950/60">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight text-slate-900">
+          <h2 className="text-xl font-semibold tracking-tight text-slate-50">
             Admin: Resolved Tickets
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-300">
             Tickets moved out of active workflow after resolution.
           </p>
         </div>
         <Link
           to="/incidents/admin"
-          className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50"
+          className="rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
         >
           Back to Admin Active
         </Link>
       </div>
 
       {loading ? (
-        <p className="mt-6 text-sm text-slate-600">Loading resolved tickets...</p>
+        <p className="mt-6 text-sm text-slate-400">Loading resolved tickets...</p>
       ) : tickets.length === 0 ? (
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
+        <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-800 p-6 text-sm text-slate-300">
           No resolved tickets available.
         </div>
       ) : (
@@ -55,14 +55,14 @@ export default function AdminResolvedTicketsPage() {
           {tickets.map((t) => (
             <div
               key={t.id}
-              className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+              className="rounded-2xl border border-slate-700 bg-slate-800 p-4"
             >
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-50">
                     #{t.id} - {t.title}
                   </p>
-                  <p className="mt-1 text-xs text-slate-600">
+                  <p className="mt-1 text-xs text-slate-400">
                     {t.requesterEmail} • {t.location}
                   </p>
                 </div>
