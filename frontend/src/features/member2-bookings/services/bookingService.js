@@ -1,59 +1,69 @@
+// Member2 - Bathiya | Booking Management Module B
+// bookingService.js — API service layer for all booking operations
+
 const BASE_URL = "http://localhost:8080/api/bookings";
 export const RESOURCES_URL = "http://localhost:8080/resources";
 
-export const createBooking = async (bookingData) => {
-  const res = await fetch(BASE_URL, {
-    method: "POST",
+// Helper — shared fetch with error handling
+const apiFetch = async (url, options = {}) => {
+  const res = await fetch(url, {
     headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || data.message || "Request failed");
+  return data;
+};
+
+// POST /api/bookings — create new booking
+export const createBooking = async (bookingData) => {
+  return apiFetch(BASE_URL, {
+    method: "POST",
     body: JSON.stringify(bookingData),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Failed to create booking");
-  return data;
 };
 
+// GET /api/bookings/my?email= — get current user's bookings
 export const getMyBookings = async (email) => {
-  const res = await fetch(`${BASE_URL}/my?email=${encodeURIComponent(email)}`);
-  if (!res.ok) throw new Error("Failed to fetch bookings");
-  return res.json();
+  return apiFetch(`${BASE_URL}/my?email=${encodeURIComponent(email)}`);
 };
 
+// GET /api/bookings — get all bookings, optional status filter (admin)
 export const getAllBookings = async (status = "") => {
   const url = status ? `${BASE_URL}?status=${status}` : BASE_URL;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Failed to fetch bookings");
-  return res.json();
+  return apiFetch(url);
 };
 
+// GET /api/bookings/stats — get booking counts by status
+export const getBookingStats = async () => {
+  return apiFetch(`${BASE_URL}/stats`);
+};
+
+// GET /api/bookings/:id — get single booking
+export const getBookingById = async (id) => {
+  return apiFetch(`${BASE_URL}/${id}`);
+};
+
+// PUT /api/bookings/:id/approve — admin approves booking
 export const approveBooking = async (id, reason = "") => {
-  const res = await fetch(`${BASE_URL}/${id}/approve`, {
+  return apiFetch(`${BASE_URL}/${id}/approve`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ reason }),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Failed to approve");
-  return data;
 };
 
+// PUT /api/bookings/:id/reject — admin rejects booking
 export const rejectBooking = async (id, reason = "") => {
-  const res = await fetch(`${BASE_URL}/${id}/reject`, {
+  return apiFetch(`${BASE_URL}/${id}/reject`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ reason }),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Failed to reject");
-  return data;
 };
 
+// PUT /api/bookings/:id/cancel — user cancels their own booking
 export const cancelBooking = async (id, email) => {
-  const res = await fetch(`${BASE_URL}/${id}/cancel`, {
+  return apiFetch(`${BASE_URL}/${id}/cancel`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Failed to cancel");
-  return data;
 };
