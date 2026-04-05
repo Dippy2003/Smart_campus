@@ -5,18 +5,18 @@ function ModuleCard({ title, description, to, cta }) {
   return (
     <Link
       to={to}
-      className="group block rounded-2xl border border-slate-700 bg-slate-800 p-5 shadow-lg transition hover:-translate-y-0.5 hover:border-blue-600 hover:shadow-xl"
+      className="group block rounded-2xl border border-slate-800 bg-slate-950/60 p-5 shadow-lg shadow-slate-950/60 transition hover:-translate-y-1 hover:border-blue-500/60 hover:shadow-blue-900/40"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <h3 className="text-base font-semibold tracking-tight text-white">
+          <h3 className="text-base font-semibold tracking-tight text-slate-50">
             {title}
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-300">
             {description}
           </p>
         </div>
-        <span className="rounded-full border border-slate-600 bg-slate-700 px-3 py-1 text-[11px] font-semibold text-slate-300 transition group-hover:border-blue-600 group-hover:bg-blue-900/50 group-hover:text-blue-300">
+        <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-[11px] font-semibold text-slate-300 transition group-hover:border-blue-500/70 group-hover:bg-slate-900 group-hover:text-blue-300">
           {cta}
         </span>
       </div>
@@ -29,13 +29,13 @@ export default function HomePage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl border border-slate-700 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900/20 p-6 shadow-lg sm:p-8">
+      <section className="rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900/20 p-6 shadow-lg sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">
-            <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+            <h2 className="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
               Welcome
             </h2>
-            <p className="max-w-2xl text-sm text-slate-400">
+            <p className="max-w-2xl text-sm text-slate-300">
               This is the main dashboard that combines all 4 members' parts. Students can
               browse resources, and resource admins can manage the catalog.
             </p>

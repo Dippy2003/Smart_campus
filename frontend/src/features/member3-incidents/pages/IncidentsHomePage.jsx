@@ -7,7 +7,7 @@ function tabStyle(active) {
     "rounded-full px-4 py-2 text-sm font-semibold transition " +
     (active
       ? "bg-blue-600 text-white shadow-sm"
-      : "border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700")
+      : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50")
   );
 }
 
@@ -22,10 +22,10 @@ export default function IncidentsHomePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           Incident Ticketing
         </h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-slate-600">
           Report issues across campus, track maintenance progress, and
           receive updates in one place.
         </p>
