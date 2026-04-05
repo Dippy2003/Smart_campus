@@ -75,11 +75,11 @@ export default function CreateTicketPage() {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-800 p-5 shadow-lg">
-      <h2 className="text-xl font-semibold tracking-tight text-white">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg shadow-slate-950/60">
+      <h2 className="text-xl font-semibold tracking-tight text-slate-50">
         Create an Incident Ticket
       </h2>
-      <p className="mt-1 text-sm text-slate-400">
+      <p className="mt-1 text-sm text-slate-300">
         Submit an issue with clear details so the maintenance team can respond
         quickly. Use your email to track updates in "My Tickets".
       </p>
@@ -95,7 +95,7 @@ export default function CreateTicketPage() {
               onChange={handleChange}
               placeholder="you@example.com"
               required
-              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
             />
           </label>
 
@@ -105,10 +105,10 @@ export default function CreateTicketPage() {
               name="priority"
               value={form.priority}
               onChange={handleChange}
-              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
             >
               {PRIORITIES.map((p) => (
-                <option key={p} value={p}>
+                <option key={p} value={p} className="bg-slate-800">
                   {p}
                 </option>
               ))}
@@ -123,10 +123,10 @@ export default function CreateTicketPage() {
               name="category"
               value={form.category}
               onChange={handleChange}
-              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
             >
               {CATEGORIES.map((c) => (
-                <option key={c} value={c}>
+                <option key={c} value={c} className="bg-slate-800">
                   {c}
                 </option>
               ))}
@@ -141,7 +141,7 @@ export default function CreateTicketPage() {
               onChange={handleChange}
               placeholder="e.g. Block C, Level 2 – Lecture Hall A"
               required
-              className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
+              className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
             />
           </label>
         </div>
@@ -154,7 +154,7 @@ export default function CreateTicketPage() {
             onChange={handleChange}
             placeholder="e.g. Projector not turning on"
             required
-            className="h-10 rounded-lg border border-slate-600 bg-slate-700 px-3 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
+            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
           />
         </label>
 
@@ -167,7 +167,7 @@ export default function CreateTicketPage() {
             placeholder="Include what happened, when it started, and any troubleshooting steps already tried."
             required
             rows={5}
-            className="rounded-lg border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-white outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
+            className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
           />
         </label>
 
@@ -178,7 +178,7 @@ export default function CreateTicketPage() {
         )}
 
         {successId && (
-          <div className="rounded-2xl border border-green-700 bg-green-900/20 px-4 py-3 text-sm text-green-300">
+          <div className="rounded-2xl border border-emerald-700 bg-emerald-900/20 px-4 py-3 text-sm text-emerald-300">
             Ticket created successfully. Ticket ID:{" "}
             <span className="font-semibold">#{successId}</span>
           </div>
@@ -188,14 +188,14 @@ export default function CreateTicketPage() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? "Submitting..." : "Submit Ticket"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/incidents/my")}
-            className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-700 px-6 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-600"
+            className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-6 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-700"
           >
             View My Tickets
           </button>
