@@ -106,7 +106,7 @@ export default function ResourcesPage() {
   }, [filteredResources, sortKey]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
@@ -118,20 +118,20 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg">
+      <div className="grid gap-2 sm:grid-cols-3">
+        <div className="rounded-xl border border-slate-700 bg-slate-800 p-3 shadow-lg">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             Total resources
           </p>
           <p className="mt-1 text-2xl font-semibold text-white">{stats.total}</p>
         </div>
-        <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg">
+        <div className="rounded-xl border border-slate-700 bg-slate-800 p-3 shadow-lg">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             Active
           </p>
           <p className="mt-1 text-2xl font-semibold text-emerald-400">{stats.active}</p>
         </div>
-        <div className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg">
+        <div className="rounded-xl border border-slate-700 bg-slate-800 p-3 shadow-lg">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             Out of service
           </p>
@@ -139,8 +139,8 @@ export default function ResourcesPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-lg sm:grid-cols-[2fr,1.2fr] sm:p-5">
-        <div className="space-y-3">
+      <div className="grid gap-3 rounded-xl border border-slate-700 bg-slate-800 p-3 shadow-lg sm:grid-cols-[2.4fr,1fr]">
+        <div className="space-y-2.5">
           <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
             Keyword
             <input
@@ -151,7 +151,7 @@ export default function ResourcesPage() {
             />
           </label>
 
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-2 sm:grid-cols-3">
             <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
               Type
               <select value={type} onChange={(e) => setType(e.target.value)} className={inputClass}>
@@ -189,7 +189,7 @@ export default function ResourcesPage() {
             </label>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-2 sm:grid-cols-2">
             <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
               Sort
               <select
@@ -237,10 +237,10 @@ export default function ResourcesPage() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-between gap-3">
+        <div className="flex flex-col gap-2.5">
           <div className="text-xs text-slate-400">
             <p className="font-medium text-white">Filters</p>
-            <p className="mt-1">
+            <p className="mt-0.5">
               Keyword searches name & location. Type, status, and location filters apply together.
             </p>
           </div>
@@ -267,7 +267,7 @@ export default function ResourcesPage() {
       )}
 
       {view === "cards" ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {sortedResources.map((r) => (
             <ResourceCard key={r.id} resource={r} />
           ))}

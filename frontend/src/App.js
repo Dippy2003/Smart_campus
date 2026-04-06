@@ -26,7 +26,7 @@ import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminRe
 
 function MainShell() {
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-6 lg:pb-10">
+    <div className="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:pt-20 lg:pb-10">
       <main className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-lg shadow-slate-950/60 sm:p-6 lg:p-8">
         <Outlet />
       </main>
