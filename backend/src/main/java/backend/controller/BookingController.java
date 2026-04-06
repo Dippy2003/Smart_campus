@@ -20,6 +20,7 @@ import java.util.Map;
  *   GET    /api/bookings              - all bookings (admin)
  *   GET    /api/bookings/{id}         - single booking
  *   GET    /api/bookings/stats        - booking statistics
+ *   PATCH  /api/bookings/{id}         - update booking (user edits PENDING booking)
  *   PUT    /api/bookings/{id}/approve - approve booking
  *   PUT    /api/bookings/{id}/reject  - reject booking
  *   PUT    /api/bookings/{id}/cancel  - cancel booking
@@ -68,7 +69,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
-    // GET /api/bookings/stats — booking counts by status (for dashboard)
+    // GET /api/bookings/stats — booking counts by status
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Long>> getBookingStats() {
         return ResponseEntity.ok(bookingService.getBookingStats());
@@ -81,6 +82,19 @@ public class BookingController {
             return ResponseEntity.ok(bookingService.getBookingById(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // PATCH /api/bookings/{id} — user updates their PENDING booking
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateBooking(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> updates) {
+        try {
+            return ResponseEntity.ok(bookingService.updateBooking(id, updates));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         }
     }
