@@ -53,4 +53,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
            "GROUP BY r.id, r.name, r.type " +
            "ORDER BY bookingCount DESC")
     List<Object[]> findTopBookedResources();
+
+    // Get monthly booking counts for the last 6 months
+    @Query("SELECT MONTHNAME(b.bookingDate) as month, COUNT(b) as count " +
+           "FROM Booking b " +
+           "GROUP BY MONTHNAME(b.bookingDate), YEAR(b.bookingDate), MONTH(b.bookingDate) " +
+           "ORDER BY YEAR(b.bookingDate), MONTH(b.bookingDate)")
+    List<Object[]> findMonthlyBookings();
 }
