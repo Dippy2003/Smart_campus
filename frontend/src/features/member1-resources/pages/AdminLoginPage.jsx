@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="mx-auto max-w-md space-y-6">
+    <div className="mx-auto max-w-md space-y-4">
       <div className="space-y-1">
         <h2 className="text-lg font-semibold tracking-tight text-slate-50 sm:text-xl">
           Resource admin login
@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg shadow-slate-950/60"
+        className="space-y-4 rounded-xl border border-slate-700 bg-slate-800 p-4 shadow-lg shadow-slate-950/60"
       >
         {error && (
           <div className="rounded-xl border border-red-700 bg-red-900/20 px-3 py-2 text-xs text-red-300">
