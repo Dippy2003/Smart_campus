@@ -44,6 +44,14 @@ export const getBookingById = async (id) => {
   return apiFetch(`${BASE_URL}/${id}`);
 };
 
+// PATCH /api/bookings/:id — user updates their PENDING booking
+export const updateBooking = async (id, updates) => {
+  return apiFetch(`${BASE_URL}/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(updates),
+  });
+};
+
 // PUT /api/bookings/:id/approve — admin approves booking
 export const approveBooking = async (id, reason = "") => {
   return apiFetch(`${BASE_URL}/${id}/approve`, {
