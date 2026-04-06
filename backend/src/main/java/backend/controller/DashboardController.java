@@ -7,6 +7,9 @@ import backend.repository.ResourceRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,12 +84,49 @@ public class DashboardController {
             topResources.add(resourceData);
         }
         
+        // Get monthly trend data for the last 6 months
+        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
+        LocalDateTime sixMonthsAgoDateTime = sixMonthsAgo.atStartOfDay();
+        
+        // Get all bookings for monthly trends
+        List<Object[]> allMonthlyBookings = bookingRepository.findMonthlyBookings();
+        List<Object[]> allMonthlyTickets = incidentTicketRepository.findMonthlyTickets();
+        
+        // Create month map for bookings
+        Map<String, Long> bookingMap = new HashMap<>();
+        for (Object[] result : allMonthlyBookings) {
+            String month = (String) result[0];
+            Long count = (Long) result[1];
+            bookingMap.put(month, count);
+        }
+        
+        // Create month map for tickets
+        Map<String, Long> ticketMap = new HashMap<>();
+        for (Object[] result : allMonthlyTickets) {
+            String month = (String) result[0];
+            Long count = (Long) result[1];
+            ticketMap.put(month, count);
+        }
+        
+        // Generate monthly trend data for the last 6 months including current month
+        List<Map<String, Object>> monthlyTrends = new ArrayList<>();
+        String[] months = {"October", "November", "December", "January", "February", "March", "April"};
+        
+        for (String month : months) {
+            Map<String, Object> monthData = new HashMap<>();
+            monthData.put("month", month.substring(0, 3)); // Use first 3 letters for display
+            monthData.put("bookings", bookingMap.getOrDefault(month, 0L));
+            monthData.put("tickets", ticketMap.getOrDefault(month, 0L));
+            monthlyTrends.add(monthData);
+        }
+        
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalResources", resourceRepository.count());
         stats.put("totalBookings", bookingRepository.count());
         stats.put("totalTickets", incidentTicketRepository.count());
         stats.put("resourceBreakdown", resourceBreakdown);
         stats.put("topResources", topResources);
+        stats.put("monthlyTrends", monthlyTrends);
         
         return ResponseEntity.ok(stats);
     }

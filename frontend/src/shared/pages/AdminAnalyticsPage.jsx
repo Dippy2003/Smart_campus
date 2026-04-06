@@ -170,7 +170,17 @@ export default function AdminAnalyticsPage() {
       { name: "Lecture Hall A", bookings: 14, type: "LECTURE_HALL" },
     ];
     
-    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown, topResources };
+    // Use real monthly trends data from backend, fallback to mock data
+    const monthlyTrends = stats?.monthlyTrends || [
+      { month: "Oct", bookings: 38, tickets: 12 },
+      { month: "Nov", bookings: 52, tickets: 18 },
+      { month: "Dec", bookings: 31, tickets: 9 },
+      { month: "Jan", bookings: 67, tickets: 22 },
+      { month: "Feb", bookings: 74, tickets: 15 },
+      { month: "Mar", bookings: 89, tickets: 28 },
+    ];
+    
+    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown, topResources, monthlyTrends };
   }, [stats]);
 
   return (
@@ -446,7 +456,7 @@ export default function AdminAnalyticsPage() {
           <div className="aa-row2" style={{ marginBottom: "1rem" }}>
             <Card title="Bookings & Tickets — 6 Month Trend" sub="Monthly volume over the last 6 months">
               <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={MONTHLY_BOOKINGS} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+                <AreaChart data={computed.monthlyTrends} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="gbookings" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%"  stopColor="#6366f1" stopOpacity={0.35} />
