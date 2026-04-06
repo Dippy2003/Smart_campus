@@ -1,4 +1,5 @@
-// frontend/src/features/member2-bookings/pages/MyBookingsPage.jsx
+// Member2 - Bathiya | Booking Management Module B
+// MyBookingsPage.jsx — view and manage user's own bookings
 
 import React, { useState } from "react";
 import { getMyBookings, cancelBooking } from "../services/bookingService";
@@ -11,6 +12,7 @@ export default function MyBookingsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searched, setSearched] = useState(false);
+  const [sortOrder, setSortOrder] = useState("newest");
 
   const fetchBookings = async (e) => {
     e.preventDefault();
@@ -41,19 +43,26 @@ export default function MyBookingsPage() {
     }
   };
 
+  // Sort bookings by date
+  const sortedBookings = [...bookings].sort((a, b) => {
+    if (sortOrder === "newest") {
+      return new Date(b.bookingDate) - new Date(a.bookingDate);
+    }
+    return new Date(a.bookingDate) - new Date(b.bookingDate);
+  });
+
+  // Count by status
+  const pendingCount = bookings.filter((b) => b.status === "PENDING").length;
+  const approvedCount = bookings.filter((b) => b.status === "APPROVED").length;
+
   return (
     <div className="mx-auto max-w-2xl">
-      <h2 className="mb-2 text-xl font-semibold text-white">
-        My Bookings
-      </h2>
+      <h2 className="mb-2 text-xl font-semibold text-white">My Bookings</h2>
       <p className="mb-5 text-sm text-slate-400">
         Enter your email to view all your booking requests.
       </p>
 
-      <form
-        onSubmit={fetchBookings}
-        className="mb-6 flex gap-2.5"
-      >
+      <form onSubmit={fetchBookings} className="mb-6 flex gap-2.5">
         <input
           type="email"
           placeholder="Enter your email address"
@@ -64,7 +73,7 @@ export default function MyBookingsPage() {
         />
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-500"
         >
           Search
         </button>
@@ -85,7 +94,33 @@ export default function MyBookingsPage() {
         </div>
       )}
 
-      {bookings.map((b) => (
+      {/* Stats + sort bar */}
+      {bookings.length > 0 && (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+          <p style={{ fontSize: "13px", color: "#94a3b8", margin: 0 }}>
+            {bookings.length} total &nbsp;·&nbsp;
+            {pendingCount > 0 && <span style={{ color: "#fcd34d" }}>{pendingCount} pending </span>}
+            {approvedCount > 0 && <span style={{ color: "#6ee7b7" }}>{approvedCount} approved</span>}
+          </p>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            style={{
+              fontSize: "12px",
+              background: "#1e293b",
+              color: "#94a3b8",
+              border: "1px solid #334155",
+              borderRadius: "6px",
+              padding: "4px 8px",
+            }}
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </div>
+      )}
+
+      {sortedBookings.map((b) => (
         <div
           key={b.id}
           className="mb-3 rounded-xl border border-slate-700 bg-slate-800 p-5 shadow-lg transition hover:shadow-xl hover:border-slate-600"
@@ -113,7 +148,7 @@ export default function MyBookingsPage() {
               {(b.status === "PENDING" || b.status === "APPROVED") && (
                 <button
                   onClick={() => handleCancel(b.id)}
-                  className="rounded-lg border border-red-600 bg-red-900/50 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-800/50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+                  className="rounded-lg border border-red-600 bg-red-900/50 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-800/50"
                 >
                   Cancel
                 </button>
