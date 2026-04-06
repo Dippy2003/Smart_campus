@@ -44,6 +44,7 @@ export default function App() {
         {/* ── Full-bleed routes (no MainShell wrapper) ── */}
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/resources/:id" element={<ResourceDetailsPage />} />
+        <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/resources" element={<AdminRoute><AdminResourcesPage /></AdminRoute>} />
         <Route path="/admin/resources/new" element={<AdminRoute><AddResourcePage /></AdminRoute>} />
         <Route path="/admin/resources/:id/edit" element={<AdminRoute><EditResourcePage /></AdminRoute>} />
@@ -53,7 +54,6 @@ export default function App() {
           <Route path="/dashboard" element={<HomePage />} />
 
           <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
 
           <Route path="/bookings" element={<BookingHomePage />}>
             <Route index element={<CreateBookingPage />} />
