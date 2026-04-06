@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,7 @@ import java.util.Map;
 /**
  * BookingService — Member 2 (Bathiya)
  * Business logic for booking management.
- * Handles create, approve, reject, cancel operations
+ * Handles create, update, approve, reject, cancel operations
  * with conflict detection to prevent double bookings.
  */
 @Service
@@ -33,8 +35,6 @@ public class BookingService {
 
     // CREATE booking with full validation and conflict check
     public Booking createBooking(Booking booking) {
-
-        // Validate time range
         if (booking.getStartTime() == null || booking.getEndTime() == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Start time and end time are required.");
@@ -43,14 +43,11 @@ public class BookingService {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Start time must be before end time.");
         }
-
-        // Validate attendees
         if (booking.getAttendees() != null && booking.getAttendees() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Attendees must be at least 1.");
         }
 
-        // Validate resource exists
         resourcesModel resource = resourceRepository
                 .findById(booking.getResource().getId())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -58,7 +55,6 @@ public class BookingService {
 
         booking.setResource(resource);
 
-        // Conflict check — prevent double booking
         List<Booking> conflicts = bookingRepository.findConflictingBookings(
                 resource.getId(),
                 booking.getBookingDate(),
@@ -73,6 +69,59 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.PENDING);
+        return bookingRepository.save(booking);
+    }
+
+    // UPDATE booking — only PENDING bookings can be edited by user
+    public Booking updateBooking(Long id, Map<String, String> updates) {
+        Booking booking = getBookingById(id);
+
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Only PENDING bookings can be edited.");
+        }
+
+        // Apply updates if provided
+        if (updates.containsKey("purpose") && !updates.get("purpose").isBlank()) {
+            booking.setPurpose(updates.get("purpose"));
+        }
+        if (updates.containsKey("attendees") && !updates.get("attendees").isBlank()) {
+            booking.setAttendees(Integer.parseInt(updates.get("attendees")));
+        }
+        if (updates.containsKey("bookingDate") && !updates.get("bookingDate").isBlank()) {
+            booking.setBookingDate(LocalDate.parse(updates.get("bookingDate")));
+        }
+        if (updates.containsKey("startTime") && !updates.get("startTime").isBlank()) {
+            booking.setStartTime(LocalTime.parse(updates.get("startTime")));
+        }
+        if (updates.containsKey("endTime") && !updates.get("endTime").isBlank()) {
+            booking.setEndTime(LocalTime.parse(updates.get("endTime")));
+        }
+
+        // Re-validate time range after update
+        if (!booking.getStartTime().isBefore(booking.getEndTime())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Start time must be before end time.");
+        }
+
+        // Re-check conflicts after update (exclude current booking)
+        List<Booking> conflicts = bookingRepository.findConflictingBookings(
+                booking.getResource().getId(),
+                booking.getBookingDate(),
+                booking.getStartTime(),
+                booking.getEndTime()
+        );
+        List<Booking> otherConflicts = conflicts.stream()
+                .filter(c -> !c.getId().equals(id))
+                .toList();
+
+        if (!otherConflicts.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Booking conflict: this resource is already booked for that time.");
+        }
+
         return bookingRepository.save(booking);
     }
 
@@ -126,7 +175,7 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    // CANCEL booking (user only — must be owner)
+    // CANCEL booking (user only)
     public Booking cancelBooking(Long id, String email) {
         Booking booking = getBookingById(id);
         if (!booking.getBookedByEmail().equals(email)) {
@@ -141,7 +190,7 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    // GET booking statistics (for dashboard)
+    // GET booking statistics
     public Map<String, Long> getBookingStats() {
         Map<String, Long> stats = new HashMap<>();
         stats.put("total", bookingRepository.count());
