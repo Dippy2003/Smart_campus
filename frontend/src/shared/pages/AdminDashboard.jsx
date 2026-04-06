@@ -88,116 +88,345 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Admin Dashboard
-            </h1>
-            <p className="mt-2 text-lg text-slate-300">
-              Manage campus operations and resources
-            </p>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+        .ad-root {
+          font-family: 'DM Sans', sans-serif;
+          background: #080c1a;
+          min-height: 100vh;
+          padding: 2rem 1.5rem 4rem;
+          position: relative;
+          overflow-x: hidden;
+        }
+
+        .ad-root::before {
+          content: '';
+          position: fixed;
+          top: -40%;
+          left: -20%;
+          width: 80vw;
+          height: 80vh;
+          background: radial-gradient(ellipse at center, rgba(99,102,241,0.12) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 0;
+        }
+        .ad-root::after {
+          content: '';
+          position: fixed;
+          bottom: -30%;
+          right: -10%;
+          width: 60vw;
+          height: 60vh;
+          background: radial-gradient(ellipse at center, rgba(6,182,212,0.08) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .ad-inner {
+          position: relative;
+          z-index: 1;
+          max-width: 1200px;
+          margin: 0 auto;
+          animation: ad-fade-in 0.5s ease both;
+        }
+
+        @keyframes ad-fade-in {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .ad-header {
+          margin-bottom: 2rem;
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+        .ad-header-left { display: flex; flex-direction: column; gap: 0.3rem; }
+        .ad-eyebrow {
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #6366f1;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .ad-eyebrow::before {
+          content: '';
+          display: inline-block;
+          width: 18px;
+          height: 2px;
+          background: #6366f1;
+          border-radius: 999px;
+        }
+        .ad-title {
+          font-family: 'Syne', sans-serif;
+          font-size: clamp(1.8rem, 4vw, 2.6rem);
+          font-weight: 800;
+          color: #fff;
+          line-height: 1.1;
+          margin: 0;
+          letter-spacing: -0.02em;
+        }
+        .ad-title span {
+          background: linear-gradient(90deg, #818cf8, #22d3ee);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .ad-subtitle {
+          margin: 0.35rem 0 0;
+          font-size: 13.5px;
+          color: #6b7280;
+          font-weight: 300;
+        }
+
+        .ad-home {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 0 14px;
+          height: 38px;
+          border-radius: 12px;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.10);
+          color: #cbd5e1;
+          text-decoration: none;
+          font-size: 13px;
+          font-weight: 600;
+          transition: transform 0.2s, border-color 0.2s, background 0.2s;
+          white-space: nowrap;
+        }
+        .ad-home:hover {
+          border-color: rgba(99,102,241,0.35);
+          background: rgba(255,255,255,0.06);
+          transform: translateY(-1px);
+          color: #fff;
+        }
+
+        .ad-stats {
+          margin-bottom: 1.75rem;
+          display: grid;
+          gap: 1rem;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        @media (max-width: 1024px) { .ad-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 520px) { .ad-stats { grid-template-columns: 1fr; } }
+
+        .ad-stat {
+          position: relative;
+          background: rgba(255,255,255,0.035);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 16px;
+          padding: 1.05rem 1.15rem;
+          overflow: hidden;
+          backdrop-filter: blur(12px);
+          transition: border-color 0.25s, transform 0.25s;
+        }
+        .ad-stat:hover { border-color: rgba(99,102,241,0.28); transform: translateY(-2px); }
+
+        .ad-stat-row { display: flex; align-items: center; gap: 0.85rem; }
+        .ad-stat-icon {
+          width: 42px;
+          height: 42px;
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid rgba(255,255,255,0.10);
+          background: rgba(255,255,255,0.03);
+        }
+        .ad-stat-value {
+          font-family: 'Syne', sans-serif;
+          font-size: 1.55rem;
+          font-weight: 800;
+          color: #fff;
+          line-height: 1;
+        }
+        .ad-stat-label {
+          margin-top: 0.2rem;
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #94a3b8;
+        }
+
+        .ad-grid {
+          display: grid;
+          gap: 1rem;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        @media (max-width: 900px) { .ad-grid { grid-template-columns: 1fr; } }
+
+        .ad-card {
+          background: rgba(255,255,255,0.035);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 18px;
+          padding: 1.2rem 1.2rem;
+          backdrop-filter: blur(12px);
+          box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+          transition: transform 0.2s, border-color 0.2s;
+        }
+        .ad-card:hover { transform: translateY(-2px); border-color: rgba(99,102,241,0.22); }
+        .ad-card-top { display: flex; gap: 0.9rem; align-items: flex-start; }
+
+        .ad-card-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+          flex-shrink: 0;
+        }
+
+        .ad-card-title {
+          font-family: 'Syne', sans-serif;
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin: 0;
+          color: #fff;
+        }
+        .ad-card-desc {
+          margin: 0.4rem 0 0;
+          font-size: 13.5px;
+          color: #94a3b8;
+          font-weight: 300;
+          line-height: 1.55;
+        }
+
+        .ad-links {
+          margin-top: 1rem;
+          display: grid;
+          gap: 0.6rem;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        @media (max-width: 520px) { .ad-links { grid-template-columns: 1fr; } }
+
+        .ad-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          height: 42px;
+          border-radius: 14px;
+          text-decoration: none;
+          color: #fff;
+          font-weight: 700;
+          font-size: 13px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+          transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+        }
+        .ad-link:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 12px 30px rgba(0,0,0,0.34);
+          filter: brightness(1.05);
+        }
+      `}</style>
+
+      <div className="ad-root">
+        <div className="ad-inner">
+          <div className="ad-header">
+            <div className="ad-header-left">
+              <div className="ad-eyebrow">Admin</div>
+              <h1 className="ad-title">
+                Admin <span>dashboard</span>
+              </h1>
+              <p className="ad-subtitle">Manage campus operations and resources.</p>
+            </div>
+            <Link to="/" className="ad-home">← Back to home</Link>
           </div>
-        </div>
 
         {/* Quick Stats - Moved to top */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-900/50 group-hover:bg-blue-800/70 transition-colors">
-                <Settings className="h-5 w-5 text-blue-400 group-hover:text-blue-300 transition-colors" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white group-hover:text-blue-100 transition-colors">
-                  {loading ? "..." : stats.totalResources}
-                </p>
-                <p className="text-xs text-slate-400 group-hover:text-blue-200 transition-colors">Total Resources</p>
+          <div className="ad-stats">
+            <div className="ad-stat">
+              <div className="ad-stat-row">
+                <div className="ad-stat-icon" style={{ boxShadow: "0 0 0 1px rgba(99,102,241,0.25), 0 12px 30px rgba(99,102,241,0.12) inset" }}>
+                  <Settings className="h-5 w-5 text-indigo-300" />
+                </div>
+                <div>
+                  <div className="ad-stat-value">{loading ? "…" : stats.totalResources}</div>
+                  <div className="ad-stat-label">Total resources</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-900/50 group-hover:bg-emerald-800/70 transition-colors">
-                <Calendar className="h-5 w-5 text-emerald-400 group-hover:text-emerald-300 transition-colors" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white group-hover:text-emerald-100 transition-colors">
-                  {loading ? "..." : stats.totalBookings}
-                </p>
-                <p className="text-xs text-slate-400 group-hover:text-emerald-200 transition-colors">Total Bookings</p>
+            <div className="ad-stat">
+              <div className="ad-stat-row">
+                <div className="ad-stat-icon" style={{ boxShadow: "0 0 0 1px rgba(16,185,129,0.22), 0 12px 30px rgba(16,185,129,0.10) inset" }}>
+                  <Calendar className="h-5 w-5 text-emerald-300" />
+                </div>
+                <div>
+                  <div className="ad-stat-value">{loading ? "…" : stats.totalBookings}</div>
+                  <div className="ad-stat-label">Total bookings</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-900/50 group-hover:bg-amber-800/70 transition-colors">
-                <AlertTriangle className="h-5 w-5 text-amber-400 group-hover:text-amber-300 transition-colors" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white group-hover:text-amber-100 transition-colors">
-                  {loading ? "..." : stats.totalTickets}
-                </p>
-                <p className="text-xs text-slate-400 group-hover:text-amber-200 transition-colors">Total Tickets</p>
+            <div className="ad-stat">
+              <div className="ad-stat-row">
+                <div className="ad-stat-icon" style={{ boxShadow: "0 0 0 1px rgba(245,158,11,0.22), 0 12px 30px rgba(245,158,11,0.10) inset" }}>
+                  <AlertTriangle className="h-5 w-5 text-amber-300" />
+                </div>
+                <div>
+                  <div className="ad-stat-value">{loading ? "…" : stats.totalTickets}</div>
+                  <div className="ad-stat-label">Total tickets</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="group rounded-xl p-4 shadow-lg transition-all hover:shadow-xl hover:scale-105">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-900/50 group-hover:bg-purple-800/70 transition-colors">
-                <Users className="h-5 w-5 text-purple-400 group-hover:text-purple-300 transition-colors" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white group-hover:text-purple-100 transition-colors">
-                  {loading ? "..." : stats.totalUsers}
-                </p>
-                <p className="text-xs text-slate-400 group-hover:text-purple-200 transition-colors">Total Users</p>
+            <div className="ad-stat">
+              <div className="ad-stat-row">
+                <div className="ad-stat-icon" style={{ boxShadow: "0 0 0 1px rgba(168,85,247,0.22), 0 12px 30px rgba(168,85,247,0.10) inset" }}>
+                  <Users className="h-5 w-5 text-purple-300" />
+                </div>
+                <div>
+                  <div className="ad-stat-value">{loading ? "…" : stats.totalUsers}</div>
+                  <div className="ad-stat-label">Total users</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
         {/* Admin Sections Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-          {adminSections.map((section, index) => (
-            <div
-              key={index}
-              className="rounded-2xl p-6 shadow-lg transition-all hover:shadow-xl"
-            >
-              <div className="flex items-start gap-4">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${getColorClasses(section.color)} text-white shadow-lg`}>
-                  <section.icon className="h-6 w-6" />
-                </div>
-                <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-white">
-                    {section.title}
-                  </h2>
-                  <p className="mt-2 text-sm text-slate-300 leading-relaxed">
-                    {section.description}
-                  </p>
-                </div>
-              </div>
+          <div className="ad-grid">
+            {adminSections.map((section, index) => {
+              const gradient = getColorClasses(section.color).replaceAll(" hover:from-blue-600 hover:to-blue-700", "");
+              return (
+                <div key={index} className="ad-card">
+                  <div className="ad-card-top">
+                    <div className={`ad-card-icon bg-gradient-to-br ${getColorClasses(section.color)}`}>
+                      <section.icon className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="ad-card-title">{section.title}</h2>
+                      <p className="ad-card-desc">{section.description}</p>
+                    </div>
+                  </div>
 
-              <div className="mt-6 space-y-2">
-                {section.links.map((link, linkIndex) => (
-                  <Link
-                    key={linkIndex}
-                    to={link.to}
-                    className={`block rounded-lg bg-gradient-to-r ${getColorClasses(section.color)} px-4 py-3 text-center text-sm font-medium text-white shadow-lg transition-all hover:shadow-md hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
+                  <div className="ad-links">
+                    {section.links.map((link, linkIndex) => (
+                      <Link
+                        key={linkIndex}
+                        to={link.to}
+                        className={`ad-link bg-gradient-to-r ${getColorClasses(section.color)}`}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-
-        </div>
-    </div>
+      </div>
+    </>
   );
 }
