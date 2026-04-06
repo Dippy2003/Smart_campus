@@ -18,7 +18,7 @@ export default function AddResourcePage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
