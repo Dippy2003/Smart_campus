@@ -88,4 +88,19 @@ public class ResourceController {
 
         return byName;
     }
+
+    // FILTER (type, status, location, capacity range, keyword)
+    // Example:
+    // /resources/filter?type=LAB&minCapacity=20&location=Block%20A&status=ACTIVE&keyword=chem
+    @GetMapping("/resources/filter")
+    public List<resourcesModel> filterResources(
+            @RequestParam(required = false) ResourceType type,
+            @RequestParam(required = false) ResourceStatus status,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Integer minCapacity,
+            @RequestParam(required = false) Integer maxCapacity,
+            @RequestParam(required = false) String keyword
+    ) {
+        return resourceRepository.filterResources(type, status, location, minCapacity, maxCapacity, keyword);
+    }
 }
