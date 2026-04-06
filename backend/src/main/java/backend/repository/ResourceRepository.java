@@ -20,6 +20,12 @@ public interface ResourceRepository extends JpaRepository<resourcesModel, Long> 
     List<resourcesModel> findByLocationContainingIgnoreCase(String location);
 
     @Query("""
+            SELECT r.type, COUNT(r) FROM resourcesModel r
+            GROUP BY r.type
+            """)
+    List<Object[]> countByType();
+
+    @Query("""
             SELECT r FROM resourcesModel r
             WHERE (:type IS NULL OR r.type = :type)
               AND (:status IS NULL OR r.status = :status)

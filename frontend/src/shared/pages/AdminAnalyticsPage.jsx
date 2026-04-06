@@ -151,7 +151,16 @@ export default function AdminAnalyticsPage() {
     const totalTickets = Number(stats?.totalTickets ?? 28);
     const totalUsers = 156;
     const utilizationRate = Math.round(clamp01((totalBookings) / Math.max(1, totalResources * 3)) * 100);
-    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate };
+    
+    // Use real resource breakdown data from backend, fallback to mock data
+    const resourceBreakdown = stats?.resourceBreakdown || [
+      { name: "Lecture Hall", value: 8, color: "#6366f1" },
+      { name: "Lab", value: 12, color: "#22d3ee" },
+      { name: "Meeting Room", value: 15, color: "#a855f7" },
+      { name: "Equipment", value: 5, color: "#f59e0b" },
+    ];
+    
+    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown };
   }, [stats]);
 
   return (
@@ -453,7 +462,7 @@ export default function AdminAnalyticsPage() {
                 <ResponsiveContainer width="100%" height={160}>
                   <PieChart>
                     <Pie
-                      data={RESOURCE_TYPES}
+                      data={computed.resourceBreakdown}
                       cx="50%"
                       cy="50%"
                       innerRadius={48}
@@ -462,7 +471,7 @@ export default function AdminAnalyticsPage() {
                       dataKey="value"
                       stroke="none"
                     >
-                      {RESOURCE_TYPES.map((entry, i) => (
+                      {computed.resourceBreakdown.map((entry, i) => (
                         <Cell key={i} fill={entry.color} opacity={0.9} />
                       ))}
                     </Pie>
@@ -470,7 +479,7 @@ export default function AdminAnalyticsPage() {
                   </PieChart>
                 </ResponsiveContainer>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.4rem 1.2rem", width: "100%" }}>
-                  {RESOURCE_TYPES.map((r, i) => (
+                  {computed.resourceBreakdown.map((r, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 7 }}>
                       <span style={{ width: 8, height: 8, borderRadius: "50%", background: r.color, flexShrink: 0 }} />
                       <span style={{ fontSize: 12, color: "#94a3b8", flex: 1 }}>{r.name}</span>
