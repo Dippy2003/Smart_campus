@@ -397,7 +397,6 @@ export default function AdminDashboard() {
         {/* Admin Sections Grid */}
           <div className="ad-grid">
             {adminSections.map((section, index) => {
-              const gradient = getColorClasses(section.color).replaceAll(" hover:from-blue-600 hover:to-blue-700", "");
               return (
                 <div key={index} className="ad-card">
                   <div className="ad-card-top">

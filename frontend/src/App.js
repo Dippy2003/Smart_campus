@@ -10,6 +10,7 @@ import AdminRoute from "./shared/auth/AdminRoute";
 import HomePage from "./shared/pages/HomePage";
 import SmartCampusLandingPage from "./shared/pages/SmartCampusLandingPage";
 import AdminDashboard from "./shared/pages/AdminDashboard";
+import AdminAnalyticsPage from "./shared/pages/AdminAnalyticsPage";
 import PlaceholderModulePage from "./shared/pages/PlaceholderModulePage";
 import PillNavbar from "./shared/components/PillNavbar";
 import CreateBookingPage from "./features/member2-bookings/pages/CreateBookingPage";
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/resources/:id" element={<ResourceDetailsPage />} />
         <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/analytics" element={<AdminRoute><AdminAnalyticsPage /></AdminRoute>} />
         <Route path="/admin/resources" element={<AdminRoute><AdminResourcesPage /></AdminRoute>} />
         <Route path="/admin/resources/new" element={<AdminRoute><AddResourcePage /></AdminRoute>} />
         <Route path="/admin/resources/:id/edit" element={<AdminRoute><EditResourcePage /></AdminRoute>} />
