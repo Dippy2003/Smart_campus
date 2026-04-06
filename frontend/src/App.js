@@ -40,58 +40,26 @@ export default function App() {
       <PillNavbar />
       <Routes>
         <Route path="/" element={<SmartCampusLandingPage />} />
+
+        {/* ── Full-bleed routes (no MainShell wrapper) ── */}
+        <Route path="/resources" element={<ResourcesPage />} />
+        <Route path="/resources/:id" element={<ResourceDetailsPage />} />
+
+        {/* ── Standard shell routes ── */}
         <Route element={<MainShell />}>
           <Route path="/dashboard" element={<HomePage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
-          <Route path="/resources/:id" element={<ResourceDetailsPage />} />
 
           <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/resources" element={<AdminRoute><AdminResourcesPage /></AdminRoute>} />
+          <Route path="/admin/resources/new" element={<AdminRoute><AddResourcePage /></AdminRoute>} />
+          <Route path="/admin/resources/:id/edit" element={<AdminRoute><EditResourcePage /></AdminRoute>} />
 
-          <Route
-            path="/admin/dashboard"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
-          />
-
-          <Route
-            path="/admin/resources"
-            element={
-              <AdminRoute>
-                <AdminResourcesPage />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/resources/new"
-            element={
-              <AdminRoute>
-                <AddResourcePage />
-              </AdminRoute>
-            }
-          />
-          <Route
-            path="/admin/resources/:id/edit"
-            element={
-              <AdminRoute>
-                <EditResourcePage />
-              </AdminRoute>
-            }
-          />
           <Route path="/bookings" element={<BookingHomePage />}>
             <Route index element={<CreateBookingPage />} />
             <Route path="create" element={<CreateBookingPage />} />
             <Route path="my" element={<MyBookingsPage />} />
-            <Route
-              path="admin"
-              element={
-                <AdminRoute>
-                  <AdminBookingsPage />
-                </AdminRoute>
-              }
-            />
+            <Route path="admin" element={<AdminRoute><AdminBookingsPage /></AdminRoute>} />
           </Route>
 
           <Route path="/incidents" element={<IncidentsHomePage />}>
@@ -99,30 +67,9 @@ export default function App() {
             <Route path="create" element={<CreateTicketPage />} />
             <Route path="my" element={<MyTicketsPage />} />
             <Route path="my-resolved" element={<MyResolvedTicketsPage />} />
-            <Route
-              path="admin"
-              element={
-                <AdminRoute>
-                  <AdminTicketsPage />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="admin-resolved"
-              element={
-                <AdminRoute>
-                  <AdminResolvedTicketsPage />
-                </AdminRoute>
-              }
-            />
-            <Route
-              path="admin/:id"
-              element={
-                <AdminRoute>
-                  <AdminTicketDetailsPage />
-                </AdminRoute>
-              }
-            />
+            <Route path="admin" element={<AdminRoute><AdminTicketsPage /></AdminRoute>} />
+            <Route path="admin-resolved" element={<AdminRoute><AdminResolvedTicketsPage /></AdminRoute>} />
+            <Route path="admin/:id" element={<AdminRoute><AdminTicketDetailsPage /></AdminRoute>} />
           </Route>
 
           <Route path="/member2" element={<PlaceholderModulePage title="Member 2 Module" />} />
