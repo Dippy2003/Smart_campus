@@ -160,7 +160,17 @@ export default function AdminAnalyticsPage() {
       { name: "Equipment", value: 5, color: "#f59e0b" },
     ];
     
-    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown };
+    // Use real top resources data from backend, fallback to mock data
+    const topResources = stats?.topResources || [
+      { name: "Lab A-101", bookings: 34, type: "LAB" },
+      { name: "Lecture Hall B", bookings: 28, type: "LECTURE_HALL" },
+      { name: "Meeting Rm 3", bookings: 24, type: "MEETING_ROOM" },
+      { name: "Lab B-202", bookings: 19, type: "LAB" },
+      { name: "Projector Kit", bookings: 16, type: "EQUIPMENT" },
+      { name: "Lecture Hall A", bookings: 14, type: "LECTURE_HALL" },
+    ];
+    
+    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown, topResources };
   }, [stats]);
 
   return (
@@ -542,8 +552,8 @@ export default function AdminAnalyticsPage() {
           <div className="aa-row2b">
             <Card title="Top Booked Resources" sub="Most popular spaces and equipment this semester">
               <div className="aa-top-list">
-                {TOP_RESOURCES.map((r, i) => {
-                  const max = TOP_RESOURCES[0].bookings;
+                {computed.topResources.map((r, i) => {
+                  const max = computed.topResources[0]?.bookings || 1;
                   const typeColors = {
                     LAB: { bg: "rgba(6,182,212,0.12)", text: "#22d3ee" },
                     LECTURE_HALL: { bg: "rgba(99,102,241,0.12)", text: "#818cf8" },
