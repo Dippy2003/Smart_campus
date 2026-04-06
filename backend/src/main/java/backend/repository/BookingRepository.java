@@ -45,4 +45,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("startTime") LocalTime startTime,
             @Param("endTime") LocalTime endTime
     );
+
+    // Get top booked resources with booking counts
+    @Query("SELECT r.name, r.type, COUNT(b) as bookingCount " +
+           "FROM Booking b JOIN b.resource r " +
+           "WHERE b.status = 'APPROVED' " +
+           "GROUP BY r.id, r.name, r.type " +
+           "ORDER BY bookingCount DESC")
+    List<Object[]> findTopBookedResources();
 }

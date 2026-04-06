@@ -65,11 +65,28 @@ public class DashboardController {
             resourceBreakdown.add(resourceData);
         }
         
+        // Get top booked resources
+        List<Object[]> topBooked = bookingRepository.findTopBookedResources();
+        List<Map<String, Object>> topResources = new ArrayList<>();
+        
+        for (Object[] result : topBooked) {
+            String name = (String) result[0];
+            ResourceType type = (ResourceType) result[1];
+            Long bookingCount = (Long) result[2];
+            
+            Map<String, Object> resourceData = new HashMap<>();
+            resourceData.put("name", name);
+            resourceData.put("type", type.name());
+            resourceData.put("bookings", bookingCount);
+            topResources.add(resourceData);
+        }
+        
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalResources", resourceRepository.count());
         stats.put("totalBookings", bookingRepository.count());
         stats.put("totalTickets", incidentTicketRepository.count());
         stats.put("resourceBreakdown", resourceBreakdown);
+        stats.put("topResources", topResources);
         
         return ResponseEntity.ok(stats);
     }
