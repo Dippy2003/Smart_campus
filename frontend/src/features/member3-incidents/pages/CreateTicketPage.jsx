@@ -3,7 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { createTicket } from "../services/ticketService";
 
 const TICKET_TYPES = ["TECHNICAL", "NON_TECHNICAL"];
-const CATEGORIES = ["MAINTENANCE", "ELECTRICAL", "PLUMBING", "CONSTRUCTION"];
+const CATEGORIES = [
+  "MAINTENANCE",
+  "ELECTRICAL",
+  "PLUMBING",
+  "CONSTRUCTION",
+  "SAFETY",
+  "EQUIPMENT",
+  "OTHER",
+];
 const PRIORITIES = ["LOW", "NORMAL", "HIGH"];
 
 export default function CreateTicketPage() {
