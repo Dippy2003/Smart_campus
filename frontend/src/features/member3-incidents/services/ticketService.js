@@ -293,16 +293,19 @@ export async function getRegisteredTechnicians() {
         email: "electrician@campus.lk",
         name: "Campus Electrician",
         specialty: "ELECTRICAL",
+        accountType: "TECHNICIAN",
       },
       {
         email: "plumber@campus.lk",
         name: "Campus Plumber",
         specialty: "PLUMBING",
+        accountType: "TECHNICIAN",
       },
       {
         email: "engineer@campus.lk",
         name: "Building Engineer",
         specialty: "CONSTRUCTION",
+        accountType: "TECHNICIAN",
       },
     ];
   }
