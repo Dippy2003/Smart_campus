@@ -17,9 +17,14 @@ import java.util.Map;
 public class IncidentTicketService {
 
     private final IncidentTicketRepository incidentTicketRepository;
+    private final EmailNotificationService emailNotificationService;
 
-    public IncidentTicketService(IncidentTicketRepository incidentTicketRepository) {
+    public IncidentTicketService(
+            IncidentTicketRepository incidentTicketRepository,
+            EmailNotificationService emailNotificationService
+    ) {
         this.incidentTicketRepository = incidentTicketRepository;
+        this.emailNotificationService = emailNotificationService;
     }
 
     public IncidentTicket createTicket(
@@ -95,10 +100,12 @@ public class IncidentTicketService {
         IncidentTicket ticket = getTicketById(id);
         ticket.setStatus(newStatus);
         String assignedEmail = normalizeEmail(trimToNull(assignedTechnician));
-        if (!assignedEmail.isEmpty() && !isRegisteredTechnician(assignedEmail)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Assigned technician must be a registered technician account.");
+        if (!assignedEmail.isEmpty()) {
+            if (!isRegisteredTechnician(assignedEmail)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Assigned technician must be a registered technician account.");
+            }
+            ticket.setAssignedTechnician(assignedEmail);
         }
-        ticket.setAssignedTechnician(assignedEmail.isEmpty() ? null : assignedEmail);
         ticket.setSolutionNote(trimToNull(solutionNote));
 
         TicketUpdate adminUpdate = new TicketUpdate();
@@ -142,7 +149,14 @@ public class IncidentTicketService {
             ticket.getNotifications().add(notif);
         }
 
-        return incidentTicketRepository.save(ticket);
+        IncidentTicket saved = incidentTicketRepository.save(ticket);
+        emailNotificationService.sendIncidentReplyToRequester(
+                ticket.getRequesterEmail(),
+                ticket.getTitle(),
+                ticket.getId(),
+                replyMessage.trim()
+        );
+        return saved;
     }
 
     public IncidentTicket markNotificationsRead(Long id, String email) {
@@ -193,9 +207,9 @@ public class IncidentTicketService {
 
     public List<Map<String, String>> getRegisteredTechnicians() {
         return List.of(
-                Map.of("email", "electrician@campus.lk", "name", "Campus Electrician", "specialty", "ELECTRICAL"),
-                Map.of("email", "plumber@campus.lk", "name", "Campus Plumber", "specialty", "PLUMBING"),
-                Map.of("email", "engineer@campus.lk", "name", "Building Engineer", "specialty", "CONSTRUCTION")
+                Map.of("email", "electrician@campus.lk", "name", "Campus Electrician", "specialty", "ELECTRICAL", "accountType", "TECHNICIAN"),
+                Map.of("email", "plumber@campus.lk", "name", "Campus Plumber", "specialty", "PLUMBING", "accountType", "TECHNICIAN"),
+                Map.of("email", "engineer@campus.lk", "name", "Building Engineer", "specialty", "CONSTRUCTION", "accountType", "TECHNICIAN")
         );
     }
 

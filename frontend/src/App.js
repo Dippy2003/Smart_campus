@@ -19,6 +19,7 @@ import AdminBookingsPage from "./features/member2-bookings/pages/AdminBookingsPa
 import BookingHomePage from "./features/member2-bookings/pages/BookingHomePage";
 import IncidentsHomePage from "./features/member3-incidents/pages/IncidentsHomePage";
 import CreateTicketPage from "./features/member3-incidents/pages/CreateTicketPage";
+import IncidentsIndexPage from "./features/member3-incidents/pages/IncidentsIndexPage";
 import MyTicketsPage from "./features/member3-incidents/pages/MyTicketsPage";
 import AdminTicketsPage from "./features/member3-incidents/pages/AdminTicketsPage";
 import AdminTicketDetailsPage from "./features/member3-incidents/pages/AdminTicketDetailsPage";
@@ -68,7 +69,7 @@ export default function App() {
           </Route>
 
           <Route path="/incidents" element={<IncidentsHomePage />}>
-            <Route index element={<CreateTicketPage />} />
+            <Route index element={<IncidentsIndexPage />} />
             <Route path="create" element={<CreateTicketPage />} />
             <Route path="my" element={<MyTicketsPage />} />
             <Route path="my-resolved" element={<MyResolvedTicketsPage />} />
