@@ -1,10 +1,10 @@
 import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { useAdminAuth } from "../../../shared/auth/AdminAuthContext";
+import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
 function tabStyle(active) {
   return (
-    "rounded-full px-4 py-2 text-sm font-semibold transition " +
+          "rounded-full px-4 py-2 text-sm font-semibold transition " +
     (active
       ? "bg-blue-600 text-white shadow-sm"
       : "border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700")
@@ -13,7 +13,7 @@ function tabStyle(active) {
 
 export default function IncidentsHomePage() {
   const location = useLocation();
-  const { isAdmin } = useAdminAuth();
+  const { isAdmin } = useAuth();
 
   const isActive = (path) =>
     location.pathname === `/incidents${path}` ||
