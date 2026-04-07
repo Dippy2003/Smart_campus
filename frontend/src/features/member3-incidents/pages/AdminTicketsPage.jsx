@@ -4,6 +4,7 @@ import TicketStatusBadge from "../components/TicketStatusBadge";
 import { getAllTickets } from "../services/ticketService";
 
 const STATUSES = ["OPEN", "IN_PROGRESS"];
+const TYPES = ["TECHNICAL", "NON_TECHNICAL"];
 
 function countUnread(ticket) {
   return (ticket.notifications || []).filter((n) => !n.read).length;
@@ -16,6 +17,10 @@ export default function AdminTicketsPage() {
 
   const [statusFilter, setStatusFilter] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -39,8 +44,20 @@ export default function AdminTicketsPage() {
 
   const filtered = useMemo(() => {
     const kw = keyword.trim().toLowerCase();
+    const from = fromDate ? new Date(fromDate + "T00:00:00") : null;
+    const to = toDate ? new Date(toDate + "T23:59:59") : null;
+
     return tickets
       .filter((t) => (statusFilter ? t.status === statusFilter : true))
+      .filter((t) => (typeFilter ? t.ticketType === typeFilter : true))
+      .filter((t) => (categoryFilter ? t.category === categoryFilter : true))
+      .filter((t) => {
+        if (!from && !to) return true;
+        const created = new Date(t.createdAt);
+        if (from && created < from) return false;
+        if (to && created > to) return false;
+        return true;
+      })
       .filter((t) => {
         if (!kw) return true;
         return (
@@ -50,7 +67,15 @@ export default function AdminTicketsPage() {
           (t.location || "").toLowerCase().includes(kw)
         );
       });
-  }, [tickets, statusFilter, keyword]);
+  }, [tickets, statusFilter, keyword, typeFilter, categoryFilter, fromDate, toDate]);
+
+  const categories = useMemo(() => {
+    const set = new Set();
+    tickets.forEach((t) => {
+      if (t.category) set.add(t.category);
+    });
+    return Array.from(set).sort();
+  }, [tickets]);
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg shadow-slate-950/60">
@@ -104,6 +129,60 @@ export default function AdminTicketsPage() {
         </label>
       </div>
 
+      <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+          Ticket Type
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+          >
+            <option value="" className="bg-slate-800">All types</option>
+            {TYPES.map((t) => (
+              <option key={t} value={t} className="bg-slate-800">
+                {t}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+          Category
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+          >
+            <option value="" className="bg-slate-800">All categories</option>
+            {categories.map((c) => (
+              <option key={c} value={c} className="bg-slate-800">
+                {c}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+          From Date
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+          />
+        </label>
+
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+          To Date
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+          />
+        </label>
+      </div>
+
       {error && (
         <div className="mt-4 rounded-2xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
           {error}
@@ -150,7 +229,7 @@ export default function AdminTicketsPage() {
                         #{t.id}
                       </div>
                       <div className="text-[11px] text-slate-400">
-                        {new Date(t.createdAt).toLocaleDateString()} • {t.category}
+                        {new Date(t.createdAt).toLocaleDateString()} • {t.ticketType || "—"} • {t.category}
                       </div>
                       {countUnread(t) > 0 && (
                         <div className="mt-2 inline-flex items-center rounded-full border border-blue-600 bg-blue-900/50 px-2 py-0.5 text-[10px] font-semibold text-blue-300">
