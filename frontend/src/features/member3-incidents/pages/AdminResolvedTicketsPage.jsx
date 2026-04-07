@@ -4,7 +4,7 @@ import TicketStatusBadge from "../components/TicketStatusBadge";
 import { getAllTickets } from "../services/ticketService";
 
 function isResolvedStatus(status) {
-  return status === "RESOLVED" || status === "CLOSED";
+  return status === "RESOLVED" || status === "CLOSED" || status === "REJECTED";
 }
 
 export default function AdminResolvedTicketsPage() {
