@@ -41,6 +41,12 @@ export default function IncidentsHomePage() {
         <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
           My Resolved
         </Link>
+        <Link to="/incidents/my-cancelled" className={tabStyle(isActive("/my-cancelled"))}>
+          My Cancelled
+        </Link>
+        <Link to="/incidents/technician" className={tabStyle(isActive("/technician"))}>
+          Technician
+        </Link>
         {isAdmin && (
           <>
             <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
@@ -48,6 +54,9 @@ export default function IncidentsHomePage() {
             </Link>
             <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
               Admin Resolved
+            </Link>
+            <Link to="/incidents/admin-cancelled" className={tabStyle(isActive("/admin-cancelled"))}>
+              Admin Cancelled
             </Link>
           </>
         )}
