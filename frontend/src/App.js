@@ -24,6 +24,9 @@ import AdminTicketsPage from "./features/member3-incidents/pages/AdminTicketsPag
 import AdminTicketDetailsPage from "./features/member3-incidents/pages/AdminTicketDetailsPage";
 import MyResolvedTicketsPage from "./features/member3-incidents/pages/MyResolvedTicketsPage";
 import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminResolvedTicketsPage";
+import MyCancelledTicketsPage from "./features/member3-incidents/pages/MyCancelledTicketsPage";
+import AdminCancelledTicketsPage from "./features/member3-incidents/pages/AdminCancelledTicketsPage";
+import TechnicianTicketsPage from "./features/member3-incidents/pages/TechnicianTicketsPage";
 
 function MainShell() {
   return (
@@ -69,8 +72,11 @@ export default function App() {
             <Route path="create" element={<CreateTicketPage />} />
             <Route path="my" element={<MyTicketsPage />} />
             <Route path="my-resolved" element={<MyResolvedTicketsPage />} />
+            <Route path="my-cancelled" element={<MyCancelledTicketsPage />} />
+            <Route path="technician" element={<TechnicianTicketsPage />} />
             <Route path="admin" element={<AdminRoute><AdminTicketsPage /></AdminRoute>} />
             <Route path="admin-resolved" element={<AdminRoute><AdminResolvedTicketsPage /></AdminRoute>} />
+            <Route path="admin-cancelled" element={<AdminRoute><AdminCancelledTicketsPage /></AdminRoute>} />
             <Route path="admin/:id" element={<AdminRoute><AdminTicketDetailsPage /></AdminRoute>} />
           </Route>
 
