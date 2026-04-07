@@ -7,6 +7,7 @@ import { createBooking, RESOURCES_URL } from "../services/bookingService";
 export default function CreateBookingPage() {
   const [resources, setResources] = useState([]);
   const [resourcesLoading, setResourcesLoading] = useState(true);
+  const [selectedResource, setSelectedResource] = useState(null); // track selected resource object
   const [form, setForm] = useState({
     resourceId: "",
     bookedByEmail: "",
@@ -35,8 +36,29 @@ export default function CreateBookingPage() {
       });
   }, []);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    // When resource changes, update selectedResource object
+    if (name === "resourceId") {
+      const found = resources.find((r) => r.id === Number(value));
+      setSelectedResource(found || null);
+    }
+  };
+
+  // Check if attendees exceed capacity — returns error message or null
+  const getCapacityError = () => {
+    if (!selectedResource || !form.attendees) return null;
+    if (!selectedResource.capacity) return null;
+    const attendees = Number(form.attendees);
+    if (attendees > selectedResource.capacity) {
+      return `Too many attendees! This resource fits max ${selectedResource.capacity} people.`;
+    }
+    return null;
+  };
+
+  const capacityError = getCapacityError();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,6 +72,12 @@ export default function CreateBookingPage() {
     }
     if (!form.resourceId) {
       setError("Please select a resource.");
+      return;
+    }
+
+    // Block if over capacity
+    if (capacityError) {
+      setError(capacityError);
       return;
     }
 
@@ -74,6 +102,7 @@ export default function CreateBookingPage() {
         startTime: "",
         endTime: "",
       });
+      setSelectedResource(null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -81,7 +110,6 @@ export default function CreateBookingPage() {
     }
   };
 
-  // Today's date for min date validation
   const today = new Date().toISOString().split("T")[0];
 
   return (
@@ -128,6 +156,20 @@ export default function CreateBookingPage() {
               </option>
             ))}
           </select>
+
+          {/* Show capacity info when resource is selected */}
+          {selectedResource && selectedResource.capacity && (
+            <p style={{
+              marginTop: "6px",
+              fontSize: "12px",
+              color: "#6ee7b7",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}>
+              ✓ Max capacity: <strong>{selectedResource.capacity} people</strong>
+            </p>
+          )}
         </div>
 
         {/* Email */}
@@ -161,7 +203,7 @@ export default function CreateBookingPage() {
           />
         </div>
 
-        {/* Attendees */}
+        {/* Attendees — with live capacity warning */}
         <div>
           <label className="block text-sm font-semibold text-slate-300 mb-1">
             Number of Attendees
@@ -170,11 +212,39 @@ export default function CreateBookingPage() {
             name="attendees"
             type="number"
             min="1"
-            placeholder="e.g. 10"
+            max={selectedResource?.capacity || undefined}
+            placeholder={
+              selectedResource?.capacity
+                ? `Max ${selectedResource.capacity}`
+                : "e.g. 10"
+            }
             value={form.attendees}
             onChange={handleChange}
-            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+            className={`w-full rounded-lg border px-3 py-2.5 text-white placeholder:text-slate-400 bg-slate-800 focus:ring-2 transition-colors ${
+              capacityError
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                : "border-slate-600 focus:border-blue-500 focus:ring-blue-500/20"
+            }`}
           />
+          {/* Live capacity warning */}
+          {capacityError && (
+            <p style={{
+              marginTop: "5px",
+              fontSize: "12px",
+              color: "#fca5a5",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+            }}>
+              ✗ {capacityError}
+            </p>
+          )}
+          {/* Show capacity hint when within limit */}
+          {!capacityError && selectedResource?.capacity && form.attendees && (
+            <p style={{ marginTop: "5px", fontSize: "12px", color: "#6ee7b7" }}>
+              ✓ Within capacity ({form.attendees}/{selectedResource.capacity})
+            </p>
+          )}
         </div>
 
         {/* Date */}
@@ -221,7 +291,7 @@ export default function CreateBookingPage() {
 
         <button
           type="submit"
-          disabled={loading || resourcesLoading}
+          disabled={loading || resourcesLoading || !!capacityError}
           className="mt-2 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-blue-700"
         >
           {loading ? "Submitting..." : "Submit Booking Request"}
