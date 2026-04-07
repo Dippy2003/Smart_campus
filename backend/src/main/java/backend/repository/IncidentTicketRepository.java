@@ -11,6 +11,7 @@ import java.util.List;
 public interface IncidentTicketRepository extends JpaRepository<IncidentTicket, Long> {
 
     List<IncidentTicket> findByRequesterEmailIgnoreCase(String email);
+    List<IncidentTicket> findByAssignedTechnicianIgnoreCase(String assignedTechnician);
 
     // Get monthly ticket counts for the last 6 months
     @Query("SELECT MONTHNAME(t.createdAt) as month, COUNT(t) as count " +
