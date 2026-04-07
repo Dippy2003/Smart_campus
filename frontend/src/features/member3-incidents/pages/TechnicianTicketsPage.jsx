@@ -43,7 +43,7 @@ export default function TechnicianTicketsPage() {
     const updated = await updateTicketStatus(
       openedTicket.id,
       status,
-      openedTicket.assignedTechnician || email,
+      null,
       openedTicket.solutionNote || ""
     );
     setTickets((prev) =>
