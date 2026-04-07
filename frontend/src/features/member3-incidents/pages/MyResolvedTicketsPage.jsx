@@ -4,7 +4,7 @@ import TicketListItem from "../components/TicketListItem";
 import { getMyTickets, getLastRequesterEmail } from "../services/ticketService";
 
 function isResolvedStatus(status) {
-  return status === "RESOLVED" || status === "CLOSED";
+  return status === "RESOLVED" || status === "CLOSED" || status === "REJECTED";
 }
 
 export default function MyResolvedTicketsPage() {
