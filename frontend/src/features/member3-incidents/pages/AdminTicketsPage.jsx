@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import { getAllTickets } from "../services/ticketService";
 
-const STATUSES = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
+const STATUSES = ["OPEN", "IN_PROGRESS"];
 
 function countUnread(ticket) {
   return (ticket.notifications || []).filter((n) => !n.read).length;
@@ -22,7 +22,9 @@ export default function AdminTicketsPage() {
     setError("");
     try {
       const list = await getAllTickets();
-      setTickets(list);
+      setTickets(
+        list.filter((t) => !["RESOLVED", "CLOSED", "CANCELLED", "REJECTED"].includes(t.status))
+      );
     } catch {
       setError("Unable to load tickets.");
       setTickets([]);
@@ -64,7 +66,13 @@ export default function AdminTicketsPage() {
           to="/incidents/admin-resolved"
           className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
         >
-          Go to Resolved Section
+          Resolved Tickets
+        </Link>
+        <Link
+          to="/incidents/admin-cancelled"
+          className="ml-2 inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
+        >
+          Cancelled Tickets
         </Link>
       </div>
 
