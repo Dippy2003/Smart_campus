@@ -24,6 +24,9 @@ import AdminTicketsPage from "./features/member3-incidents/pages/AdminTicketsPag
 import AdminTicketDetailsPage from "./features/member3-incidents/pages/AdminTicketDetailsPage";
 import MyResolvedTicketsPage from "./features/member3-incidents/pages/MyResolvedTicketsPage";
 import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminResolvedTicketsPage";
+// admin
+import { AuthProvider } from "./features/member4-auth/Contexts/AuthContext";
+import LoginPage from "./features/member4-auth/pages/LoginPage";
 
 function MainShell() {
   return (
