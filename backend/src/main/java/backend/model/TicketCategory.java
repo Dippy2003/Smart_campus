@@ -4,6 +4,9 @@ public enum TicketCategory {
     MAINTENANCE,
     ELECTRICAL,
     PLUMBING,
-    CONSTRUCTION
+    CONSTRUCTION,
+    SAFETY,
+    EQUIPMENT,
+    OTHER
 }
 
