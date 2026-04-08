@@ -66,7 +66,7 @@ export default function MyTicketsPage() {
     try {
       await markTicketNotificationsRead({ id: ticket.id, email });
       const next = await getMyTickets(email);
-      setTickets(next);
+      setTickets(next.filter((t) => isActiveStatus(t.status)));
     } catch {
       // Ignore read failure; ticket details can still show.
     }

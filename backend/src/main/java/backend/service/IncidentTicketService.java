@@ -122,6 +122,14 @@ public class IncidentTicketService {
         adminUpdate.setTicket(ticket);
         ticket.getUpdates().add(adminUpdate);
 
+        TicketNotification notif = new TicketNotification();
+        notif.setMessage(buildStatusNotificationMessage(ticket, newStatus, assignedEmail, trimToNull(solutionNote)));
+        notif.setCreatedAt(LocalDateTime.now());
+        notif.setRead(false);
+        notif.setRecipientEmail(ticket.getRequesterEmail());
+        notif.setTicket(ticket);
+        ticket.getNotifications().add(notif);
+
         return incidentTicketRepository.save(ticket);
     }
 
@@ -217,6 +225,27 @@ public class IncidentTicketService {
         return getRegisteredTechnicians()
                 .stream()
                 .anyMatch(t -> email.equalsIgnoreCase(t.get("email")));
+    }
+
+    private String buildStatusNotificationMessage(
+            IncidentTicket ticket,
+            TicketStatus status,
+            String assignedTechnician,
+            String solutionNote
+    ) {
+        StringBuilder notification = new StringBuilder("Ticket #")
+                .append(ticket.getId())
+                .append(" status changed to ")
+                .append(status)
+                .append(".");
+
+        if (assignedTechnician != null && !assignedTechnician.isBlank()) {
+            notification.append(" Assigned technician: ").append(assignedTechnician).append(".");
+        }
+        if (solutionNote != null && !solutionNote.isBlank()) {
+            notification.append(" Solution: ").append(solutionNote);
+        }
+        return notification.toString();
     }
 }
 

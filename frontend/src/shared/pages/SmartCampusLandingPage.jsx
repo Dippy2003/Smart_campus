@@ -16,6 +16,14 @@ import {
   BarChart3,
   CheckCircle2,
   ChevronDown,
+  Sparkles,
+  Users,
+  Lock,
+  ClipboardList,
+  Mail,
+  Phone,
+  Globe,
+  GraduationCap,
 } from "lucide-react";
 
 function SmartCampusLandingPage() {
@@ -165,6 +173,27 @@ function SmartCampusLandingPage() {
     { label: "Project Documentation", href: "#about" },
   ];
 
+  const aboutHighlights = [
+    {
+      icon: Sparkles,
+      title: "Usability First",
+      description:
+        "Clear interfaces, guided workflows, and role-aware actions help users complete tasks quickly with minimal training.",
+    },
+    {
+      icon: Lock,
+      title: "Secure by Design",
+      description:
+        "Role-based access control and auditable activity patterns ensure responsible handling of operational data.",
+    },
+    {
+      icon: ClipboardList,
+      title: "Traceable Operations",
+      description:
+        "Every booking and incident can be tracked across its full lifecycle, improving accountability and service quality.",
+    },
+  ];
+
   const faqItems = [
     {
       question: "What is the Smart Campus Operations Hub?",
@@ -252,73 +281,73 @@ function SmartCampusLandingPage() {
 
           <div className="relative">
             <div className="absolute -inset-6 -z-10 bg-gradient-to-br from-blue-500/10 via-sky-400/05 to-blue-900/10 blur-3xl" />
-            <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 shadow-2xl shadow-blue-900/40 md:p-10">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-800/90 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 shadow-2xl shadow-blue-900/40 md:p-8">
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-4">
-                  <div className="rounded-2xl bg-slate-900/80 p-4 shadow-lg shadow-slate-950/80">
+                <div className="grid gap-4">
+                  <div className="rounded-2xl border border-slate-800/70 bg-slate-900/80 p-5 shadow-lg shadow-slate-950/80">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-slate-300">
                         Live Bookings
                       </span>
-                      <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs text-blue-300">
+                      <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 text-xs text-blue-300">
                         Campus
                       </span>
                     </div>
-                    <p className="mt-3 text-2xl font-semibold text-blue-300">
+                    <p className="mt-4 text-3xl font-semibold leading-none text-blue-300">
                       32
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-2 text-xs leading-relaxed text-slate-400">
                       Active reservations across halls and labs
                     </p>
                   </div>
 
-                  <div className="rounded-2xl border border-blue-500/20 bg-slate-950/70 p-4 shadow-lg shadow-blue-900/40">
+                  <div className="rounded-2xl border border-blue-500/25 bg-slate-950/75 p-5 shadow-lg shadow-blue-900/40">
                     <p className="text-xs font-semibold text-slate-200">
                       Maintenance Queue
                     </p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-2xl font-semibold text-blue-300">
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-3xl font-semibold leading-none text-blue-300">
                         12
                       </span>
-                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-300">
+                      <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs text-emerald-300">
                         8 In Progress
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-2 text-xs leading-relaxed text-slate-400">
                       Technicians are resolving reported incidents.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between gap-4">
-                  <div className="rounded-2xl bg-slate-900/80 p-4 shadow-lg shadow-slate-950/80">
+                <div className="grid gap-4">
+                  <div className="rounded-2xl border border-slate-800/70 bg-slate-900/80 p-5 shadow-lg shadow-slate-950/80">
                     <p className="text-xs font-semibold text-slate-200">
                       Today&apos;s Schedule
                     </p>
-                    <ul className="mt-3 space-y-2 text-xs text-slate-300">
-                      <li className="flex items-center justify-between">
+                    <ul className="mt-4 space-y-2.5 text-xs text-slate-300">
+                      <li className="flex items-center justify-between gap-4 rounded-lg border border-slate-800/60 bg-slate-950/30 px-2.5 py-1.5">
                         <span>Lecture Hall A</span>
                         <span className="text-slate-400">08:00–10:00</span>
                       </li>
-                      <li className="flex items-center justify-between">
+                      <li className="flex items-center justify-between gap-4 rounded-lg border border-slate-800/60 bg-slate-950/30 px-2.5 py-1.5">
                         <span>Computer Lab 1</span>
                         <span className="text-slate-400">11:00–13:00</span>
                       </li>
-                      <li className="flex items-center justify-between">
+                      <li className="flex items-center justify-between gap-4 rounded-lg border border-slate-800/60 bg-slate-950/30 px-2.5 py-1.5">
                         <span>Meeting Room B</span>
                         <span className="text-slate-400">15:00–16:30</span>
                       </li>
                     </ul>
                   </div>
-                  <div className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-950/80 p-3 text-xs text-slate-300">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/15">
+                  <div className="flex items-start gap-3 rounded-2xl border border-slate-800/90 bg-slate-950/85 p-4 text-xs text-slate-300">
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/15">
                       <AlertTriangle className="h-4 w-4 text-blue-300" />
                     </div>
                     <div>
                       <p className="font-semibold text-slate-100">
                         Priority Incident
                       </p>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="mt-1 text-[11px] leading-relaxed text-slate-400">
                         Projector X200 reported as faulty in Lecture Hall B. Ticket
                         assigned to AV technician.
                       </p>
@@ -326,7 +355,7 @@ function SmartCampusLandingPage() {
                   </div>
                 </div>
               </div>
-              <p className="mt-5 text-center text-[11px] text-slate-500">
+              <p className="mt-6 text-center text-[11px] text-slate-500">
                 Dashboard-style illustration showcasing bookings, incidents, and
                 resource utilization for the Smart Campus Operations Hub.
               </p>
@@ -603,26 +632,84 @@ function SmartCampusLandingPage() {
 
         <section
           id="about"
-          className="scroll-mt-28 mt-16 grid gap-8 border-y border-slate-800 py-10 md:grid-cols-2"
+          className="scroll-mt-28 mt-16 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 shadow-xl shadow-slate-950/60 md:mt-20 md:p-9"
         >
-          <div>
-            <h2 className="text-lg font-semibold text-slate-50">
-              About the Project
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-slate-300">
-              Smart Campus Operations Hub is a university-level final-year project
-              that demonstrates how modern web technologies can streamline the
-              management of physical resources. The system emphasizes usability,
-              security, and traceability, offering a realistic foundation for
-              future production-ready deployments.
-            </p>
+          <div className="grid gap-8 lg:grid-cols-[1.3fr,1fr] lg:items-start">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-300">
+                About the Project
+              </p>
+              <h2 className="mt-2 text-xl font-semibold text-slate-50 sm:text-2xl">
+                Built to modernize campus operations
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                Smart Campus Operations Hub is a university final-year project
+                designed to bring booking, asset visibility, and incident handling
+                into one connected system. Instead of scattered spreadsheets and
+                disconnected communication, teams use a shared workflow with clear
+                statuses, ownership, and timelines.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                The platform demonstrates how institutions can reduce scheduling
+                conflicts, improve maintenance turnaround, and make better
+                infrastructure decisions using operational data. It is built as an
+                academic prototype with production-minded structure and scalability.
+              </p>
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Core Roles
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold text-blue-300">3</p>
+                  <p className="text-xs text-slate-400">Users, Admins, Technicians</p>
+                </div>
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Key Modules
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold text-blue-300">4</p>
+                  <p className="text-xs text-slate-400">Resources, Bookings, Incidents, Alerts</p>
+                </div>
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                  <p className="text-[11px] uppercase tracking-wide text-slate-400">
+                    Target
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold text-blue-300">1</p>
+                  <p className="text-xs text-slate-400">Unified campus operations hub</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {aboutHighlights.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4 shadow-md shadow-slate-950/70"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/15 text-blue-300">
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-slate-100">
+                        {item.title}
+                      </h3>
+                      <p className="mt-1 text-xs leading-relaxed text-slate-300">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </main>
 
       <footer id="contact" className="scroll-mt-28 border-t border-slate-800 bg-slate-950/95">
         <div className="mx-auto max-w-6xl px-4 py-8 md:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-4">
             <div className="space-y-3 md:col-span-2">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-sky-400 shadow-lg shadow-blue-500/40">
@@ -637,6 +724,24 @@ function SmartCampusLandingPage() {
                 assets, and maintenance workflows, designed as a comprehensive
                 final-year project for real-world campus operations.
               </p>
+              <div className="grid gap-2 pt-1 text-xs text-slate-300 sm:grid-cols-2">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="h-3.5 w-3.5 text-blue-300" />
+                  <span>Academic demonstration project</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Users className="h-3.5 w-3.5 text-blue-300" />
+                  <span>Designed for multi-role collaboration</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Lock className="h-3.5 w-3.5 text-blue-300" />
+                  <span>Role-aware secure workflows</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Globe className="h-3.5 w-3.5 text-blue-300" />
+                  <span>Scalable for institutional growth</span>
+                </div>
+              </div>
             </div>
 
             <div>
@@ -654,6 +759,31 @@ function SmartCampusLandingPage() {
                     </a>
                   </li>
                 ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-300">
+                Contact
+              </h3>
+              <ul className="mt-3 space-y-2 text-xs text-slate-400">
+                <li className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-blue-300" />
+                  <a
+                    href="mailto:smartcampus@university.edu"
+                    className="transition-colors hover:text-blue-400"
+                  >
+                    smartcampus@university.edu
+                  </a>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-blue-300" />
+                  <span>+94 11 234 5678</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-blue-300" />
+                  <span>Campus ICT Innovation Lab</span>
+                </li>
               </ul>
             </div>
           </div>
