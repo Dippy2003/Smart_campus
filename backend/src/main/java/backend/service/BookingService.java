@@ -2,6 +2,7 @@ package backend.service;
 
 import backend.model.Booking;
 import backend.model.BookingStatus;
+import backend.model.ResourceStatus;
 import backend.model.resourcesModel;
 import backend.repository.BookingRepository;
 import backend.repository.ResourceRepository;
@@ -19,7 +20,8 @@ import java.util.Map;
  * BookingService — Member 2 (Bathiya)
  * Business logic for booking management.
  * Handles create, update, approve, reject, cancel, delete operations
- * with conflict detection and capacity validation.
+ * with conflict detection, capacity validation,
+ * availability window check and OUT_OF_SERVICE check.
  */
 @Service
 public class BookingService {
@@ -33,22 +35,28 @@ public class BookingService {
         this.resourceRepository = resourceRepository;
     }
 
-    // CREATE booking with full validation, capacity check and conflict check
+    // CREATE booking — full validation
     public Booking createBooking(Booking booking) {
 
+        // 1. Validate times exist
         if (booking.getStartTime() == null || booking.getEndTime() == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Start time and end time are required.");
         }
+
+        // 2. Start must be before end
         if (!booking.getStartTime().isBefore(booking.getEndTime())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Start time must be before end time.");
         }
+
+        // 3. Attendees must be >= 1
         if (booking.getAttendees() != null && booking.getAttendees() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Attendees must be at least 1.");
         }
 
+        // 4. Resource must exist
         resourcesModel resource = resourceRepository
                 .findById(booking.getResource().getId())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -56,7 +64,26 @@ public class BookingService {
 
         booking.setResource(resource);
 
-        // Capacity check
+        // 5. OUT_OF_SERVICE check — cannot book unavailable resource
+        if (resource.getStatus() == ResourceStatus.OUT_OF_SERVICE) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Resource '" + resource.getName() + "' is currently out of service and cannot be booked.");
+        }
+
+        // 6. Availability window check — booking time must be within resource availability
+        if (resource.getAvailabilityStart() != null && resource.getAvailabilityEnd() != null) {
+            boolean startInWindow = !booking.getStartTime().isBefore(resource.getAvailabilityStart());
+            boolean endInWindow = !booking.getEndTime().isAfter(resource.getAvailabilityEnd());
+            if (!startInWindow || !endInWindow) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Booking time must be within resource availability hours: "
+                        + resource.getAvailabilityStart() + " – " + resource.getAvailabilityEnd() + ".");
+            }
+        }
+
+        // 7. Capacity check — attendees cannot exceed resource capacity
         if (booking.getAttendees() != null
                 && resource.getCapacity() != null
                 && booking.getAttendees() > resource.getCapacity()) {
@@ -66,7 +93,7 @@ public class BookingService {
                     ") exceeds resource capacity (" + resource.getCapacity() + ").");
         }
 
-        // Conflict check
+        // 8. Conflict check — no overlapping bookings
         List<Booking> conflicts = bookingRepository.findConflictingBookings(
                 resource.getId(),
                 booking.getBookingDate(),
@@ -121,6 +148,19 @@ public class BookingService {
                     HttpStatus.BAD_REQUEST, "Start time must be before end time.");
         }
 
+        // Re-check availability window on update too
+        resourcesModel resource = booking.getResource();
+        if (resource.getAvailabilityStart() != null && resource.getAvailabilityEnd() != null) {
+            boolean startInWindow = !booking.getStartTime().isBefore(resource.getAvailabilityStart());
+            boolean endInWindow = !booking.getEndTime().isAfter(resource.getAvailabilityEnd());
+            if (!startInWindow || !endInWindow) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Booking time must be within resource availability hours: "
+                        + resource.getAvailabilityStart() + " – " + resource.getAvailabilityEnd() + ".");
+            }
+        }
+
         List<Booking> conflicts = bookingRepository.findConflictingBookings(
                 booking.getResource().getId(),
                 booking.getBookingDate(),
@@ -139,7 +179,7 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    // DELETE booking — admin permanently removes a booking record
+    // DELETE booking — admin permanently removes a booking
     public void deleteBooking(Long id) {
         Booking booking = getBookingById(id);
         bookingRepository.delete(booking);
