@@ -4,15 +4,18 @@
 import React, { useEffect, useState } from "react";
 import { createBooking, RESOURCES_URL } from "../services/bookingService";
 import { useToast } from "../../../shared/components/ToastProvider";
+import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
 export default function CreateBookingPage() {
   const toast = useToast();
+  const { user } = useAuth();
+  const sessionEmail = user?.email ?? "";
   const [resources, setResources] = useState([]);
   const [resourcesLoading, setResourcesLoading] = useState(true);
   const [selectedResource, setSelectedResource] = useState(null);
   const [form, setForm] = useState({
     resourceId: "",
-    bookedByEmail: "",
+    bookedByEmail: sessionEmail,
     purpose: "",
     attendees: "",
     bookingDate: "",
@@ -36,6 +39,11 @@ export default function CreateBookingPage() {
         setResourcesLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (!sessionEmail) return;
+    setForm((prev) => ({ ...prev, bookedByEmail: sessionEmail }));
+  }, [sessionEmail]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,7 +132,7 @@ export default function CreateBookingPage() {
       toast.success("Booking request submitted (PENDING).");
       setForm({
         resourceId: "",
-        bookedByEmail: "",
+        bookedByEmail: sessionEmail,
         purpose: "",
         attendees: "",
         bookingDate: "",
@@ -212,9 +220,8 @@ export default function CreateBookingPage() {
           <input
             name="bookedByEmail"
             type="email"
-            placeholder="you@example.com"
             value={form.bookedByEmail}
-            onChange={handleChange}
+            readOnly
             required
             className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
           />

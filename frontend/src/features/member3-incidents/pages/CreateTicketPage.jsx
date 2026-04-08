@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTicket } from "../services/ticketService";
+import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
 const TICKET_TYPES = ["TECHNICAL", "NON_TECHNICAL"];
 const CATEGORIES = [
@@ -16,8 +17,10 @@ const PRIORITIES = ["LOW", "NORMAL", "HIGH"];
 
 export default function CreateTicketPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const sessionEmail = user?.email ?? "";
   const [form, setForm] = useState({
-    requesterEmail: "",
+    requesterEmail: sessionEmail,
     title: "",
     description: "",
     ticketType: "TECHNICAL",
@@ -30,6 +33,11 @@ export default function CreateTicketPage() {
   const [error, setError] = useState("");
   const [successId, setSuccessId] = useState(null);
   const [attachments, setAttachments] = useState([]);
+
+  useEffect(() => {
+    if (!sessionEmail) return;
+    setForm((prev) => ({ ...prev, requesterEmail: sessionEmail }));
+  }, [sessionEmail]);
 
   const canSubmit = useMemo(() => {
     return (
@@ -72,7 +80,7 @@ export default function CreateTicketPage() {
         });
         setSuccessId(created.id);
         setForm({
-          requesterEmail: "",
+          requesterEmail: sessionEmail,
           title: "",
           description: "",
           ticketType: "TECHNICAL",
@@ -133,8 +141,7 @@ export default function CreateTicketPage() {
               name="requesterEmail"
               type="email"
               value={form.requesterEmail}
-              onChange={handleChange}
-              placeholder="you@example.com"
+              readOnly
               required
               className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
             />

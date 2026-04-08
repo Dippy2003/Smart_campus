@@ -1,15 +1,16 @@
 // Member2 - Bathiya | Booking Management Module B
 // MyBookingsPage.jsx — view, edit and manage user's own bookings
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getMyBookings, cancelBooking, updateBooking } from "../services/bookingService";
 import BookingStatusBadge from "../components/BookingStatusBadge";
 import { useToast } from "../../../shared/components/ToastProvider";
+import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
 export default function MyBookingsPage() {
   const toast = useToast();
-  const [email, setEmail] = useState("");
-  const [input, setInput] = useState("");
+  const { user, loading: authLoading } = useAuth();
+  const sessionEmail = user?.email ?? "";
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -21,27 +22,36 @@ export default function MyBookingsPage() {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
 
-  const fetchBookings = async (e) => {
-    e.preventDefault();
+  const fetchBookings = async (email) => {
+    if (!email) return;
     setError(null);
     setLoading(true);
-    setSearched(false);
     try {
-      const data = await getMyBookings(input);
+      const data = await getMyBookings(email);
       setBookings(data);
-      setEmail(input);
       setSearched(true);
     } catch (err) {
       setError(err.message);
+      setSearched(true);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (authLoading) return;
+    if (!sessionEmail) {
+      setBookings([]);
+      setSearched(false);
+      return;
+    }
+    fetchBookings(sessionEmail);
+  }, [sessionEmail, authLoading]);
+
   const handleCancel = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this booking?")) return;
     try {
-      await cancelBooking(id, email);
+      await cancelBooking(id, sessionEmail);
       setBookings((prev) =>
         prev.map((b) => (b.id === id ? { ...b, status: "CANCELLED" } : b))
       );
@@ -114,25 +124,14 @@ export default function MyBookingsPage() {
       {/* ── HEADER CHANGED TO "Booking Resources" ── */}
       <h2 className="mb-2 text-xl font-semibold text-white">Booking Resources</h2>
       <p className="mb-5 text-sm text-slate-400">
-        Enter your email to view all your booking requests.
+        Your bookings are loaded automatically from your logged-in account.
       </p>
 
-      <form onSubmit={fetchBookings} className="mb-6 flex gap-2.5">
-        <input
-          type="email"
-          placeholder="Enter your email address"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          required
-          className="flex-1 rounded-lg border border-slate-600 bg-slate-700 px-3.5 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
-        />
-        <button
-          type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-500"
-        >
-          Search
-        </button>
-      </form>
+      {!authLoading && !sessionEmail && (
+        <div className="mb-6 rounded-xl border border-amber-700 bg-amber-900/20 px-4 py-3 text-sm text-amber-300">
+          Please sign in to view your bookings.
+        </div>
+      )}
 
       {error && (
         <div className="rounded-xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300 mb-4">
@@ -140,11 +139,11 @@ export default function MyBookingsPage() {
         </div>
       )}
 
-      {loading && <p className="text-slate-400">Loading...</p>}
+      {(loading || authLoading) && <p className="text-slate-400">Loading...</p>}
 
-      {searched && !loading && bookings.length === 0 && (
+      {searched && !loading && !authLoading && sessionEmail && bookings.length === 0 && (
         <div className="py-10 text-center text-slate-400">
-          <p className="text-base">No bookings found for <strong className="text-white">{email}</strong></p>
+          <p className="text-base">No bookings found for <strong className="text-white">{sessionEmail}</strong></p>
           <p className="text-sm mt-1">Try creating a booking first.</p>
         </div>
       )}
