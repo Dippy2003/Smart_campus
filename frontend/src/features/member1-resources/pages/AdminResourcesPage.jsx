@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import ResourceTable from "../components/ResourceTable";
 import { deleteResource, getAllResources } from "../services/resourceApi";
 import { exportResourcesToCsv } from "../utils/resourceExport";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 export default function AdminResourcesPage() {
+  const toast = useToast();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -29,8 +31,14 @@ export default function AdminResourcesPage() {
     try {
       await deleteResource(id);
       await loadAll();
+      toast.success("Resource deleted.");
     } catch (e) {
-      setError("Delete failed. Check that the backend is running and reachable.");
+      const msg =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Delete failed. Check that the backend is running and reachable.";
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -48,6 +56,7 @@ export default function AdminResourcesPage() {
   const handleExportCsv = () => {
     const stamp = new Date().toISOString().slice(0, 10);
     exportResourcesToCsv(resources, `admin-resources-${stamp}.csv`);
+    toast.success("CSV downloaded.");
   };
 
   return (

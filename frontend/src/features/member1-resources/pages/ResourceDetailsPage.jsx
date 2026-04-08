@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getResourceById } from "../services/resourceApi";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 const TYPE_META = {
   LECTURE_HALL: { icon: "🎓", color: "#6366f1" },
@@ -13,6 +14,7 @@ export default function ResourceDetailsPage() {
   const { id } = useParams();
   const [resource, setResource] = useState(null);
   const [loading, setLoading]   = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     (async () => {
@@ -322,7 +324,10 @@ export default function ResourceDetailsPage() {
                     <button
                       type="button"
                       className="rd-print-btn rd-print-hide"
-                      onClick={() => window.print()}
+                      onClick={() => {
+                        toast.info("Opening print dialog…");
+                        window.print();
+                      }}
                     >
                       Print schedule
                     </button>

@@ -2,18 +2,26 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ResourceForm from "../components/ResourceForm";
 import { createResource } from "../services/resourceApi";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 export default function AddResourcePage() {
   const nav = useNavigate();
   const [error, setError] = useState("");
+  const toast = useToast();
 
   const submit = async (data) => {
     setError("");
     try {
       await createResource(data);
+      toast.success("Resource created.");
       nav("/admin/resources");
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to create resource. Check backend is running.");
+      const msg =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Failed to create resource. Check backend is running.";
+      setError(msg);
+      toast.error(msg);
     }
   };
 
