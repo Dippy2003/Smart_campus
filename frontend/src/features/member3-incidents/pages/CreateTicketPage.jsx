@@ -2,7 +2,16 @@ import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createTicket } from "../services/ticketService";
 
-const CATEGORIES = ["MAINTENANCE", "SAFETY", "EQUIPMENT", "OTHER"];
+const TICKET_TYPES = ["TECHNICAL", "NON_TECHNICAL"];
+const CATEGORIES = [
+  "MAINTENANCE",
+  "ELECTRICAL",
+  "PLUMBING",
+  "CONSTRUCTION",
+  "SAFETY",
+  "EQUIPMENT",
+  "OTHER",
+];
 const PRIORITIES = ["LOW", "NORMAL", "HIGH"];
 
 export default function CreateTicketPage() {
@@ -11,6 +20,7 @@ export default function CreateTicketPage() {
     requesterEmail: "",
     title: "",
     description: "",
+    ticketType: "TECHNICAL",
     category: "MAINTENANCE",
     location: "",
     priority: "NORMAL",
@@ -19,6 +29,7 @@ export default function CreateTicketPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successId, setSuccessId] = useState(null);
+  const [attachments, setAttachments] = useState([]);
 
   const canSubmit = useMemo(() => {
     return (
@@ -53,25 +64,55 @@ export default function CreateTicketPage() {
           requesterEmail: form.requesterEmail,
           title: form.title,
           description: form.description,
+          ticketType: form.ticketType,
           category: form.category,
           location: form.location,
           priority: form.priority,
+          attachments,
         });
         setSuccessId(created.id);
         setForm({
           requesterEmail: "",
           title: "",
           description: "",
+          ticketType: "TECHNICAL",
           category: "MAINTENANCE",
           location: "",
           priority: "NORMAL",
         });
+        setAttachments([]);
       } catch {
         setError("Could not create the ticket. Please try again.");
       } finally {
         setLoading(false);
       }
     })();
+  };
+
+  const handleAttachments = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 3) {
+      setError("You can upload up to 3 images only.");
+      return;
+    }
+    setError("");
+    Promise.all(
+      files.map(
+        (file) =>
+          new Promise((resolve, reject) => {
+            if (!file.type.startsWith("image/")) {
+              reject(new Error("Only image files are allowed."));
+              return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          })
+      )
+    )
+      .then((results) => setAttachments(results.slice(0, 3)))
+      .catch(() => setError("Could not read selected image(s). Try again."));
   };
 
   return (
@@ -117,6 +158,22 @@ export default function CreateTicketPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+            Ticket Type
+            <select
+              name="ticketType"
+              value={form.ticketType}
+              onChange={handleChange}
+              className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            >
+              {TICKET_TYPES.map((t) => (
+                <option key={t} value={t} className="bg-slate-800">
+                  {t}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
             Category
             <select
@@ -169,6 +226,22 @@ export default function CreateTicketPage() {
             rows={5}
             className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
           />
+        </label>
+
+        <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
+          Attach Images (max 3)
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleAttachments}
+            className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-200 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 file:mr-3 file:rounded-full file:border-0 file:bg-blue-600 file:px-3 file:py-1 file:text-xs file:font-semibold file:text-white"
+          />
+          {attachments.length > 0 && (
+            <p className="text-[11px] text-slate-400">
+              {attachments.length} image(s) selected.
+            </p>
+          )}
         </label>
 
         {error && (

@@ -32,22 +32,34 @@ export default function IncidentsHomePage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <Link to="/incidents/create" className={tabStyle(isActive("/create"))}>
-          Create Ticket
-        </Link>
-        <Link to="/incidents/my" className={tabStyle(isActive("/my"))}>
-          My Tickets
-        </Link>
-        <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
-          My Resolved
-        </Link>
-        {isAdmin && (
+        {isAdmin ? (
           <>
             <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
               Admin Panel
             </Link>
             <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
               Admin Resolved
+            </Link>
+            <Link to="/incidents/admin-cancelled" className={tabStyle(isActive("/admin-cancelled"))}>
+              Admin Cancelled
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link to="/incidents/create" className={tabStyle(isActive("/create"))}>
+              Create Ticket
+            </Link>
+            <Link to="/incidents/my" className={tabStyle(isActive("/my"))}>
+              My Tickets
+            </Link>
+            <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
+              My Resolved
+            </Link>
+            <Link to="/incidents/my-cancelled" className={tabStyle(isActive("/my-cancelled"))}>
+              My Cancelled
+            </Link>
+            <Link to="/incidents/technician" className={tabStyle(isActive("/technician"))}>
+              Technician
             </Link>
           </>
         )}

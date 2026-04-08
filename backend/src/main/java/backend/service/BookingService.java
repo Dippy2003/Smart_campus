@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * BookingService — Member 2 (Bathiya)
  * Business logic for booking management.
- * Handles create, update, approve, reject, cancel operations
+ * Handles create, update, approve, reject, cancel, delete operations
  * with conflict detection and capacity validation.
  */
 @Service
@@ -36,7 +36,6 @@ public class BookingService {
     // CREATE booking with full validation, capacity check and conflict check
     public Booking createBooking(Booking booking) {
 
-        // Validate time range
         if (booking.getStartTime() == null || booking.getEndTime() == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Start time and end time are required.");
@@ -45,14 +44,11 @@ public class BookingService {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Start time must be before end time.");
         }
-
-        // Validate attendees >= 1
         if (booking.getAttendees() != null && booking.getAttendees() < 1) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Attendees must be at least 1.");
         }
 
-        // Validate resource exists
         resourcesModel resource = resourceRepository
                 .findById(booking.getResource().getId())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -60,7 +56,7 @@ public class BookingService {
 
         booking.setResource(resource);
 
-        // CAPACITY CHECK — attendees cannot exceed resource capacity
+        // Capacity check
         if (booking.getAttendees() != null
                 && resource.getCapacity() != null
                 && booking.getAttendees() > resource.getCapacity()) {
@@ -70,14 +66,13 @@ public class BookingService {
                     ") exceeds resource capacity (" + resource.getCapacity() + ").");
         }
 
-        // Conflict check — prevent double booking
+        // Conflict check
         List<Booking> conflicts = bookingRepository.findConflictingBookings(
                 resource.getId(),
                 booking.getBookingDate(),
                 booking.getStartTime(),
                 booking.getEndTime()
         );
-
         if (!conflicts.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -88,7 +83,7 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
-    // UPDATE booking — only PENDING bookings can be edited by user
+    // UPDATE booking — only PENDING bookings can be edited
     public Booking updateBooking(Long id, Map<String, String> updates) {
         Booking booking = getBookingById(id);
 
@@ -102,8 +97,6 @@ public class BookingService {
         }
         if (updates.containsKey("attendees") && !updates.get("attendees").isBlank()) {
             int newAttendees = Integer.parseInt(updates.get("attendees"));
-
-            // CAPACITY CHECK on update too
             resourcesModel resource = booking.getResource();
             if (resource.getCapacity() != null && newAttendees > resource.getCapacity()) {
                 throw new ResponseStatusException(
@@ -123,13 +116,11 @@ public class BookingService {
             booking.setEndTime(LocalTime.parse(updates.get("endTime")));
         }
 
-        // Re-validate time range
         if (!booking.getStartTime().isBefore(booking.getEndTime())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Start time must be before end time.");
         }
 
-        // Re-check conflicts (exclude current booking)
         List<Booking> conflicts = bookingRepository.findConflictingBookings(
                 booking.getResource().getId(),
                 booking.getBookingDate(),
@@ -139,7 +130,6 @@ public class BookingService {
         List<Booking> otherConflicts = conflicts.stream()
                 .filter(c -> !c.getId().equals(id))
                 .toList();
-
         if (!otherConflicts.isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -147,6 +137,12 @@ public class BookingService {
         }
 
         return bookingRepository.save(booking);
+    }
+
+    // DELETE booking — admin permanently removes a booking record
+    public void deleteBooking(Long id) {
+        Booking booking = getBookingById(id);
+        bookingRepository.delete(booking);
     }
 
     // GET user's own bookings by email

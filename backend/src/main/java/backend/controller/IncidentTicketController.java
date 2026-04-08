@@ -26,15 +26,18 @@ public class IncidentTicketController {
     public ResponseEntity<?> createTicket(@RequestBody IncidentTicketCreateRequest req) {
         try {
             TicketCategory category = TicketCategory.valueOf(req.getCategory().toUpperCase());
+            TicketType ticketType = TicketType.valueOf(req.getTicketType().toUpperCase());
             TicketPriority priority = TicketPriority.valueOf(req.getPriority().toUpperCase());
 
             IncidentTicket created = incidentTicketService.createTicket(
                     req.getRequesterEmail(),
                     req.getTitle(),
                     req.getDescription(),
+                    ticketType,
                     category,
                     req.getLocation(),
-                    priority
+                    priority,
+                    req.getAttachments()
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
@@ -47,6 +50,18 @@ public class IncidentTicketController {
     @GetMapping("/my")
     public ResponseEntity<List<IncidentTicket>> getMyTickets(@RequestParam String email) {
         return ResponseEntity.ok(incidentTicketService.getMyTickets(email));
+    }
+
+    // GET /api/incidents/technician?email=tech@campus.lk
+    @GetMapping("/technician")
+    public ResponseEntity<List<IncidentTicket>> getTechnicianTickets(@RequestParam String email) {
+        return ResponseEntity.ok(incidentTicketService.getTechnicianTickets(email));
+    }
+
+    // GET /api/incidents/technicians
+    @GetMapping("/technicians")
+    public ResponseEntity<List<Map<String, String>>> getRegisteredTechnicians() {
+        return ResponseEntity.ok(incidentTicketService.getRegisteredTechnicians());
     }
 
     // GET /api/incidents — admin view (all tickets)
@@ -74,7 +89,14 @@ public class IncidentTicketController {
     ) {
         try {
             TicketStatus status = TicketStatus.valueOf(req.getStatus().toUpperCase());
-            return ResponseEntity.ok(incidentTicketService.updateStatus(id, status));
+            return ResponseEntity.ok(
+                    incidentTicketService.updateStatus(
+                            id,
+                            status,
+                            req.getAssignedTechnician(),
+                            req.getSolutionNote()
+                    )
+            );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));

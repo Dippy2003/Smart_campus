@@ -1,8 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  // Use CRA dev-proxy by default (baseURL: "") to avoid CORS during development.
-  // Override with REACT_APP_API_BASE_URL if needed (e.g., production).
-  baseURL: process.env.REACT_APP_API_BASE_URL || "",
+  // Default to Spring Boot dev server; override via REACT_APP_API_BASE_URL when needed.
+  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:8080",
   headers: { "Content-Type": "application/json" }
 });

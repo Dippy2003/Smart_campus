@@ -23,6 +23,9 @@ public class IncidentTicket {
     @Enumerated(EnumType.STRING)
     private TicketCategory category;
 
+    @Enumerated(EnumType.STRING)
+    private TicketType ticketType;
+
     private String location;
 
     @Enumerated(EnumType.STRING)
@@ -32,6 +35,15 @@ public class IncidentTicket {
     private TicketStatus status = TicketStatus.OPEN;
 
     private LocalDateTime createdAt;
+    private String assignedTechnician;
+
+    @Column(length = 4000)
+    private String solutionNote;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "incident_ticket_attachments", joinColumns = @JoinColumn(name = "ticket_id"))
+    @Column(name = "image_data_url", length = 120000)
+    private List<String> attachments = new ArrayList<>();
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketUpdate> updates = new ArrayList<>();
@@ -81,6 +93,14 @@ public class IncidentTicket {
         this.category = category;
     }
 
+    public TicketType getTicketType() {
+        return ticketType;
+    }
+
+    public void setTicketType(TicketType ticketType) {
+        this.ticketType = ticketType;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -111,6 +131,30 @@ public class IncidentTicket {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getAssignedTechnician() {
+        return assignedTechnician;
+    }
+
+    public void setAssignedTechnician(String assignedTechnician) {
+        this.assignedTechnician = assignedTechnician;
+    }
+
+    public String getSolutionNote() {
+        return solutionNote;
+    }
+
+    public void setSolutionNote(String solutionNote) {
+        this.solutionNote = solutionNote;
+    }
+
+    public List<String> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<String> attachments) {
+        this.attachments = attachments;
     }
 
     public List<TicketUpdate> getUpdates() {
