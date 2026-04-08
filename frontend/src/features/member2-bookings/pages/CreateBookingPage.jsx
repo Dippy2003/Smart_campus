@@ -9,7 +9,7 @@ export default function CreateBookingPage() {
   const toast = useToast();
   const [resources, setResources] = useState([]);
   const [resourcesLoading, setResourcesLoading] = useState(true);
-  const [selectedResource, setSelectedResource] = useState(null); // track selected resource object
+  const [selectedResource, setSelectedResource] = useState(null);
   const [form, setForm] = useState({
     resourceId: "",
     bookedByEmail: "",
@@ -23,7 +23,6 @@ export default function CreateBookingPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Load resources from Member 1's endpoint on mount
   useEffect(() => {
     setResourcesLoading(true);
     fetch(RESOURCES_URL)
@@ -41,15 +40,16 @@ export default function CreateBookingPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-
-    // When resource changes, update selectedResource object
     if (name === "resourceId") {
       const found = resources.find((r) => r.id === Number(value));
       setSelectedResource(found || null);
     }
   };
 
-  // Check if attendees exceed capacity — returns error message or null
+  // Check if resource is OUT_OF_SERVICE
+  const isOutOfService = selectedResource?.status === "OUT_OF_SERVICE";
+
+  // Check if attendees exceed capacity
   const getCapacityError = () => {
     if (!selectedResource || !form.attendees) return null;
     if (!selectedResource.capacity) return null;
@@ -60,14 +60,34 @@ export default function CreateBookingPage() {
     return null;
   };
 
+  // Check if booking time is within resource availability window
+  const getAvailabilityError = () => {
+    if (!selectedResource) return null;
+    if (!selectedResource.availabilityStart || !selectedResource.availabilityEnd) return null;
+    if (!form.startTime || !form.endTime) return null;
+
+    const bookingStart = form.startTime;
+    const bookingEnd = form.endTime;
+    const availStart = selectedResource.availabilityStart.substring(0, 5); // HH:MM
+    const availEnd = selectedResource.availabilityEnd.substring(0, 5);     // HH:MM
+
+    if (bookingStart < availStart || bookingEnd > availEnd) {
+      return `Booking time must be within availability hours: ${availStart} – ${availEnd}.`;
+    }
+    return null;
+  };
+
   const capacityError = getCapacityError();
+  const availabilityError = getAvailabilityError();
+
+  // Submit is blocked if any error exists
+  const hasBlockingError = isOutOfService || !!capacityError || !!availabilityError;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setMessage(null);
 
-    // Frontend validation
     if (form.startTime >= form.endTime) {
       setError("End time must be after start time.");
       return;
@@ -76,8 +96,14 @@ export default function CreateBookingPage() {
       setError("Please select a resource.");
       return;
     }
-
-    // Block if over capacity
+    if (isOutOfService) {
+      setError("This resource is currently out of service.");
+      return;
+    }
+    if (availabilityError) {
+      setError(availabilityError);
+      return;
+    }
     if (capacityError) {
       setError(capacityError);
       return;
@@ -157,21 +183,23 @@ export default function CreateBookingPage() {
             {resources.map((r) => (
               <option key={r.id} value={r.id} className="bg-slate-800">
                 {r.name} ({r.type}) — {r.location}
+                {r.status === "OUT_OF_SERVICE" ? " ⚠ OUT OF SERVICE" : ""}
               </option>
             ))}
           </select>
 
-          {/* Show capacity info when resource is selected */}
-          {selectedResource && selectedResource.capacity && (
-            <p style={{
-              marginTop: "6px",
-              fontSize: "12px",
-              color: "#6ee7b7",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-            }}>
-              ✓ Max capacity: <strong>{selectedResource.capacity} people</strong>
+          {/* OUT_OF_SERVICE warning */}
+          {isOutOfService && (
+            <p style={{ marginTop: "6px", fontSize: "12px", color: "#fca5a5", display: "flex", alignItems: "center", gap: "4px" }}>
+              ✗ This resource is currently out of service and cannot be booked.
+            </p>
+          )}
+
+          {/* Availability window info */}
+          {selectedResource && !isOutOfService && selectedResource.availabilityStart && selectedResource.availabilityEnd && (
+            <p style={{ marginTop: "6px", fontSize: "12px", color: "#6ee7b7", display: "flex", alignItems: "center", gap: "4px" }}>
+              ✓ Available: {selectedResource.availabilityStart.substring(0, 5)} – {selectedResource.availabilityEnd.substring(0, 5)}
+              &nbsp;·&nbsp; Max {selectedResource.capacity} people
             </p>
           )}
         </div>
@@ -207,7 +235,7 @@ export default function CreateBookingPage() {
           />
         </div>
 
-        {/* Attendees — with live capacity warning */}
+        {/* Attendees */}
         <div>
           <label className="block text-sm font-semibold text-slate-300 mb-1">
             Number of Attendees
@@ -217,11 +245,7 @@ export default function CreateBookingPage() {
             type="number"
             min="1"
             max={selectedResource?.capacity || undefined}
-            placeholder={
-              selectedResource?.capacity
-                ? `Max ${selectedResource.capacity}`
-                : "e.g. 10"
-            }
+            placeholder={selectedResource?.capacity ? `Max ${selectedResource.capacity}` : "e.g. 10"}
             value={form.attendees}
             onChange={handleChange}
             className={`w-full rounded-lg border px-3 py-2.5 text-white placeholder:text-slate-400 bg-slate-800 focus:ring-2 transition-colors ${
@@ -230,20 +254,9 @@ export default function CreateBookingPage() {
                 : "border-slate-600 focus:border-blue-500 focus:ring-blue-500/20"
             }`}
           />
-          {/* Live capacity warning */}
           {capacityError && (
-            <p style={{
-              marginTop: "5px",
-              fontSize: "12px",
-              color: "#fca5a5",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-            }}>
-              ✗ {capacityError}
-            </p>
+            <p style={{ marginTop: "5px", fontSize: "12px", color: "#fca5a5" }}>✗ {capacityError}</p>
           )}
-          {/* Show capacity hint when within limit */}
           {!capacityError && selectedResource?.capacity && form.attendees && (
             <p style={{ marginTop: "5px", fontSize: "12px", color: "#6ee7b7" }}>
               ✓ Within capacity ({form.attendees}/{selectedResource.capacity})
@@ -279,7 +292,11 @@ export default function CreateBookingPage() {
               value={form.startTime}
               onChange={handleChange}
               required
-              className="flex-1 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+              className={`flex-1 rounded-lg border px-3 py-2.5 text-white bg-slate-800 focus:ring-2 transition-colors ${
+                availabilityError
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                  : "border-slate-600 focus:border-blue-500 focus:ring-blue-500/20"
+              }`}
             />
             <span className="self-center text-slate-400 text-sm">to</span>
             <input
@@ -288,14 +305,22 @@ export default function CreateBookingPage() {
               value={form.endTime}
               onChange={handleChange}
               required
-              className="flex-1 rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+              className={`flex-1 rounded-lg border px-3 py-2.5 text-white bg-slate-800 focus:ring-2 transition-colors ${
+                availabilityError
+                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                  : "border-slate-600 focus:border-blue-500 focus:ring-blue-500/20"
+              }`}
             />
           </div>
+          {/* Availability window error */}
+          {availabilityError && (
+            <p style={{ marginTop: "5px", fontSize: "12px", color: "#fca5a5" }}>✗ {availabilityError}</p>
+          )}
         </div>
 
         <button
           type="submit"
-          disabled={loading || resourcesLoading || !!capacityError}
+          disabled={loading || resourcesLoading || hasBlockingError}
           className="mt-2 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-blue-700"
         >
           {loading ? "Submitting..." : "Submit Booking Request"}
