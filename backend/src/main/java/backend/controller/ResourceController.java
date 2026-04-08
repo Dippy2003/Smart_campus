@@ -1,43 +1,57 @@
 package backend.controller;
 
 import backend.model.ResourceStatus;
-import org.springframework.web.bind.annotation.RequestParam;
 import backend.model.ResourceType;
 import backend.model.resourcesModel;
 import backend.repository.ResourceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/resources")
 @CrossOrigin("http://localhost:3000")
 public class ResourceController {
 
-    @Autowired
-    private ResourceRepository resourceRepository;
+    private final ResourceRepository resourceRepository;
 
-    // CREATE
-    @PostMapping("/resource")
-    public resourcesModel newResource(@RequestBody resourcesModel newResource){
-        return resourceRepository.save(newResource);
+    public ResourceController(ResourceRepository resourceRepository) {
+        this.resourceRepository = resourceRepository;
     }
 
-    // GET ALL
-    @GetMapping("/resources")
-    public List<resourcesModel> getAllResources(){
-        return resourceRepository.findAll();
+    @PostMapping
+    public ResponseEntity<resourcesModel> createResource(@Valid @RequestBody resourcesModel newResource) {
+        newResource.setId(null);
+        resourcesModel saved = resourceRepository.save(newResource);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(saved.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(saved);
     }
 
-    // GET BY ID
-    @GetMapping("/resource/{id}")
-    public resourcesModel getResourceById(@PathVariable Long id){
+    @GetMapping
+    public ResponseEntity<List<resourcesModel>> getAllResources() {
+        return ResponseEntity.ok(resourceRepository.findAll());
+    }
+
+    @GetMapping("/{id:\\d+}")
+    public ResponseEntity<resourcesModel> getResourceById(@PathVariable Long id) {
         return resourceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Resource not found"));
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
     }
 
-    // UPDATE
-    @PutMapping("/resource/{id}")
-    public resourcesModel updateResource(@RequestBody resourcesModel newResource, @PathVariable Long id){
+    @PutMapping("/{id:\\d+}")
+    public ResponseEntity<resourcesModel> updateResource(
+            @Valid @RequestBody resourcesModel newResource,
+            @PathVariable Long id) {
         return resourceRepository.findById(id)
                 .map(resource -> {
                     resource.setName(newResource.getName());
@@ -47,53 +61,47 @@ public class ResourceController {
                     resource.setAvailabilityStart(newResource.getAvailabilityStart());
                     resource.setAvailabilityEnd(newResource.getAvailabilityEnd());
                     resource.setStatus(newResource.getStatus());
-                    return resourceRepository.save(resource);
-                }).orElseThrow(() -> new RuntimeException("Resource not found"));
+                    return ResponseEntity.ok(resourceRepository.save(resource));
+                })
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
     }
 
-    // DELETE
-    @DeleteMapping("/resource/{id}")
-    public void deleteResource(@PathVariable Long id){
+    @DeleteMapping("/{id:\\d+}")
+    public ResponseEntity<Void> deleteResource(@PathVariable Long id) {
+        if (!resourceRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
+        }
         resourceRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
-    // FILTER BY TYPE
-    @GetMapping("/resource/type/{type}")
-    public List<resourcesModel> getByType(@PathVariable ResourceType type){
-        return resourceRepository.findByType(type);
+    @GetMapping("/type/{type}")
+    public ResponseEntity<List<resourcesModel>> getByType(@PathVariable ResourceType type) {
+        return ResponseEntity.ok(resourceRepository.findByType(type));
     }
 
-    // FILTER BY STATUS
-    @GetMapping("/resource/status/{status}")
-    public List<resourcesModel> getByStatus(@PathVariable ResourceStatus status){
-        return resourceRepository.findByStatus(status);
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<resourcesModel>> getByStatus(@PathVariable ResourceStatus status) {
+        return ResponseEntity.ok(resourceRepository.findByStatus(status));
     }
 
-    // FILTER BY LOCATION
-    @GetMapping("/resource/location/{location}")
-    public List<resourcesModel> getByLocation(@PathVariable String location){
-        return resourceRepository.findByLocation(location);
+    @GetMapping("/location/{location}")
+    public ResponseEntity<List<resourcesModel>> getByLocation(@PathVariable String location) {
+        return ResponseEntity.ok(resourceRepository.findByLocation(location));
     }
-    @GetMapping("/resource/search")
-    public List<resourcesModel> searchResources(@RequestParam String keyword) {
 
-        // simple approach: search by name OR location
+    @GetMapping("/search")
+    public ResponseEntity<List<resourcesModel>> searchResources(@RequestParam String keyword) {
         List<resourcesModel> byName = resourceRepository.findByNameContainingIgnoreCase(keyword);
         List<resourcesModel> byLocation = resourceRepository.findByLocationContainingIgnoreCase(keyword);
-
-        // merge results without duplicates
         byName.addAll(byLocation.stream()
                 .filter(r -> !byName.contains(r))
                 .toList());
-
-        return byName;
+        return ResponseEntity.ok(byName);
     }
 
-    // FILTER (type, status, location, capacity range, keyword)
-    // Example:
-    // /resources/filter?type=LAB&minCapacity=20&location=Block%20A&status=ACTIVE&keyword=chem
-    @GetMapping("/resources/filter")
-    public List<resourcesModel> filterResources(
+    @GetMapping("/filter")
+    public ResponseEntity<List<resourcesModel>> filterResources(
             @RequestParam(required = false) ResourceType type,
             @RequestParam(required = false) ResourceStatus status,
             @RequestParam(required = false) String location,
@@ -101,6 +109,7 @@ public class ResourceController {
             @RequestParam(required = false) Integer maxCapacity,
             @RequestParam(required = false) String keyword
     ) {
-        return resourceRepository.filterResources(type, status, location, minCapacity, maxCapacity, keyword);
+        return ResponseEntity.ok(
+                resourceRepository.filterResources(type, status, location, minCapacity, maxCapacity, keyword));
     }
 }

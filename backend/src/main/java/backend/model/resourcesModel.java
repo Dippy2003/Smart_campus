@@ -2,6 +2,10 @@ package backend.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalTime;
 
@@ -12,17 +16,28 @@ public class resourcesModel {
     @GeneratedValue
     private Long id;
 
+    @NotBlank(message = "Name is required")
     private String name;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Type is required")
     private ResourceType type;
 
+    @NotNull(message = "Capacity is required")
+    @Min(value = 1, message = "Capacity must be at least 1")
     private Integer capacity;
+
+    @NotBlank(message = "Location is required")
     private String location;
+
+    @NotNull(message = "Availability start is required")
     private LocalTime availabilityStart;
+
+    @NotNull(message = "Availability end is required")
     private LocalTime availabilityEnd;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Status is required")
     private ResourceStatus status;
 
     public resourcesModel (){
@@ -103,5 +118,13 @@ public class resourcesModel {
         this.availabilityStart = availabilityStart;
         this.availabilityEnd = availabilityEnd;
         this.status = status;
+    }
+
+    @AssertTrue(message = "Availability end must be after availability start")
+    public boolean isAvailabilityWindowValid() {
+        if (availabilityStart == null || availabilityEnd == null) {
+            return true;
+        }
+        return availabilityEnd.isAfter(availabilityStart);
     }
 }
