@@ -27,6 +27,7 @@ import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminRe
 // Member 4 Auth Imports
 import { AuthProvider } from "./features/member4-auth/Contexts/AuthContext";
 import LoginPage from "./features/member4-auth/pages/LoginPage";
+import { ToastProvider } from "./shared/components/ToastProvider";
 
 function MainShell() {
   return (
@@ -41,13 +42,14 @@ function MainShell() {
 export default function App() {
   return (
     <AuthProvider> {/* Wraps the entire app to provide login state */}
-      <div className="min-h-screen bg-slate-950">
-        <PillNavbar />
-        <Routes>
-          <Route path="/" element={<SmartCampusLandingPage />} />
-          
-          {/* New Login Route */}
-          <Route path="/login" element={<LoginPage />} />
+      <ToastProvider>
+        <div className="min-h-screen bg-slate-950">
+          <PillNavbar />
+          <Routes>
+            <Route path="/" element={<SmartCampusLandingPage />} />
+            
+            {/* New Login Route */}
+            <Route path="/login" element={<LoginPage />} />
 
           {/* Full-bleed routes */}
           <Route path="/resources" element={<ResourcesPage />} />
@@ -59,8 +61,8 @@ export default function App() {
           <Route path="/admin/resources/:id/edit" element={<AdminRoute><EditResourcePage /></AdminRoute>} />
 
           {/* Standard shell routes */}
-          <Route element={<MainShell />}>
-            <Route path="/dashboard" element={<HomePage />} />
+            <Route element={<MainShell />}>
+              <Route path="/dashboard" element={<HomePage />} />
 
             {/* admin login to use the new page */}
             <Route path="/admin/login" element={<LoginPage />} />
@@ -87,9 +89,10 @@ export default function App() {
             <Route path="/member3" element={<PlaceholderModulePage title="Member 3 Module" />} />
             {/* Set Member 4 to point to the Login/Auth dashboard */}
             <Route path="/member4" element={<LoginPage />} />
-          </Route>
-        </Routes>
-      </div>
+            </Route>
+          </Routes>
+        </div>
+      </ToastProvider>
     </AuthProvider>
   );
 }

@@ -5,11 +5,13 @@ import React, { useEffect, useState, useCallback } from "react";
 import { getAllBookings, approveBooking, rejectBooking } from "../services/bookingService";
 import BookingStatusBadge from "../components/BookingStatusBadge";
 import ApproveRejectModal from "../components/ApproveRejectModal";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 const BASE_URL = "http://localhost:8080/api/bookings";
 const STATUS_FILTERS = ["ALL", "PENDING", "APPROVED", "REJECTED", "CANCELLED"];
 
 export default function AdminBookingsPage() {
+  const toast = useToast();
   const [bookings, setBookings] = useState([]);
   const [filter, setFilter] = useState("ALL");
   const [search, setSearch] = useState("");
@@ -33,15 +35,25 @@ export default function AdminBookingsPage() {
   }, [fetchBookings]);
 
   const handleApprove = async (id, reason) => {
-    await approveBooking(id, reason);
-    setSelected(null);
-    fetchBookings();
+    try {
+      await approveBooking(id, reason);
+      toast.success("Booking approved.");
+      setSelected(null);
+      fetchBookings();
+    } catch (err) {
+      toast.error(err.message || "Approve failed.");
+    }
   };
 
   const handleReject = async (id, reason) => {
-    await rejectBooking(id, reason);
-    setSelected(null);
-    fetchBookings();
+    try {
+      await rejectBooking(id, reason);
+      toast.success("Booking rejected.");
+      setSelected(null);
+      fetchBookings();
+    } catch (err) {
+      toast.error(err.message || "Reject failed.");
+    }
   };
 
   // DELETE booking — admin permanently removes a booking
@@ -50,8 +62,9 @@ export default function AdminBookingsPage() {
     try {
       await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
       setBookings((prev) => prev.filter((b) => b.id !== id));
+      toast.success("Booking deleted.");
     } catch (err) {
-      alert("Failed to delete booking.");
+      toast.error("Failed to delete booking.");
     }
   };
 
