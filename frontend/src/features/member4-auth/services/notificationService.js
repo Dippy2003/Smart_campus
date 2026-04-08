@@ -31,7 +31,16 @@ function saveMock(data) { localStorage.setItem(MOCK_KEY, JSON.stringify(data)); 
 function delay(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 function authHeaders() {
-  return { "Content-Type": "application/json" };
+  const token =
+    (typeof window !== "undefined" &&
+      (window.localStorage.getItem("token") ||
+        window.localStorage.getItem("authToken") ||
+        window.localStorage.getItem("accessToken"))) ||
+    "";
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 }
 
 /* ── Public API ───────────────────────────────────────────────── */
