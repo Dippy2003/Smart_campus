@@ -3,27 +3,27 @@ import { Link } from "react-router-dom";
 import TicketListItem from "../components/TicketListItem";
 import { getMyTickets, getLastRequesterEmail } from "../services/ticketService";
 
-function isResolvedStatus(status) {
-  return status === "RESOLVED" || status === "CLOSED" || status === "REJECTED";
+function isCancelledStatus(status) {
+  return status === "CANCELLED";
 }
 
-export default function MyResolvedTicketsPage() {
+export default function MyCancelledTicketsPage() {
   const [email, setEmail] = useState(getLastRequesterEmail() || "");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [tickets, setTickets] = useState([]);
 
-  const fetchResolved = async (e) => {
+  const fetchCancelled = async (e) => {
     e.preventDefault();
     setLoading(true);
     setSubmitted(true);
     setError("");
     try {
       const all = await getMyTickets(email);
-      setTickets(all.filter((t) => isResolvedStatus(t.status)));
+      setTickets(all.filter((t) => isCancelledStatus(t.status)));
     } catch {
-      setError("Unable to load resolved tickets.");
+      setError("Unable to load cancelled tickets.");
       setTickets([]);
     } finally {
       setLoading(false);
@@ -35,10 +35,10 @@ export default function MyResolvedTicketsPage() {
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h2 className="text-xl font-semibold tracking-tight text-slate-900">
-            My Resolved Tickets
+            My Cancelled Tickets
           </h2>
           <p className="mt-1 text-sm text-slate-600">
-            View tickets that are resolved or closed.
+            View tickets that were cancelled.
           </p>
         </div>
         <Link
@@ -49,7 +49,7 @@ export default function MyResolvedTicketsPage() {
         </Link>
       </div>
 
-      <form onSubmit={fetchResolved} className="mt-6 flex flex-col gap-4 md:flex-row md:items-end">
+      <form onSubmit={fetchCancelled} className="mt-6 flex flex-col gap-4 md:flex-row md:items-end">
         <label className="w-full md:flex-1 grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
           Email *
           <input
@@ -64,7 +64,7 @@ export default function MyResolvedTicketsPage() {
           type="submit"
           className="inline-flex justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
         >
-          {loading ? "Loading..." : "Show Resolved"}
+          {loading ? "Loading..." : "Show Cancelled"}
         </button>
       </form>
 
@@ -76,7 +76,7 @@ export default function MyResolvedTicketsPage() {
 
       {submitted && !loading && tickets.length === 0 && (
         <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
-          No resolved tickets found for this email.
+          No cancelled tickets found for this email.
         </div>
       )}
 
@@ -90,4 +90,3 @@ export default function MyResolvedTicketsPage() {
     </div>
   );
 }
-

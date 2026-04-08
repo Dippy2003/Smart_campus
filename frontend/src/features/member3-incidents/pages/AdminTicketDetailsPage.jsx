@@ -5,10 +5,11 @@ import TicketThread from "../components/TicketThread";
 import {
   addAdminReply,
   getTicketById,
+  getRegisteredTechnicians,
   updateTicketStatus,
 } from "../services/ticketService";
 
-const STATUSES = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
+const STATUSES = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED", "CANCELLED", "REJECTED"];
 
 export default function AdminTicketDetailsPage() {
   const { id } = useParams();
@@ -18,6 +19,9 @@ export default function AdminTicketDetailsPage() {
   const [ticket, setTicket] = useState(null);
   const [status, setStatus] = useState("OPEN");
   const [replyMessage, setReplyMessage] = useState("");
+  const [assignedTechnician, setAssignedTechnician] = useState("");
+  const [solutionNote, setSolutionNote] = useState("");
+  const [technicians, setTechnicians] = useState([]);
   const [sendNotification, setSendNotification] = useState(true);
   const [savingStatus, setSavingStatus] = useState(false);
   const [sendingReply, setSendingReply] = useState(false);
@@ -30,11 +34,16 @@ export default function AdminTicketDetailsPage() {
   const load = async () => {
     const t = await getTicketById(ticketId);
     setTicket(t);
-    if (t) setStatus(t.status);
+    if (t) {
+      setStatus(t.status);
+      setAssignedTechnician(t.assignedTechnician || "");
+      setSolutionNote(t.solutionNote || "");
+    }
   };
 
   useEffect(() => {
     load();
+    getRegisteredTechnicians().then(setTechnicians).catch(() => setTechnicians([]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticketId]);
 
@@ -42,11 +51,22 @@ export default function AdminTicketDetailsPage() {
     setError("");
     setSavingStatus(true);
     try {
-      const updated = await updateTicketStatus(ticketId, status);
+      const updated = await updateTicketStatus(
+        ticketId,
+        status,
+        assignedTechnician,
+        solutionNote
+      );
       if (!updated) throw new Error("Ticket not found");
       setTicket(updated);
-      if (updated.status === "RESOLVED" || updated.status === "CLOSED") {
+      if (
+        updated.status === "RESOLVED" ||
+        updated.status === "CLOSED" ||
+        updated.status === "REJECTED"
+      ) {
         navigate("/incidents/admin-resolved");
+      } else if (updated.status === "CANCELLED") {
+        navigate("/incidents/admin-cancelled");
       }
     } catch (err) {
       setError("Could not update status.");
@@ -173,6 +193,24 @@ export default function AdminTicketDetailsPage() {
           <p className="mt-3 text-sm text-slate-700 whitespace-pre-wrap">
             {ticket.description}
           </p>
+          {ticket.attachments?.length > 0 && (
+            <div className="mt-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                Attachments
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {ticket.attachments.map((img, idx) => (
+                  <a key={idx} href={img} target="_blank" rel="noreferrer">
+                    <img
+                      src={img}
+                      alt={`Ticket attachment ${idx + 1}`}
+                      className="h-16 w-16 rounded-lg border border-slate-300 object-cover"
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -202,6 +240,33 @@ export default function AdminTicketDetailsPage() {
             </button>
           </div>
         </div>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+            Assigned Technician
+            <select
+              value={assignedTechnician}
+              onChange={(e) => setAssignedTechnician(e.target.value)}
+              className="h-10 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            >
+              <option value="">Unassigned</option>
+              {technicians.map((t) => (
+                <option key={t.email} value={t.email}>
+                  {t.name} ({t.specialty}) - {t.email}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-600">
+            Solution Note
+            <textarea
+              value={solutionNote}
+              onChange={(e) => setSolutionNote(e.target.value)}
+              rows={2}
+              placeholder="Final fix / solution details"
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30"
+            />
+          </label>
+        </div>
 
         {error && (
           <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
@@ -215,8 +280,9 @@ export default function AdminTicketDetailsPage() {
           Send Reply / Notification
         </h3>
         <p className="mt-1 text-sm text-slate-600">
-          Your reply will appear in the request timeline. If you enable
-          notifications, the requester will see it as a new update.
+          Your reply is sent to the requester&apos;s email (when the server has
+          SMTP configured) and appears in the ticket timeline. Use the checkbox
+          below to also add an in-app notification for them.
         </p>
 
         <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-end">
@@ -239,7 +305,7 @@ export default function AdminTicketDetailsPage() {
                 onChange={(e) => setSendNotification(e.target.checked)}
               />
               <span className="text-xs font-semibold text-slate-700">
-                Send notification to requester
+                Also add in-app notification
               </span>
             </label>
 

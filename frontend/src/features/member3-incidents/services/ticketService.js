@@ -45,9 +45,11 @@ function createTicketLocal({
   requesterEmail,
   title,
   description,
+  ticketType,
   category,
   location,
   priority,
+  attachments,
 }) {
   const tickets = readTickets();
   const id = nextId(tickets);
@@ -58,11 +60,15 @@ function createTicketLocal({
     requesterEmail: requesterEmail.trim().toLowerCase(),
     title: title.trim(),
     description: description.trim(),
+    ticketType,
     category,
     location: location.trim(),
     priority,
     status: "OPEN",
     createdAt: now,
+    assignedTechnician: null,
+    solutionNote: null,
+    attachments: Array.isArray(attachments) ? attachments.slice(0, 3) : [],
     updates: [
       {
         id: 1,
@@ -101,7 +107,7 @@ function getTicketByIdLocal(id) {
   return readTickets().find((t) => Number(t.id) === ticketId) || null;
 }
 
-function updateTicketStatusLocal(id, status) {
+function updateTicketStatusLocal(id, status, assignedTechnician, solutionNote) {
   const tickets = readTickets();
   const ticketId = Number(id);
   const idx = tickets.findIndex((t) => Number(t.id) === ticketId);
@@ -110,12 +116,19 @@ function updateTicketStatusLocal(id, status) {
   tickets[idx] = {
     ...tickets[idx],
     status,
+    assignedTechnician: assignedTechnician?.trim() || null,
+    solutionNote: solutionNote?.trim() || null,
     updates: [
       ...(tickets[idx].updates || []),
       {
         id: nextUpdateId(tickets[idx]),
         authorType: "ADMIN",
-        message: `Status changed to ${status}.`,
+        message:
+          `Status changed to ${status}.` +
+          (assignedTechnician?.trim()
+            ? ` Technician assigned: ${assignedTechnician.trim()}.`
+            : "") +
+          (solutionNote?.trim() ? ` Solution: ${solutionNote.trim()}` : ""),
         createdAt: new Date().toISOString(),
       },
     ],
@@ -192,17 +205,21 @@ export async function createTicket({
   requesterEmail,
   title,
   description,
+  ticketType,
   category,
   location,
   priority,
+  attachments,
 }) {
   const payload = {
     requesterEmail,
     title,
     description,
+    ticketType,
     category,
     location,
     priority,
+    attachments: Array.isArray(attachments) ? attachments.slice(0, 3) : [],
   };
 
   window.localStorage.setItem(LAST_EMAIL_KEY, String(requesterEmail || "").trim().toLowerCase());
@@ -247,6 +264,53 @@ export async function getMyTickets(email) {
   }
 }
 
+export async function getTechnicianTickets(email) {
+  const safeEmail = String(email || "").trim();
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/technician?email=${encodeURIComponent(safeEmail)}`
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.error || "Failed to fetch technician tickets");
+    return data;
+  } catch {
+    const norm = safeEmail.toLowerCase();
+    return getAllTicketsLocal().filter(
+      (t) => String(t.assignedTechnician || "").toLowerCase() === norm
+    );
+  }
+}
+
+export async function getRegisteredTechnicians() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/technicians`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.error || "Failed to fetch technicians");
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [
+      {
+        email: "electrician@campus.lk",
+        name: "Campus Electrician",
+        specialty: "ELECTRICAL",
+        accountType: "TECHNICIAN",
+      },
+      {
+        email: "plumber@campus.lk",
+        name: "Campus Plumber",
+        specialty: "PLUMBING",
+        accountType: "TECHNICIAN",
+      },
+      {
+        email: "engineer@campus.lk",
+        name: "Building Engineer",
+        specialty: "CONSTRUCTION",
+        accountType: "TECHNICIAN",
+      },
+    ];
+  }
+}
+
 export async function getTicketById(id) {
   try {
     const res = await fetch(`${API_BASE_URL}/${id}`);
@@ -258,18 +322,18 @@ export async function getTicketById(id) {
   }
 }
 
-export async function updateTicketStatus(id, status) {
+export async function updateTicketStatus(id, status, assignedTechnician, solutionNote) {
   try {
     const res = await fetch(`${API_BASE_URL}/${id}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status, assignedTechnician, solutionNote }),
     });
     const data = await res.json().catch(() => null);
     if (!res.ok) throw new Error(data?.error || "Failed to update status");
     return data;
   } catch {
-    return updateTicketStatusLocal(id, status);
+    return updateTicketStatusLocal(id, status, assignedTechnician, solutionNote);
   }
 }
 
