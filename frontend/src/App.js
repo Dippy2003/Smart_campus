@@ -44,6 +44,19 @@ import UnauthorizedPage from "./features/member4-auth/pages/UnauthorizedPage";
 import RoleGuard from "./features/member4-auth/components/RoleGuard";
 import AuthGuard from "./features/member4-auth/components/AuthGuard";
 
+function MissingComponent({ name }) {
+  return (
+    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-800">
+      Missing component: <span className="font-semibold">{name}</span>
+    </div>
+  );
+}
+
+function SafeComponent({ component: Component, name }) {
+  if (!Component) return <MissingComponent name={name} />;
+  return <Component />;
+}
+
 /**
  * MainShell - Layout wrapper for standard pages
  */
@@ -62,63 +75,63 @@ export default function App() {
     <AuthProvider>
       <ToastProvider>
         <div className="min-h-screen bg-slate-950 text-slate-200">
-          <PillNavbar />
+          <SafeComponent component={PillNavbar} name="PillNavbar" />
 
           <AppErrorBoundary>
             <Routes>
             {/* 1. Public Routes */}
-            <Route path="/" element={<SmartCampusLandingPage />} />
-            <Route path="/admin/login" element={<LoginPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/unauthorized" element={<UnauthorizedPage />} />
-            <Route path="/resources" element={<ResourcesPage />} />
-            <Route path="/resources/:id" element={<ResourceDetailsPage />} />
+            <Route path="/" element={<SafeComponent component={SmartCampusLandingPage} name="SmartCampusLandingPage" />} />
+            <Route path="/admin/login" element={<SafeComponent component={LoginPage} name="LoginPage" />} />
+            <Route path="/login" element={<SafeComponent component={LoginPage} name="LoginPage" />} />
+            <Route path="/unauthorized" element={<SafeComponent component={UnauthorizedPage} name="UnauthorizedPage" />} />
+            <Route path="/resources" element={<SafeComponent component={ResourcesPage} name="ResourcesPage" />} />
+            <Route path="/resources/:id" element={<SafeComponent component={ResourceDetailsPage} name="ResourceDetailsPage" />} />
 
             {/* 2. Admin & Technician Managed Routes (Full Bleed) */}
             <Route
               path="/admin/dashboard"
               element={
                 <RoleGuard roles={["ADMIN", "TECHNICIAN"]}>
-                  <AdminDashboard />
+                  <SafeComponent component={AdminDashboard} name="AdminDashboard" />
                 </RoleGuard>
               }
             />
-            <Route path="/admin/analytics" element={<RoleGuard roles={["ADMIN"]}><AdminAnalyticsPage /></RoleGuard>} />
-            <Route path="/admin/resources" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><AdminResourcesPage /></RoleGuard>} />
-            <Route path="/admin/resources/new" element={<RoleGuard roles={["ADMIN"]}><AddResourcePage /></RoleGuard>} />
-            <Route path="/admin/resources/:id/edit" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><EditResourcePage /></RoleGuard>} />
+            <Route path="/admin/analytics" element={<RoleGuard roles={["ADMIN"]}><SafeComponent component={AdminAnalyticsPage} name="AdminAnalyticsPage" /></RoleGuard>} />
+            <Route path="/admin/resources" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminResourcesPage} name="AdminResourcesPage" /></RoleGuard>} />
+            <Route path="/admin/resources/new" element={<RoleGuard roles={["ADMIN"]}><SafeComponent component={AddResourcePage} name="AddResourcePage" /></RoleGuard>} />
+            <Route path="/admin/resources/:id/edit" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={EditResourcePage} name="EditResourcePage" /></RoleGuard>} />
 
             {/* 3. Protected Shell Routes */}
             <Route element={<MainShell />}>
-              <Route path="/dashboard" element={<AuthGuard><HomePage /></AuthGuard>} />
-              <Route path="/notifications" element={<AuthGuard><NotificationsPage /></AuthGuard>} />
+              <Route path="/dashboard" element={<AuthGuard><SafeComponent component={HomePage} name="HomePage" /></AuthGuard>} />
+              <Route path="/notifications" element={<AuthGuard><SafeComponent component={NotificationsPage} name="NotificationsPage" /></AuthGuard>} />
 
               {/* Member 2 - Bookings */}
-              <Route path="/bookings" element={<BookingHomePage />}>
-                <Route index element={<CreateBookingPage />} />
-                <Route path="create" element={<CreateBookingPage />} />
-                <Route path="my" element={<AuthGuard><MyBookingsPage /></AuthGuard>} />
-                <Route path="admin" element={<RoleGuard roles={["ADMIN"]}><AdminBookingsPage /></RoleGuard>} />
+              <Route path="/bookings" element={<SafeComponent component={BookingHomePage} name="BookingHomePage" />}>
+                <Route index element={<SafeComponent component={CreateBookingPage} name="CreateBookingPage" />} />
+                <Route path="create" element={<SafeComponent component={CreateBookingPage} name="CreateBookingPage" />} />
+                <Route path="my" element={<AuthGuard><SafeComponent component={MyBookingsPage} name="MyBookingsPage" /></AuthGuard>} />
+                <Route path="admin" element={<RoleGuard roles={["ADMIN"]}><SafeComponent component={AdminBookingsPage} name="AdminBookingsPage" /></RoleGuard>} />
               </Route>
 
               {/* Member 3 - Incidents */}
-              <Route path="/incidents" element={<IncidentsHomePage />}>
-                <Route index element={<CreateTicketPage />} />
-                <Route path="create" element={<CreateTicketPage />} />
-                <Route path="my" element={<AuthGuard><MyTicketsPage /></AuthGuard>} />
-                <Route path="my-resolved" element={<AuthGuard><MyResolvedTicketsPage /></AuthGuard>} />
-                <Route path="my-cancelled" element={<AuthGuard><MyCancelledTicketsPage /></AuthGuard>} />
-                <Route path="technician" element={<RoleGuard roles={["TECHNICIAN"]}><TechnicianTicketsPage /></RoleGuard>} />
-                <Route path="admin" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><AdminTicketsPage /></RoleGuard>} />
-                <Route path="admin-resolved" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><AdminResolvedTicketsPage /></RoleGuard>} />
-                <Route path="admin-cancelled" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><AdminCancelledTicketsPage /></RoleGuard>} />
-                <Route path="admin/:id" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><AdminTicketDetailsPage /></RoleGuard>} />
+              <Route path="/incidents" element={<SafeComponent component={IncidentsHomePage} name="IncidentsHomePage" />}>
+                <Route index element={<SafeComponent component={CreateTicketPage} name="CreateTicketPage" />} />
+                <Route path="create" element={<SafeComponent component={CreateTicketPage} name="CreateTicketPage" />} />
+                <Route path="my" element={<AuthGuard><SafeComponent component={MyTicketsPage} name="MyTicketsPage" /></AuthGuard>} />
+                <Route path="my-resolved" element={<AuthGuard><SafeComponent component={MyResolvedTicketsPage} name="MyResolvedTicketsPage" /></AuthGuard>} />
+                <Route path="my-cancelled" element={<AuthGuard><SafeComponent component={MyCancelledTicketsPage} name="MyCancelledTicketsPage" /></AuthGuard>} />
+                <Route path="technician" element={<RoleGuard roles={["TECHNICIAN"]}><SafeComponent component={TechnicianTicketsPage} name="TechnicianTicketsPage" /></RoleGuard>} />
+                <Route path="admin" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminTicketsPage} name="AdminTicketsPage" /></RoleGuard>} />
+                <Route path="admin-resolved" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminResolvedTicketsPage} name="AdminResolvedTicketsPage" /></RoleGuard>} />
+                <Route path="admin-cancelled" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminCancelledTicketsPage} name="AdminCancelledTicketsPage" /></RoleGuard>} />
+                <Route path="admin/:id" element={<RoleGuard roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminTicketDetailsPage} name="AdminTicketDetailsPage" /></RoleGuard>} />
               </Route>
 
               {/* Module Placeholders */}
-              <Route path="/member2" element={<PlaceholderModulePage title="Member 2 Module" />} />
-              <Route path="/member3" element={<PlaceholderModulePage title="Member 3 Module" />} />
-              <Route path="/member4" element={<AuthGuard><NotificationsPage /></AuthGuard>} />
+              <Route path="/member2" element={<SafeComponent component={PlaceholderModulePage} name="PlaceholderModulePage" />} />
+              <Route path="/member3" element={<SafeComponent component={PlaceholderModulePage} name="PlaceholderModulePage" />} />
+              <Route path="/member4" element={<AuthGuard><SafeComponent component={NotificationsPage} name="NotificationsPage" /></AuthGuard>} />
             </Route>
             </Routes>
           </AppErrorBoundary>

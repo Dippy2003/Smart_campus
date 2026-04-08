@@ -46,7 +46,7 @@ export default function NotificationBell({ pollInterval = 30000 }) {
 
   /* ── Handlers ───────────────────────────────────────────────── */
   const handleMarkOne = async (id) => {
-    const updated = await markAsRead(id);
+    await markAsRead(id);
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
