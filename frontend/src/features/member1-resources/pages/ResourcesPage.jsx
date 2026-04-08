@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import ResourceTable from "../components/ResourceTable";
 import ResourceCard from "../components/ResourceCard";
 import { getAllResources } from "../services/resourceApi";
+import { exportResourcesToCsv } from "../utils/resourceExport";
 
 const TYPES = ["", "LECTURE_HALL", "LAB", "MEETING_ROOM", "EQUIPMENT"];
 const STATUSES = ["", "ACTIVE", "OUT_OF_SERVICE"];
@@ -97,6 +98,29 @@ export default function ResourcesPage() {
   }, [filteredResources, sortKey]);
 
   const hasActiveFilters = keyword || type || status || location;
+
+  const filterSummaryPrint = useMemo(() => {
+    const parts = [];
+    if (keyword.trim()) parts.push(`Keyword: "${keyword.trim()}"`);
+    if (type) parts.push(`Type: ${type.replace(/_/g, " ")}`);
+    if (status) parts.push(`Status: ${status.replace(/_/g, " ")}`);
+    if (location.trim()) parts.push(`Location: "${location.trim()}"`);
+    return parts.length ? parts.join(" · ") : "No filters (full list)";
+  }, [keyword, type, status, location]);
+
+  const sortLabel = useMemo(
+    () => SORTS.find((s) => s.key === sortKey)?.label ?? sortKey,
+    [sortKey]
+  );
+
+  const handleExportCsv = () => {
+    const stamp = new Date().toISOString().slice(0, 10);
+    exportResourcesToCsv(sortedResources, `campus-resources-${stamp}.csv`);
+  };
+
+  const handlePrintList = () => {
+    window.print();
+  };
 
   return (
     <>
@@ -421,6 +445,8 @@ export default function ResourcesPage() {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          gap: 0.75rem;
+          flex-wrap: wrap;
           margin-bottom: 0.85rem;
           padding: 0 2px;
         }
@@ -505,20 +531,103 @@ export default function ResourcesPage() {
           .rp-bottom-bar { flex-direction: column; align-items: stretch; }
           .rp-sort-wrap { flex-direction: column; align-items: flex-start; }
         }
+
+        /* Export / print */
+        .rp-export-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+        .rp-export-btn {
+          height: 34px;
+          padding: 0 14px;
+          border-radius: 10px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          border: 1px solid rgba(255,255,255,0.12);
+          background: rgba(255,255,255,0.06);
+          color: #d1d5db;
+          transition: background 0.2s, border-color 0.2s, color 0.2s;
+          white-space: nowrap;
+        }
+        .rp-export-btn:hover:not(:disabled) {
+          background: rgba(99,102,241,0.15);
+          border-color: rgba(99,102,241,0.35);
+          color: #e0e7ff;
+        }
+        .rp-export-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .rp-export-btn--primary {
+          background: rgba(99,102,241,0.2);
+          border-color: rgba(99,102,241,0.35);
+          color: #c7d2fe;
+        }
+
+        .rp-print-only { display: none; }
+
+        @media print {
+          .rp-print-hide { display: none !important; }
+          .rp-main-view { display: none !important; }
+          .rp-print-only {
+            display: block !important;
+            font-family: Georgia, 'Times New Roman', serif;
+            color: #111;
+            padding: 0;
+          }
+          .rp-root {
+            background: #fff !important;
+            min-height: auto !important;
+            padding: 0.75in !important;
+          }
+          .rp-inner { max-width: 100% !important; animation: none !important; }
+          .rp-print-title {
+            font-size: 18pt;
+            margin: 0 0 8pt;
+            font-weight: 700;
+            border-bottom: 2pt solid #333;
+            padding-bottom: 6pt;
+          }
+          .rp-print-meta {
+            font-size: 9pt;
+            color: #444;
+            margin: 4pt 0;
+            line-height: 1.35;
+          }
+          .rp-print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12pt;
+            font-size: 9pt;
+          }
+          .rp-print-table th,
+          .rp-print-table td {
+            border: 1px solid #999;
+            padding: 6pt 8pt;
+            text-align: left;
+            vertical-align: top;
+          }
+          .rp-print-table th {
+            background: #f0f0f0;
+            font-weight: 600;
+          }
+          .rp-print-table tr:nth-child(even) td { background: #fafafa; }
+        }
       `}</style>
 
       <div className="rp-root">
         <div className="rp-inner">
 
           {/* Header */}
-          <div className="rp-header">
+          <div className="rp-header rp-print-hide">
             <div className="rp-header-eyebrow">Student Portal</div>
             <h1>Campus <span>Resources</span></h1>
             <p>Browse, search, and filter all available spaces and equipment on campus.</p>
           </div>
 
           {/* Stats */}
-          <div className="rp-stats">
+          <div className="rp-stats rp-print-hide">
             <div className="rp-stat rp-stat--total">
               <div className="rp-stat-glow" />
               <div className="rp-stat-label">
@@ -546,7 +655,7 @@ export default function ResourcesPage() {
           </div>
 
           {/* Filters */}
-          <div className="rp-filters">
+          <div className="rp-filters rp-print-hide">
             <div className="rp-filter-row">
               <div className="rp-field" style={{ gridColumn: "span 2" }}>
                 <span className="rp-field-label">🔍 Keyword</span>
@@ -648,7 +757,7 @@ export default function ResourcesPage() {
 
           {/* Loading */}
           {loading && (
-            <div className="rp-loading">
+            <div className="rp-loading rp-print-hide">
               <div className="rp-spinner" />
               Fetching resources…
             </div>
@@ -656,21 +765,82 @@ export default function ResourcesPage() {
 
           {/* Error */}
           {error && (
-            <div className="rp-error">
+            <div className="rp-error rp-print-hide">
               ⚠️ {error}
             </div>
           )}
 
           {/* Results bar */}
           {!loading && !error && (
-            <div className="rp-results-bar">
+            <div className="rp-results-bar rp-print-hide">
               <p className="rp-results-count">
                 Showing <strong>{sortedResources.length}</strong> of <strong>{resources.length}</strong> resources
               </p>
+              <div className="rp-export-actions">
+                <button
+                  type="button"
+                  className="rp-export-btn rp-export-btn--primary"
+                  disabled={sortedResources.length === 0}
+                  onClick={handleExportCsv}
+                  title="Download the current filtered & sorted list as CSV"
+                >
+                  Export CSV
+                </button>
+                <button
+                  type="button"
+                  className="rp-export-btn"
+                  disabled={sortedResources.length === 0}
+                  onClick={handlePrintList}
+                  title="Open print dialog for a clean list"
+                >
+                  Print list
+                </button>
+              </div>
             </div>
           )}
 
+          {/* Print-only: simple table (same data as filtered/sorted list) */}
+          <div className="rp-print-only">
+            <h1 className="rp-print-title">Campus resources</h1>
+            <p className="rp-print-meta">
+              Generated {new Date().toLocaleString()} · Sort: {sortLabel}
+            </p>
+            <p className="rp-print-meta">Filters: {filterSummaryPrint}</p>
+            <p className="rp-print-meta">
+              Rows: {sortedResources.length} (of {resources.length} total in system)
+            </p>
+            <table className="rp-print-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Capacity</th>
+                  <th>Location</th>
+                  <th>Availability</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedResources.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.id}</td>
+                    <td>{r.name}</td>
+                    <td>{String(r.type ?? "").replace(/_/g, " ")}</td>
+                    <td>{r.capacity}</td>
+                    <td>{r.location}</td>
+                    <td>
+                      {r.availabilityStart} – {r.availabilityEnd}
+                    </td>
+                    <td>{String(r.status ?? "").replace(/_/g, " ")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
           {/* Results */}
+          <div className="rp-main-view">
           {view === "cards" ? (
             <div className="rp-cards-grid">
               {sortedResources.map((r) => (
@@ -694,6 +864,7 @@ export default function ResourcesPage() {
               )}
             </>
           )}
+          </div>
 
         </div>
       </div>
