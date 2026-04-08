@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getResourceById } from "../services/resourceApi";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 const TYPE_META = {
   LECTURE_HALL: { icon: "🎓", color: "#6366f1" },
@@ -13,6 +14,7 @@ export default function ResourceDetailsPage() {
   const { id } = useParams();
   const [resource, setResource] = useState(null);
   const [loading, setLoading]   = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     (async () => {
@@ -170,13 +172,84 @@ export default function ResourceDetailsPage() {
         @media (max-width: 480px) {
           .rd-avail { grid-column: span 1; }
         }
+
+        .rd-header-actions {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+        }
+        .rd-print-btn {
+          font-family: 'Outfit', sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 8px 14px;
+          border-radius: 10px;
+          border: 1px solid rgba(255,255,255,0.12);
+          background: rgba(99,102,241,0.12);
+          color: #a5b4fc;
+          cursor: pointer;
+          transition: background 0.2s, border-color 0.2s;
+          white-space: nowrap;
+        }
+        .rd-print-btn:hover {
+          background: rgba(99,102,241,0.22);
+          border-color: rgba(99,102,241,0.35);
+        }
+
+        .rd-print-only { display: none; }
+
+        @media print {
+          .rd-print-hide { display: none !important; }
+          .rd-main-screen { display: none !important; }
+          .rd-print-only {
+            display: block !important;
+            font-family: Georgia, 'Times New Roman', serif;
+            color: #111;
+            max-width: 100%;
+          }
+          .rd {
+            background: #fff !important;
+            min-height: auto !important;
+            padding: 0.75in !important;
+          }
+          .rd-wrap { animation: none !important; }
+          .rd-print-h1 {
+            font-size: 18pt;
+            margin: 0 0 10pt;
+            font-weight: 700;
+            border-bottom: 2pt solid #222;
+            padding-bottom: 6pt;
+          }
+          .rd-print-meta {
+            font-size: 10pt;
+            color: #333;
+            margin: 6pt 0;
+          }
+          .rd-print-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12pt;
+            font-size: 10pt;
+          }
+          .rd-print-table th,
+          .rd-print-table td {
+            border: 1px solid #999;
+            padding: 8pt 10pt;
+            text-align: left;
+          }
+          .rd-print-table th {
+            background: #f0f0f0;
+            width: 32%;
+          }
+        }
       `}</style>
 
       <div className="rd">
         <div className="rd-wrap">
 
           {/* Back */}
-          <Link to="/resources" className="rd-back">
+          <Link to="/resources" className="rd-back rd-print-hide">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -201,13 +274,65 @@ export default function ResourceDetailsPage() {
             const isActive = resource.status === "ACTIVE";
             return (
               <>
+                <div className="rd-print-only">
+                  <h1 className="rd-print-h1">Resource schedule</h1>
+                  <p className="rd-print-meta">Printed {new Date().toLocaleString()}</p>
+                  <p className="rd-print-meta">
+                    <strong>{resource.name}</strong> · ID {resource.id}
+                  </p>
+                  <table className="rd-print-table">
+                    <tbody>
+                      <tr>
+                        <th>Type</th>
+                        <td>{resource.type?.replace(/_/g, " ") ?? "—"}</td>
+                      </tr>
+                      <tr>
+                        <th>Status</th>
+                        <td>{resource.status?.replace(/_/g, " ") ?? "—"}</td>
+                      </tr>
+                      <tr>
+                        <th>Location</th>
+                        <td>{resource.location || "—"}</td>
+                      </tr>
+                      <tr>
+                        <th>Capacity</th>
+                        <td>{resource.capacity ?? "—"}</td>
+                      </tr>
+                      <tr>
+                        <th>Available from</th>
+                        <td>{resource.availabilityStart ?? "—"}</td>
+                      </tr>
+                      <tr>
+                        <th>Available until</th>
+                        <td>{resource.availabilityEnd ?? "—"}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p className="rd-print-meta" style={{ marginTop: "14pt", fontSize: "9pt", color: "#555" }}>
+                    This schedule reflects the standard daily booking window for this resource.
+                  </p>
+                </div>
+
+                <div className="rd-main-screen">
                 {/* Header */}
                 <div className="rd-header">
                   <div>
                     <div className="rd-eyebrow"><span />Resource Details</div>
                     <h1 className="rd-h1">{resource.name}</h1>
                   </div>
-                  <div className="rd-id-badge"># {resource.id}</div>
+                  <div className="rd-header-actions">
+                    <button
+                      type="button"
+                      className="rd-print-btn rd-print-hide"
+                      onClick={() => {
+                        toast.info("Opening print dialog…");
+                        window.print();
+                      }}
+                    >
+                      Print schedule
+                    </button>
+                    <div className="rd-id-badge"># {resource.id}</div>
+                  </div>
                 </div>
 
                 {/* Type + Status chips */}
@@ -241,6 +366,7 @@ export default function ResourceDetailsPage() {
                       <span className="rd-time">{resource.availabilityEnd || "—"}</span>
                     </div>
                   </div>
+                </div>
                 </div>
               </>
             );

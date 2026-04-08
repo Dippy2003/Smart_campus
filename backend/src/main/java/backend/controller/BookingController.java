@@ -20,10 +20,11 @@ import java.util.Map;
  *   GET    /api/bookings              - all bookings (admin)
  *   GET    /api/bookings/{id}         - single booking
  *   GET    /api/bookings/stats        - booking statistics
- *   PATCH  /api/bookings/{id}         - update booking (user edits PENDING booking)
+ *   PATCH  /api/bookings/{id}         - update booking
  *   PUT    /api/bookings/{id}/approve - approve booking
  *   PUT    /api/bookings/{id}/reject  - reject booking
  *   PUT    /api/bookings/{id}/cancel  - cancel booking
+ *   DELETE /api/bookings/{id}         - delete booking (admin only)
  */
 @RestController
 @RequestMapping("/api/bookings")
@@ -136,6 +137,18 @@ public class BookingController {
             return ResponseEntity.ok(bookingService.cancelBooking(id, body.get("email")));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // DELETE /api/bookings/{id} — admin permanently deletes a booking
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
+        try {
+            bookingService.deleteBooking(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", e.getMessage()));
         }
     }

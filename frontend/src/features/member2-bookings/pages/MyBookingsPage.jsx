@@ -4,8 +4,10 @@
 import React, { useState } from "react";
 import { getMyBookings, cancelBooking, updateBooking } from "../services/bookingService";
 import BookingStatusBadge from "../components/BookingStatusBadge";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 export default function MyBookingsPage() {
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const [input, setInput] = useState("");
   const [bookings, setBookings] = useState([]);
@@ -14,7 +16,6 @@ export default function MyBookingsPage() {
   const [searched, setSearched] = useState(false);
   const [sortOrder, setSortOrder] = useState("newest");
 
-  // Edit modal state
   const [editingBooking, setEditingBooking] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [editLoading, setEditLoading] = useState(false);
@@ -44,12 +45,12 @@ export default function MyBookingsPage() {
       setBookings((prev) =>
         prev.map((b) => (b.id === id ? { ...b, status: "CANCELLED" } : b))
       );
+      toast.success("Booking cancelled.");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message || "Cancel failed.");
     }
   };
 
-  // Open edit modal and populate form with current values
   const handleEditOpen = (booking) => {
     setEditingBooking(booking);
     setEditError(null);
@@ -68,7 +69,6 @@ export default function MyBookingsPage() {
     setEditError(null);
   };
 
-  // Save edited booking
   const handleEditSave = async () => {
     if (editForm.startTime >= editForm.endTime) {
       setEditError("End time must be after start time.");
@@ -84,19 +84,19 @@ export default function MyBookingsPage() {
         startTime: editForm.startTime,
         endTime: editForm.endTime,
       });
-      // Update booking in list
       setBookings((prev) =>
         prev.map((b) => (b.id === updated.id ? updated : b))
       );
       handleEditClose();
+      toast.success("Booking updated.");
     } catch (err) {
       setEditError(err.message);
+      toast.error(err.message || "Update failed.");
     } finally {
       setEditLoading(false);
     }
   };
 
-  // Sort bookings by date
   const sortedBookings = [...bookings].sort((a, b) => {
     if (sortOrder === "newest") {
       return new Date(b.bookingDate) - new Date(a.bookingDate);
@@ -110,12 +110,13 @@ export default function MyBookingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h2 className="mb-2 text-xl font-semibold text-white">My Bookings</h2>
+
+      {/* ── HEADER CHANGED TO "Booking Resources" ── */}
+      <h2 className="mb-2 text-xl font-semibold text-white">Booking Resources</h2>
       <p className="mb-5 text-sm text-slate-400">
         Enter your email to view all your booking requests.
       </p>
 
-      {/* Search form */}
       <form onSubmit={fetchBookings} className="mb-6 flex gap-2.5">
         <input
           type="email"
@@ -148,7 +149,6 @@ export default function MyBookingsPage() {
         </div>
       )}
 
-      {/* Stats + sort bar */}
       {bookings.length > 0 && (
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
           <p style={{ fontSize: "13px", color: "#94a3b8", margin: 0 }}>
@@ -159,14 +159,7 @@ export default function MyBookingsPage() {
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            style={{
-              fontSize: "12px",
-              background: "#1e293b",
-              color: "#94a3b8",
-              border: "1px solid #334155",
-              borderRadius: "6px",
-              padding: "4px 8px",
-            }}
+            style={{ fontSize: "12px", background: "#1e293b", color: "#94a3b8", border: "1px solid #334155", borderRadius: "6px", padding: "4px 8px" }}
           >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
@@ -174,7 +167,6 @@ export default function MyBookingsPage() {
         </div>
       )}
 
-      {/* Booking cards */}
       {sortedBookings.map((b) => (
         <div
           key={b.id}
@@ -200,22 +192,20 @@ export default function MyBookingsPage() {
             </div>
             <div className="flex flex-col items-end gap-2 ml-4">
               <BookingStatusBadge status={b.status} />
-
-              {/* Edit button — only for PENDING bookings */}
               {b.status === "PENDING" && (
                 <button
                   onClick={() => handleEditOpen(b)}
                   className="rounded-lg border border-blue-600 bg-blue-900/50 px-3 py-1.5 text-xs font-semibold text-blue-300 transition hover:bg-blue-800/50"
+                  style={{ width: "70px", textAlign: "center" }}
                 >
                   Edit
                 </button>
               )}
-
-              {/* Cancel button — for PENDING or APPROVED */}
               {(b.status === "PENDING" || b.status === "APPROVED") && (
                 <button
                   onClick={() => handleCancel(b.id)}
                   className="rounded-lg border border-red-600 bg-red-900/50 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-800/50"
+                  style={{ width: "70px", textAlign: "center" }}
                 >
                   Cancel
                 </button>
@@ -225,31 +215,14 @@ export default function MyBookingsPage() {
         </div>
       ))}
 
-      {/* ── Edit Modal ── */}
+      {/* Edit Modal */}
       {editingBooking && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "20px",
-          }}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: "20px" }}
           onClick={handleEditClose}
         >
           <div
-            style={{
-              background: "#1e293b",
-              border: "1px solid #334155",
-              borderRadius: "14px",
-              padding: "28px",
-              width: "100%",
-              maxWidth: "460px",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
-            }}
+            style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: "14px", padding: "28px", width: "100%", maxWidth: "460px", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}
             onClick={(e) => e.stopPropagation()}
           >
             <h3 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: 700, color: "#fff" }}>
@@ -266,76 +239,33 @@ export default function MyBookingsPage() {
             )}
 
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-
-              {/* Purpose */}
               <div>
                 <label style={labelStyle}>Purpose</label>
-                <input
-                  type="text"
-                  value={editForm.purpose}
-                  onChange={(e) => setEditForm({ ...editForm, purpose: e.target.value })}
-                  style={inputStyle}
-                />
+                <input type="text" value={editForm.purpose} onChange={(e) => setEditForm({ ...editForm, purpose: e.target.value })} style={inputStyle} />
               </div>
-
-              {/* Attendees */}
               <div>
                 <label style={labelStyle}>Attendees</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={editForm.attendees}
-                  onChange={(e) => setEditForm({ ...editForm, attendees: e.target.value })}
-                  style={inputStyle}
-                />
+                <input type="number" min="1" value={editForm.attendees} onChange={(e) => setEditForm({ ...editForm, attendees: e.target.value })} style={inputStyle} />
               </div>
-
-              {/* Date */}
               <div>
                 <label style={labelStyle}>Booking Date</label>
-                <input
-                  type="date"
-                  value={editForm.bookingDate}
-                  min={today}
-                  onChange={(e) => setEditForm({ ...editForm, bookingDate: e.target.value })}
-                  style={inputStyle}
-                />
+                <input type="date" value={editForm.bookingDate} min={today} onChange={(e) => setEditForm({ ...editForm, bookingDate: e.target.value })} style={inputStyle} />
               </div>
-
-              {/* Time range */}
               <div>
                 <label style={labelStyle}>Time Range</label>
                 <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                  <input
-                    type="time"
-                    value={editForm.startTime}
-                    onChange={(e) => setEditForm({ ...editForm, startTime: e.target.value })}
-                    style={{ ...inputStyle, flex: 1 }}
-                  />
+                  <input type="time" value={editForm.startTime} onChange={(e) => setEditForm({ ...editForm, startTime: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
                   <span style={{ color: "#64748b", fontSize: "13px" }}>to</span>
-                  <input
-                    type="time"
-                    value={editForm.endTime}
-                    onChange={(e) => setEditForm({ ...editForm, endTime: e.target.value })}
-                    style={{ ...inputStyle, flex: 1 }}
-                  />
+                  <input type="time" value={editForm.endTime} onChange={(e) => setEditForm({ ...editForm, endTime: e.target.value })} style={{ ...inputStyle, flex: 1 }} />
                 </div>
               </div>
             </div>
 
-            {/* Buttons */}
             <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "24px" }}>
-              <button
-                onClick={handleEditClose}
-                style={{ padding: "9px 18px", borderRadius: "8px", border: "1px solid #334155", background: "transparent", color: "#94a3b8", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}
-              >
+              <button onClick={handleEditClose} style={{ padding: "9px 18px", borderRadius: "8px", border: "1px solid #334155", background: "transparent", color: "#94a3b8", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}>
                 Cancel
               </button>
-              <button
-                onClick={handleEditSave}
-                disabled={editLoading}
-                style={{ padding: "9px 24px", borderRadius: "8px", border: "none", background: editLoading ? "#1d4ed8" : "#2563eb", color: "#fff", fontWeight: 600, cursor: editLoading ? "not-allowed" : "pointer", fontSize: "13px", opacity: editLoading ? 0.7 : 1 }}
-              >
+              <button onClick={handleEditSave} disabled={editLoading} style={{ padding: "9px 24px", borderRadius: "8px", border: "none", background: editLoading ? "#1d4ed8" : "#2563eb", color: "#fff", fontWeight: 600, cursor: editLoading ? "not-allowed" : "pointer", fontSize: "13px", opacity: editLoading ? 0.7 : 1 }}>
                 {editLoading ? "Saving..." : "Save Changes"}
               </button>
             </div>
@@ -346,21 +276,5 @@ export default function MyBookingsPage() {
   );
 }
 
-const inputStyle = {
-  width: "100%",
-  padding: "9px 12px",
-  borderRadius: "8px",
-  border: "1px solid #334155",
-  background: "#0f172a",
-  color: "#fff",
-  fontSize: "13px",
-  boxSizing: "border-box",
-};
-
-const labelStyle = {
-  display: "block",
-  fontSize: "12px",
-  fontWeight: 600,
-  color: "#94a3b8",
-  marginBottom: "5px",
-};
+const inputStyle = { width: "100%", padding: "9px 12px", borderRadius: "8px", border: "1px solid #334155", background: "#0f172a", color: "#fff", fontSize: "13px", boxSizing: "border-box" };
+const labelStyle = { display: "block", fontSize: "12px", fontWeight: 600, color: "#94a3b8", marginBottom: "5px" };

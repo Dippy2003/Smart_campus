@@ -1,17 +1,17 @@
 import { api } from "../../../shared/services/api";
 
-// CRUD
+// CRUD — all under /resources (REST plural)
 export const getAllResources = () => api.get("/resources");
-export const getResourceById = (id) => api.get(`/resource/${id}`);
-export const createResource = (data) => api.post("/resource", data);
-export const updateResource = (id, data) => api.put(`/resource/${id}`, data);
-export const deleteResource = (id) => api.delete(`/resource/${id}`);
+export const getResourceById = (id) => api.get(`/resources/${id}`);
+export const createResource = (data) => api.post("/resources", data);
+export const updateResource = (id, data) => api.put(`/resources/${id}`, data);
+export const deleteResource = (id) => api.delete(`/resources/${id}`);
 
 // Filters
-export const getByType = (type) => api.get(`/resource/type/${type}`);
-export const getByStatus = (status) => api.get(`/resource/status/${status}`);
-export const getByLocation = (location) => api.get(`/resource/location/${location}`);
+export const getByType = (type) => api.get(`/resources/type/${type}`);
+export const getByStatus = (status) => api.get(`/resources/status/${status}`);
+export const getByLocation = (location) => api.get(`/resources/location/${location}`);
 
 // Search
 export const searchResources = (keyword) =>
-  api.get("/resource/search", { params: { keyword } });
+  api.get("/resources/search", { params: { keyword } });

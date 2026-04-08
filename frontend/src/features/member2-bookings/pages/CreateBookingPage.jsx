@@ -3,8 +3,10 @@
 
 import React, { useEffect, useState } from "react";
 import { createBooking, RESOURCES_URL } from "../services/bookingService";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 export default function CreateBookingPage() {
+  const toast = useToast();
   const [resources, setResources] = useState([]);
   const [resourcesLoading, setResourcesLoading] = useState(true);
   const [selectedResource, setSelectedResource] = useState(null); // track selected resource object
@@ -93,6 +95,7 @@ export default function CreateBookingPage() {
         endTime: form.endTime,
       });
       setMessage("✓ Booking submitted successfully! Status: PENDING — waiting for admin approval.");
+      toast.success("Booking request submitted (PENDING).");
       setForm({
         resourceId: "",
         bookedByEmail: "",
@@ -105,6 +108,7 @@ export default function CreateBookingPage() {
       setSelectedResource(null);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Booking submission failed.");
     } finally {
       setLoading(false);
     }

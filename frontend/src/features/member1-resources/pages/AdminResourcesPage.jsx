@@ -2,8 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import ResourceTable from "../components/ResourceTable";
 import { deleteResource, getAllResources } from "../services/resourceApi";
+import { exportResourcesToCsv } from "../utils/resourceExport";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 export default function AdminResourcesPage() {
+  const toast = useToast();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,8 +31,14 @@ export default function AdminResourcesPage() {
     try {
       await deleteResource(id);
       await loadAll();
+      toast.success("Resource deleted.");
     } catch (e) {
-      setError("Delete failed. Check that the backend is running and reachable.");
+      const msg =
+        e.response?.data?.message ||
+        e.response?.data?.error ||
+        "Delete failed. Check that the backend is running and reachable.";
+      setError(msg);
+      toast.error(msg);
     }
   };
 
@@ -43,6 +52,12 @@ export default function AdminResourcesPage() {
     const out = resources.filter((r) => r.status === "OUT_OF_SERVICE").length;
     return { total, active, out };
   }, [resources]);
+
+  const handleExportCsv = () => {
+    const stamp = new Date().toISOString().slice(0, 10);
+    exportResourcesToCsv(resources, `admin-resources-${stamp}.csv`);
+    toast.success("CSV downloaded.");
+  };
 
   return (
     <>
@@ -176,6 +191,39 @@ export default function AdminResourcesPage() {
         }
         .arp-add-btn:active {
           transform: translateY(0);
+        }
+
+        .arp-header-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          flex-wrap: wrap;
+        }
+        .arp-export-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 0 16px;
+          height: 40px;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 12px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px;
+          font-weight: 600;
+          color: #d1d5db;
+          cursor: pointer;
+          transition: background 0.2s, border-color 0.2s, color 0.2s;
+          white-space: nowrap;
+        }
+        .arp-export-btn:hover:not(:disabled) {
+          background: rgba(99,102,241,0.15);
+          border-color: rgba(99,102,241,0.35);
+          color: #e0e7ff;
+        }
+        .arp-export-btn:disabled {
+          opacity: 0.45;
+          cursor: not-allowed;
         }
 
         /* ── Stat Cards ──────────────────────────── */
@@ -313,9 +361,20 @@ export default function AdminResourcesPage() {
               <p>Manage, edit, and remove resources from the system.</p>
             </div>
 
-            <Link to="/admin/resources/new" className="arp-add-btn">
-              + Add Resource
-            </Link>
+            <div className="arp-header-actions">
+              <button
+                type="button"
+                className="arp-export-btn"
+                disabled={resources.length === 0 || loading}
+                onClick={handleExportCsv}
+                title="Download all resources as CSV"
+              >
+                Export CSV
+              </button>
+              <Link to="/admin/resources/new" className="arp-add-btn">
+                + Add Resource
+              </Link>
+            </div>
           </div>
 
           {/* Stats */}
