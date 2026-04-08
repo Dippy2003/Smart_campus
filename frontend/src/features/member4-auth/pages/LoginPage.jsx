@@ -142,7 +142,7 @@ function SignInForm({ onForgot, onSwitch }) {
       return;
     }
 
-    const from = searchParams.get("from") || (result.role === "ADMIN" ? "/admin/resources" : "/");
+    const from = searchParams.get("from") || (result.role === "ADMIN" ? "/admin/dashboard" : "/");
     navigate(from, { replace: true });
   };
 
