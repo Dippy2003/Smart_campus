@@ -1,7 +1,16 @@
 import axios from "axios";
 
-const API_BASE =
-  (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_BASE_URL) || "";
+function normalizeApiBase(raw) {
+  const value = String(raw || "").trim();
+  if (!value) return "http://localhost:8080";
+  if (value.startsWith(":")) return `http://localhost${value}`;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  return `http://${value}`;
+}
+
+const API_BASE = normalizeApiBase(
+  typeof process !== "undefined" && process.env ? process.env.REACT_APP_API_BASE_URL : ""
+);
 
 export const api = axios.create({
   baseURL: API_BASE,

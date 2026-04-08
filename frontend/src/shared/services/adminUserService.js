@@ -1,6 +1,20 @@
 import { api } from "../../features/member4-auth/services/api";
 
 export const adminUserService = {
+  async createUser(payload) {
+    try {
+      const res = await api.post("/api/admin/users", payload);
+      return res.data;
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Failed to create user.";
+      throw new Error(msg);
+    }
+  },
+
   async getAllUsers() {
     try {
       const res = await api.get("/api/admin/users");
