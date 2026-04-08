@@ -17,41 +17,20 @@ function clamp01(n) {
   return Number.isNaN(x) ? 0 : Math.max(0, Math.min(1, x));
 }
 
-// ─── Mock trend data (replace with real API calls when available) ────────────
-const MONTHLY_BOOKINGS = [
-  { month: "Oct", bookings: 38, tickets: 12 },
-  { month: "Nov", bookings: 52, tickets: 18 },
-  { month: "Dec", bookings: 31, tickets: 9 },
-  { month: "Jan", bookings: 67, tickets: 22 },
-  { month: "Feb", bookings: 74, tickets: 15 },
-  { month: "Mar", bookings: 89, tickets: 28 },
-];
-
-const RESOURCE_TYPES = [
-  { name: "Lecture Hall", value: 8, color: "#6366f1" },
-  { name: "Lab", value: 12, color: "#22d3ee" },
-  { name: "Meeting Room", value: 15, color: "#a855f7" },
-  { name: "Equipment", value: 5, color: "#f59e0b" },
-];
-
-const DAILY_ACTIVITY = [
-  { day: "Mon", active: 42, idle: 18 },
-  { day: "Tue", active: 58, idle: 12 },
-  { day: "Wed", active: 71, idle: 9 },
-  { day: "Thu", active: 65, idle: 15 },
-  { day: "Fri", active: 53, idle: 27 },
-  { day: "Sat", active: 21, idle: 59 },
-  { day: "Sun", active: 14, idle: 66 },
-];
-
-const TOP_RESOURCES = [
-  { name: "Lab A-101", bookings: 34, type: "LAB" },
-  { name: "Lecture Hall B", bookings: 28, type: "LECTURE_HALL" },
-  { name: "Meeting Rm 3", bookings: 24, type: "MEETING_ROOM" },
-  { name: "Lab B-202", bookings: 19, type: "LAB" },
-  { name: "Projector Kit", bookings: 16, type: "EQUIPMENT" },
-  { name: "Lecture Hall A", bookings: 14, type: "LECTURE_HALL" },
-];
+function emptyWeeklyActivity() {
+  const today = new Date();
+  const days = [];
+  for (let i = 6; i >= 0; i -= 1) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    days.push({
+      day: d.toLocaleDateString("en-US", { weekday: "short" }),
+      active: 0,
+      idle: 0,
+    });
+  }
+  return days;
+}
 
 // ─── Custom tooltip ──────────────────────────────────────────────────────────
 const ChartTooltip = ({ active, payload, label }) => {
@@ -149,7 +128,7 @@ export default function AdminAnalyticsPage() {
     const totalResources = Number(stats?.totalResources ?? 40);
     const totalBookings = Number(stats?.totalBookings ?? 89);
     const totalTickets = Number(stats?.totalTickets ?? 28);
-    const totalUsers = 156;
+    const totalUsers = Number(stats?.totalUsers ?? 0);
     const utilizationRate = Math.round(clamp01((totalBookings) / Math.max(1, totalResources * 3)) * 100);
     
     // Use real resource breakdown data from backend, fallback to mock data
@@ -179,8 +158,13 @@ export default function AdminAnalyticsPage() {
       { month: "Feb", bookings: 74, tickets: 15 },
       { month: "Mar", bookings: 89, tickets: 28 },
     ];
+
+    const weeklyActivity =
+      Array.isArray(stats?.weeklyActivity) && stats.weeklyActivity.length > 0
+        ? stats.weeklyActivity
+        : emptyWeeklyActivity();
     
-    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown, topResources, monthlyTrends };
+    return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown, topResources, monthlyTrends, weeklyActivity };
   }, [stats]);
 
   return (
@@ -515,7 +499,7 @@ export default function AdminAnalyticsPage() {
           <div className="aa-row3" style={{ marginBottom: "1rem" }}>
             <Card title="Weekly Activity" sub="Active vs idle resources by day" style={{ gridColumn: "span 2" }}>
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={DAILY_ACTIVITY} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barGap={4}>
+                <BarChart data={computed.weeklyActivity} margin={{ top: 4, right: 8, left: -20, bottom: 0 }} barGap={4}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="day" tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: "#6b7280", fontSize: 11 }} axisLine={false} tickLine={false} />

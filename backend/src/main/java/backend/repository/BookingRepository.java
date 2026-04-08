@@ -60,4 +60,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
            "GROUP BY MONTHNAME(b.bookingDate), YEAR(b.bookingDate), MONTH(b.bookingDate) " +
            "ORDER BY YEAR(b.bookingDate), MONTH(b.bookingDate)")
     List<Object[]> findMonthlyBookings();
+
+    @Query("""
+           SELECT b.bookingDate as day, COUNT(b) as count
+           FROM Booking b
+           WHERE b.bookingDate BETWEEN :startDate AND :endDate
+           GROUP BY b.bookingDate
+           ORDER BY b.bookingDate
+           """)
+    List<Object[]> findDailyBookingsBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }

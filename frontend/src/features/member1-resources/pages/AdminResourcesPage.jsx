@@ -33,10 +33,12 @@ export default function AdminResourcesPage() {
       await loadAll();
       toast.success("Resource deleted.");
     } catch (e) {
-      const msg =
-        e.response?.data?.message ||
-        e.response?.data?.error ||
-        "Delete failed. Check that the backend is running and reachable.";
+      const isConflict = e.response?.status === 409;
+      const msg = isConflict
+        ? "Cannot delete this resource because it has related bookings. Remove those bookings first."
+        : e.response?.data?.message ||
+          e.response?.data?.error ||
+          "Delete failed. Check that the backend is running and reachable.";
       setError(msg);
       toast.error(msg);
     }
