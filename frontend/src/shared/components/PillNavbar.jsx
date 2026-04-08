@@ -1,6 +1,6 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
 import { useAuth } from "../../features/member4-auth/Contexts/AuthContext";
 import NotificationBell from "../../features/member4-auth/components/NotificationBell";
 
@@ -29,7 +29,9 @@ export default function PillNavbar() {
   const { isAdmin, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const isLanding = location.pathname === "/";
+  const profileMenuRef = useRef(null);
 
   const dashboardTo = isAdmin ? "/admin/dashboard" : "/dashboard";
 
@@ -154,7 +156,40 @@ export default function PillNavbar() {
   const handleLogout = async () => {
     await logout();
     setMobileOpen(false);
+    setProfileMenuOpen(false);
   };
+
+  const handleRouteClick = (item, event, shouldCloseMobile = false) => {
+    if (item?.id === "home" && isLanding) {
+      event.preventDefault();
+      if (location.hash) {
+        window.history.replaceState(null, "", `${location.pathname}${location.search}`);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setProfileMenuOpen(false);
+      if (shouldCloseMobile) setMobileOpen(false);
+      return;
+    }
+    if (shouldCloseMobile) setMobileOpen(false);
+  };
+
+  useEffect(() => {
+    if (!profileMenuOpen) return undefined;
+    const handleOutsideClick = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+    const handleEsc = (event) => {
+      if (event.key === "Escape") setProfileMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleEsc);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [profileMenuOpen]);
 
   return (
     <header className={headerClass}>
@@ -164,6 +199,13 @@ export default function PillNavbar() {
           60% { transform: scale(1.03); }
           100% { transform: scale(1); }
         }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
       `}</style>
       <div className="mx-auto flex max-w-6xl flex-col items-stretch px-4 py-4 sm:items-center">
         <nav
@@ -172,7 +214,7 @@ export default function PillNavbar() {
         >
           <div
             ref={containerRef}
-            className="relative hidden min-h-[2.25rem] min-w-0 flex-1 flex-wrap items-center gap-x-0 gap-y-2 md:flex"
+            className="no-scrollbar relative hidden min-h-[2.25rem] min-w-0 flex-1 flex-wrap items-center gap-x-0 gap-y-2 md:flex"
           >
             {indicator.ready && indicator.width > 0 && (
               <span
@@ -197,6 +239,7 @@ export default function PillNavbar() {
                     ref={setLinkRef(item.id)}
                     to={item.to}
                     end={item.end}
+                    onClick={(e) => handleRouteClick(item, e)}
                     className={({ isActive }) =>
                       `relative z-10 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 active:scale-95 md:px-3.5 ` +
                       (isRouteActive(item, isActive) ? linkActive : linkIdle)
@@ -231,14 +274,37 @@ export default function PillNavbar() {
                 >
                   Dashboard
                 </Link>
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  className="hidden shrink-0 items-center gap-1.5 rounded-full border border-rose-400/40 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-100 shadow-sm shadow-rose-900/20 transition-all duration-200 hover:-translate-y-[1px] hover:bg-rose-500/20 hover:text-white active:scale-95 md:inline-flex"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </button>
+                <div ref={profileMenuRef} className="relative hidden md:block">
+                  <button
+                    type="button"
+                    onClick={() => setProfileMenuOpen((open) => !open)}
+                    aria-haspopup="menu"
+                    aria-expanded={profileMenuOpen}
+                    aria-label="Open user menu"
+                    className={`inline-flex h-10 w-10 items-center justify-center rounded-full border text-slate-200 transition-all duration-200 active:scale-95 ${
+                      profileMenuOpen
+                        ? "border-blue-400/70 bg-slate-700 text-white shadow-[0_0_0_3px_rgba(59,130,246,0.18)]"
+                        : "border-slate-600 bg-slate-800 hover:-translate-y-[1px] hover:border-slate-500 hover:bg-slate-700 hover:text-white"
+                    }`}
+                  >
+                    <User className="h-5 w-5" />
+                  </button>
+                  {profileMenuOpen && (
+                    <div className="absolute right-0 top-[calc(100%+0.6rem)] z-50 w-48 overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900/95 p-1.5 shadow-2xl shadow-black/50 ring-1 ring-slate-700/60 backdrop-blur animate-[navPop_180ms_ease-out]">
+                      <div className="px-3 py-2 text-[11px] font-medium uppercase tracking-wide text-slate-400">
+                        Account
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-200 transition-colors hover:bg-slate-800 hover:text-white"
+                      >
+                        <LogOut className="h-4 w-4 text-rose-300" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <NotificationBellSafe pollInterval={30000} />
               </>
             ) : (
@@ -268,7 +334,7 @@ export default function PillNavbar() {
                 key={item.id}
                 to={item.to}
                 end={item.end}
-                onClick={() => setMobileOpen(false)}
+                onClick={(e) => handleRouteClick(item, e, true)}
                 className={({ isActive }) =>
                   "rounded-xl px-3 py-2.5 text-sm font-medium transition-colors " +
                   (isRouteActive(item, isActive)

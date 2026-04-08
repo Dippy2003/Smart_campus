@@ -70,6 +70,15 @@ export default function NotificationBell({ pollInterval = 30000 }) {
 
   return (
     <div ref={ref} className="relative">
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
       {/* ── Bell button ── */}
       <button
         onClick={() => setOpen((o) => !o)}
@@ -105,7 +114,7 @@ export default function NotificationBell({ pollInterval = 30000 }) {
           </div>
 
           {/* List */}
-          <ul className="max-h-72 divide-y divide-slate-700/50 overflow-y-auto">
+          <ul className="no-scrollbar max-h-72 divide-y divide-slate-700/50 overflow-y-auto">
             {preview.length === 0 ? (
               <li className="px-4 py-8 text-center text-sm text-slate-400">No notifications yet</li>
             ) : (
