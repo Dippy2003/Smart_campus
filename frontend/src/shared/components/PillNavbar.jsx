@@ -121,9 +121,10 @@ export default function PillNavbar() {
 
   const pillClass = "border border-slate-700/90 bg-slate-900/90 shadow-lg shadow-black/20";
 
-  const linkIdle = "text-slate-300 hover:text-white";
+  const linkIdle =
+    "text-slate-300 hover:text-white hover:-translate-y-[1px]";
 
-  const linkActive = "text-white";
+  const linkActive = "text-white animate-[navPop_220ms_ease-out]";
 
   const mobileBtnClass = "inline-flex rounded-full border border-slate-600 p-2 text-slate-200";
 
@@ -149,6 +150,13 @@ export default function PillNavbar() {
 
   return (
     <header className={headerClass}>
+      <style>{`
+        @keyframes navPop {
+          0% { transform: scale(0.96); }
+          60% { transform: scale(1.03); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
       <div className="mx-auto flex max-w-6xl flex-col items-stretch px-4 py-4 sm:items-center">
         <nav
           className={`mx-auto flex w-full max-w-5xl items-center justify-end gap-2 rounded-full px-2 py-2 pl-3 sm:justify-between sm:pl-4 sm:pr-2 ${pillClass}`}
@@ -160,7 +168,7 @@ export default function PillNavbar() {
           >
             {indicator.ready && indicator.width > 0 && (
               <span
-                className="pointer-events-none absolute rounded-full bg-blue-600 transition-[left,width,height,opacity] duration-300 ease-out"
+                className="pointer-events-none absolute rounded-full bg-blue-600 transition-[left,width,height,opacity,transform] duration-300 ease-out"
                 style={{
                   left: indicator.left,
                   width: indicator.width,
@@ -182,7 +190,7 @@ export default function PillNavbar() {
                     to={item.to}
                     end={item.end}
                     className={({ isActive }) =>
-                      `relative z-10 rounded-full px-3 py-2 text-sm font-medium transition-colors md:px-3.5 ` +
+                      `relative z-10 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 active:scale-95 md:px-3.5 ` +
                       (isRouteActive(item, isActive) ? linkActive : linkIdle)
                     }
                   >
@@ -196,7 +204,7 @@ export default function PillNavbar() {
                   ref={setLinkRef(item.id)}
                   href={item.href}
                   className={
-                    `relative z-10 rounded-full px-3 py-2 text-sm font-medium transition-colors md:px-3.5 ` +
+                    `relative z-10 rounded-full px-3 py-2 text-sm font-medium transition-all duration-200 active:scale-95 md:px-3.5 ` +
                     (isAnchorActive(item) ? linkActive : linkIdle)
                   }
                 >
@@ -212,14 +220,14 @@ export default function PillNavbar() {
                 <NotificationBellSafe pollInterval={30000} />
                 <Link
                   to={dashboardTo}
-                  className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 sm:px-5"
+                  className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 sm:px-5"
                 >
                   Dashboard
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="hidden shrink-0 items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 sm:inline-flex"
+                  className="hidden shrink-0 items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition-all duration-200 hover:-translate-y-[1px] hover:bg-slate-700 active:scale-95 sm:inline-flex"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
@@ -228,7 +236,7 @@ export default function PillNavbar() {
             ) : (
               <Link
                 to="/admin/login"
-                className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 sm:px-5"
+                className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 sm:px-5"
               >
                 Login
               </Link>

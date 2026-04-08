@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "../auth/AdminAuthContext";
+import { useAuth } from "../../features/member4-auth/Contexts/AuthContext";
 
 function ModuleCard({ title, description, to, cta }) {
   return (
@@ -26,6 +27,21 @@ function ModuleCard({ title, description, to, cta }) {
 
 export default function HomePage() {
   const { isAdmin } = useAdminAuth();
+  const { user } = useAuth();
+
+  const sessionUserName = (() => {
+    if (user?.name) return user.name;
+    try {
+      const cached = window.sessionStorage.getItem("paf-auth-user");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.name) return parsed.name;
+      }
+    } catch {
+      // Ignore malformed session cache.
+    }
+    return "there";
+  })();
 
   return (
     <div className="space-y-8">
@@ -33,11 +49,11 @@ export default function HomePage() {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold tracking-tight text-slate-50 sm:text-3xl">
-              Welcome
+              Hello {sessionUserName}
             </h2>
             <p className="max-w-2xl text-sm text-slate-300">
-              This is the main dashboard that combines all 4 members' parts. Students can
-              browse resources, and resource admins can manage the catalog.
+              What you can do from here: see resources, book resources, use incident
+              ticketing, and check your notifications.
             </p>
           </div>
 
@@ -61,38 +77,37 @@ export default function HomePage() {
       <section className="space-y-3">
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-300">
-            Modules (4 members)
+            What you can do
           </h3>
           <p className="mt-1 text-xs text-slate-400">
-            Member 1 is implemented. Member 2–4 tiles are placeholders you can replace with
-            your real pages when ready.
+            Jump into the four main sections below.
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <ModuleCard
-            title="Member 1 · Resources"
-            description="Search, filter, and view resource details."
+            title="See Resources"
+            description="Browse and view campus resources."
             to="/resources"
             cta="Open"
           />
           <ModuleCard
-            title="Member 2 · Bookings"
-            description="Create, view, and manage your bookings."
+            title="Book Resource"
+            description="Create and manage your resource bookings."
             to="/bookings"
             cta="Open"
           />
           <ModuleCard
-            title="Member 3 · Incidents"
-            description="Report issues and track maintenance tickets."
+            title="Incident Ticketing"
+            description="Report issues and track incident tickets."
             to="/incidents/create"
             cta="Open"
           />
           <ModuleCard
-            title="Member 4 · Coming soon"
-            description="Add your member 4 feature here."
-            to="/member4"
-            cta="Preview"
+            title="Notifications"
+            description="View your latest alerts and updates."
+            to="/notifications"
+            cta="Open"
           />
         </div>
       </section>
