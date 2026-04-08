@@ -5,6 +5,7 @@ import backend.model.ResourceType;
 import backend.model.resourcesModel;
 import backend.repository.ResourceRepository;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +72,13 @@ public class ResourceController {
         if (!resourceRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found");
         }
-        resourceRepository.deleteById(id);
+        try {
+            resourceRepository.deleteById(id);
+        } catch (DataIntegrityViolationException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Cannot delete resource because it has related bookings");
+        }
         return ResponseEntity.noContent().build();
     }
 
