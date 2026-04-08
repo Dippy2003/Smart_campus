@@ -6,6 +6,7 @@ import backend.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Map;
@@ -51,9 +52,10 @@ public class BookingController {
 
     // GET /api/bookings/my?email=xxx — get user's own bookings
     @GetMapping("/my")
-    public ResponseEntity<?> getMyBookings(@RequestParam String email) {
+    public ResponseEntity<?> getMyBookings(@RequestParam(required = false) String email, Authentication auth) {
         try {
-            return ResponseEntity.ok(bookingService.getMyBookings(email));
+            String effective = (auth != null) ? auth.getName() : email;
+            return ResponseEntity.ok(bookingService.getMyBookings(effective));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
@@ -132,9 +134,11 @@ public class BookingController {
     @PutMapping("/{id}/cancel")
     public ResponseEntity<?> cancelBooking(
             @PathVariable Long id,
-            @RequestBody Map<String, String> body) {
+            @RequestBody(required = false) Map<String, String> body,
+            Authentication auth) {
         try {
-            return ResponseEntity.ok(bookingService.cancelBooking(id, body.get("email")));
+            String email = (auth != null) ? auth.getName() : (body == null ? null : body.get("email"));
+            return ResponseEntity.ok(bookingService.cancelBooking(id, email));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));

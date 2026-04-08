@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  fetchMe,
+  loginWithPassword,
+  logout as apiLogout,
+  registerWithPassword,
+} from "../services/authService";
+import { normalizeApiError } from "../services/api";
 
 /**
  * AuthContext – Member 4 (Module E)
@@ -7,27 +14,46 @@ import { createContext, useContext, useEffect, useState } from "react";
  */
 
 const AuthContext = createContext(null);
-const AUTH_STORAGE_KEY = "paf-auth-user";
+const AUTH_STORAGE_KEY = "paf-auth-user"; // offline cache only (UI convenience)
 
 export function AuthProvider({ children }) {
-  const [user, setUser]     = useState(null);   // { id, name, email, role, avatar }
+  const [user, setUser] = useState(null); // { id, name, email, role, avatar }
   const [loading, setLoading] = useState(true);
+  const [lastError, setLastError] = useState(null);
 
   useEffect(() => {
+    // 1) Warm start from cache (so navbar doesn't flash)
     try {
       const stored = window.localStorage.getItem(AUTH_STORAGE_KEY);
       if (stored) setUser(JSON.parse(stored));
     } catch {
       window.localStorage.removeItem(AUTH_STORAGE_KEY);
-    } finally {
-      setLoading(false);
     }
+
+    // 2) Then ask backend session for truth
+    (async () => {
+      try {
+        const me = await fetchMe();
+        setUser(me || null);
+        if (me) window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(me));
+        else window.localStorage.removeItem(AUTH_STORAGE_KEY);
+      } catch (err) {
+        // If backend isn't ready yet, keep cached user but expose error for UI.
+        const e = normalizeApiError(err);
+        // If session is invalid, clear cached user to prevent false "logged in" UI.
+        if (e.status === 401) persist(null);
+        setLastError(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
   /* ---------- helpers ---------- */
   const persist = (userData) => {
     setUser(userData);
-    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
+    if (userData) window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(userData));
+    else window.localStorage.removeItem(AUTH_STORAGE_KEY);
   };
 
   /* ---------- EMAIL validation ---------- */
@@ -35,87 +61,59 @@ export function AuthProvider({ children }) {
     /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
 
   /* ---------- REGISTER ---------- */
-  const register = ({ name, email, password }) => {
+  const register = useCallback(async ({ name, email, password }) => {
     if (!name.trim())          return { success: false, message: "Full name is required." };
     if (!isValidEmail(email))  return { success: false, message: "Please enter a valid email address." };
     if (password.length < 8)   return { success: false, message: "Password must be at least 8 characters." };
     if (!/[A-Z]/.test(password))     return { success: false, message: "Password must contain at least one uppercase letter." };
     if (!/[0-9]/.test(password))     return { success: false, message: "Password must contain at least one number." };
-
-    // Demo: check if email already "exists" (stored users list)
-    const users = JSON.parse(window.localStorage.getItem("paf-users") || "[]");
-    if (users.find((u) => u.email === email.trim().toLowerCase())) {
-      return { success: false, message: "An account with this email already exists." };
+    try {
+      const created = await registerWithPassword({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+      });
+      persist(created);
+      setLastError(null);
+      return { success: true };
+    } catch (err) {
+      const e = normalizeApiError(err);
+      setLastError(e);
+      return { success: false, message: e.message };
     }
-
-    const newUser = {
-      id: Date.now(),
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      password,          // In real app: never store plain — hash server-side
-      role: "USER",
-      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name.trim())}`,
-    };
-
-    users.push(newUser);
-    window.localStorage.setItem("paf-users", JSON.stringify(users));
-
-    const { password: _pw, ...safeUser } = newUser;
-    persist(safeUser);
-    return { success: true };
-  };
+  }, []);
 
   /* ---------- LOGIN ---------- */
-  const login = ({ email, password }) => {
+  const login = useCallback(async ({ email, password }) => {
     if (!isValidEmail(email)) return { success: false, message: "Please enter a valid email address." };
     if (!password)            return { success: false, message: "Password is required." };
-
-    // Demo seed accounts
-    const DEMO_ACCOUNTS = [
-      { id: 1, name: "Admin User",       email: "admin@paf.com",    password: "Admin123",  role: "ADMIN",      avatar: "" },
-      { id: 2, name: "Tech User",        email: "tech@paf.com",     password: "Tech1234",  role: "TECHNICIAN", avatar: "" },
-      { id: 3, name: "Student User",     email: "student@paf.com",  password: "Student1",  role: "USER",       avatar: "" },
-    ];
-
-    const allUsers = [
-      ...DEMO_ACCOUNTS,
-      ...JSON.parse(window.localStorage.getItem("paf-users") || "[]"),
-    ];
-
-    const found = allUsers.find(
-      (u) => u.email === email.trim().toLowerCase() && u.password === password
-    );
-
-    if (!found) return { success: false, message: "Invalid email or password." };
-
-    const { password: _pw, ...safeUser } = found;
-    persist({
-      ...safeUser,
-      avatar: safeUser.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(safeUser.name)}`,
-    });
-    return { success: true, role: found.role };
-  };
+    try {
+      const me = await loginWithPassword({
+        email: email.trim().toLowerCase(),
+        password,
+      });
+      persist(me);
+      setLastError(null);
+      return { success: true, role: me?.role };
+    } catch (err) {
+      const e = normalizeApiError(err);
+      setLastError(e);
+      return { success: false, message: e.message };
+    }
+  }, []);
 
   /* ---------- FORGOT PASSWORD (demo: just returns token) ---------- */
-  const forgotPassword = ({ email }) => {
+  const forgotPassword = useCallback(({ email }) => {
+    // Not implemented server-side yet; keep demo behavior so UI works.
     if (!isValidEmail(email)) return { success: false, message: "Please enter a valid email address." };
-
-    const DEMO_EMAILS = ["admin@paf.com", "tech@paf.com", "student@paf.com"];
-    const users = JSON.parse(window.localStorage.getItem("paf-users") || "[]");
-    const allEmails = [...DEMO_EMAILS, ...users.map((u) => u.email)];
-
-    if (!allEmails.includes(email.trim().toLowerCase())) {
-      // Security: don't reveal if email exists — always show success
-    }
-
-    // Store a mock reset token
     const token = Math.random().toString(36).slice(2) + Date.now();
     window.localStorage.setItem(`paf-reset-${email.trim().toLowerCase()}`, token);
-    return { success: true, token }; // In real app: send email
-  };
+    return { success: true, token };
+  }, []);
 
   /* ---------- RESET PASSWORD ---------- */
-  const resetPassword = ({ email, token, newPassword }) => {
+  const resetPassword = useCallback(({ email, token, newPassword }) => {
+    // Not implemented server-side yet; keep demo behavior so UI works.
     if (!isValidEmail(email))   return { success: false, message: "Invalid email." };
     if (newPassword.length < 8) return { success: false, message: "Password must be at least 8 characters." };
     if (!/[A-Z]/.test(newPassword)) return { success: false, message: "Password must contain at least one uppercase letter." };
@@ -124,30 +122,27 @@ export function AuthProvider({ children }) {
     const stored = window.localStorage.getItem(`paf-reset-${email.trim().toLowerCase()}`);
     if (stored !== token) return { success: false, message: "Invalid or expired reset link." };
 
-    // Update password in stored users
-    const users = JSON.parse(window.localStorage.getItem("paf-users") || "[]");
-    const idx = users.findIndex((u) => u.email === email.trim().toLowerCase());
-    if (idx !== -1) {
-      users[idx].password = newPassword;
-      window.localStorage.setItem("paf-users", JSON.stringify(users));
-    }
-
     window.localStorage.removeItem(`paf-reset-${email.trim().toLowerCase()}`);
     return { success: true };
-  };
+  }, []);
 
   /* ---------- LOGOUT ---------- */
-  const logout = () => {
-    setUser(null);
-    window.localStorage.removeItem(AUTH_STORAGE_KEY);
-  };
+  const logout = useCallback(async () => {
+    try {
+      await apiLogout();
+    } catch {
+      // ignore
+    } finally {
+      persist(null);
+    }
+  }, []);
 
   /* ---------- derived ---------- */
   const isAdmin       = user?.role === "ADMIN";
   const isTechnician  = user?.role === "TECHNICIAN";
   const isAuthenticated = !!user;
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     loading,
     isAuthenticated,
@@ -158,7 +153,20 @@ export function AuthProvider({ children }) {
     register,
     forgotPassword,
     resetPassword,
-  };
+    lastError,
+    refresh: async () => {
+      try {
+        const me = await fetchMe();
+        persist(me || null);
+        setLastError(null);
+        return me;
+      } catch (err) {
+        const e = normalizeApiError(err);
+        setLastError(e);
+        throw e;
+      }
+    },
+  }), [user, loading, isAuthenticated, isAdmin, isTechnician, login, logout, register, forgotPassword, resetPassword, lastError]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router-dom";
+/*import { Navigate, useLocation } from "react-router-dom";
 import { useAdminAuth } from "./AdminAuthContext";
 
 export default function AdminRoute({ children }) {
@@ -10,5 +10,5 @@ export default function AdminRoute({ children }) {
   }
 
   return children;
-}
+}*/
 
