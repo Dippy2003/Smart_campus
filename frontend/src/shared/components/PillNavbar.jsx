@@ -128,7 +128,7 @@ export default function PillNavbar() {
 
   const mobileBtnClass = "inline-flex rounded-full border border-slate-600 p-2 text-slate-200";
 
-  const mobilePanelClass = "mt-3 flex flex-col gap-1 rounded-2xl border border-slate-700 bg-slate-900 p-3 shadow-lg sm:hidden";
+  const mobilePanelClass = "mt-3 flex flex-col gap-1 rounded-2xl border border-slate-700 bg-slate-900 p-3 shadow-lg lg:hidden";
 
   const isRouteActive = (item, isActive) => {
     if (item.type !== "route") return false;
@@ -159,12 +159,12 @@ export default function PillNavbar() {
       `}</style>
       <div className="mx-auto flex max-w-6xl flex-col items-stretch px-4 py-4 sm:items-center">
         <nav
-          className={`mx-auto flex w-full max-w-5xl items-center justify-end gap-2 rounded-full px-2 py-2 pl-3 sm:justify-between sm:pl-4 sm:pr-2 ${pillClass}`}
+          className={`mx-auto flex w-full max-w-5xl items-center justify-end gap-2 rounded-full px-2 py-2 pl-3 lg:justify-between lg:pl-4 lg:pr-2 ${pillClass}`}
           aria-label="Main navigation"
         >
           <div
             ref={containerRef}
-            className="relative hidden min-h-[2.25rem] min-w-0 flex-1 flex-wrap items-center gap-x-0 gap-y-2 sm:flex"
+            className="relative hidden min-h-[2.25rem] min-w-0 flex-1 flex-wrap items-center gap-x-0 gap-y-2 lg:flex"
           >
             {indicator.ready && indicator.width > 0 && (
               <span
@@ -214,36 +214,36 @@ export default function PillNavbar() {
             })}
           </div>
 
-          <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none sm:justify-end">
+          <div className="flex flex-1 items-center justify-end gap-2 lg:flex-none lg:justify-end">
             {isAuthenticated ? (
               <>
-                <NotificationBellSafe pollInterval={30000} />
                 <Link
                   to={dashboardTo}
-                  className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 sm:px-5"
+                  className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 lg:px-5"
                 >
                   Dashboard
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="hidden shrink-0 items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition-all duration-200 hover:-translate-y-[1px] hover:bg-slate-700 active:scale-95 sm:inline-flex"
+                  className="hidden shrink-0 items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition-all duration-200 hover:-translate-y-[1px] hover:bg-slate-700 active:scale-95 lg:inline-flex"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
                 </button>
+                <NotificationBellSafe pollInterval={30000} />
               </>
             ) : (
               <Link
                 to="/admin/login"
-                className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 sm:px-5"
+                className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 lg:px-5"
               >
                 Login
               </Link>
             )}
             <button
               type="button"
-              className={`${mobileBtnClass} sm:hidden`}
+              className={`${mobileBtnClass} lg:hidden`}
               aria-expanded={mobileOpen}
               aria-label="Toggle menu"
               onClick={() => setMobileOpen((o) => !o)}
