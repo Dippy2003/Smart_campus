@@ -1,6 +1,7 @@
 package backend.controller;
 
 import backend.model.ResourceType;
+import backend.auth.AppUserRepository;
 import backend.repository.BookingRepository;
 import backend.repository.IncidentTicketRepository;
 import backend.repository.ResourceRepository;
@@ -9,10 +10,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -23,13 +25,16 @@ public class DashboardController {
     private final ResourceRepository resourceRepository;
     private final BookingRepository bookingRepository;
     private final IncidentTicketRepository incidentTicketRepository;
+    private final AppUserRepository appUserRepository;
 
     public DashboardController(ResourceRepository resourceRepository, 
                               BookingRepository bookingRepository,
-                              IncidentTicketRepository incidentTicketRepository) {
+                              IncidentTicketRepository incidentTicketRepository,
+                              AppUserRepository appUserRepository) {
         this.resourceRepository = resourceRepository;
         this.bookingRepository = bookingRepository;
         this.incidentTicketRepository = incidentTicketRepository;
+        this.appUserRepository = appUserRepository;
     }
 
     @GetMapping("/stats")
@@ -37,7 +42,8 @@ public class DashboardController {
         Map<String, Long> stats = Map.of(
             "totalResources", resourceRepository.count(),
             "totalBookings", bookingRepository.count(),
-            "totalTickets", incidentTicketRepository.count()
+            "totalTickets", incidentTicketRepository.count(),
+            "totalUsers", appUserRepository.count()
         );
         return ResponseEntity.ok(stats);
     }
@@ -119,14 +125,57 @@ public class DashboardController {
             monthData.put("tickets", ticketMap.getOrDefault(month, 0L));
             monthlyTrends.add(monthData);
         }
+
+        // Build weekly activity from real records (bookings + tickets) for last 7 days
+        LocalDate today = LocalDate.now();
+        LocalDate weekStart = today.minusDays(6);
+
+        Map<LocalDate, Long> bookingByDay = new HashMap<>();
+        for (Object[] row : bookingRepository.findDailyBookingsBetween(weekStart, today)) {
+            LocalDate day = (LocalDate) row[0];
+            Long count = (Long) row[1];
+            bookingByDay.put(day, count);
+        }
+
+        Map<LocalDate, Long> ticketByDay = new HashMap<>();
+        for (Object[] row : incidentTicketRepository.findDailyTicketsBetween(weekStart, today)) {
+            Object rawDay = row[0];
+            LocalDate day;
+            if (rawDay instanceof LocalDate localDate) {
+                day = localDate;
+            } else {
+                day = java.sql.Date.valueOf(String.valueOf(rawDay)).toLocalDate();
+            }
+            Long count = (Long) row[1];
+            ticketByDay.put(day, count);
+        }
+
+        List<Map<String, Object>> weeklyActivity = new ArrayList<>();
+        long maxActive = 0L;
+        for (int i = 0; i < 7; i++) {
+            LocalDate day = weekStart.plusDays(i);
+            long active = bookingByDay.getOrDefault(day, 0L) + ticketByDay.getOrDefault(day, 0L);
+            maxActive = Math.max(maxActive, active);
+            Map<String, Object> dayData = new HashMap<>();
+            dayData.put("date", day.toString());
+            dayData.put("day", day.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
+            dayData.put("active", active);
+            weeklyActivity.add(dayData);
+        }
+        for (Map<String, Object> dayData : weeklyActivity) {
+            long active = ((Number) dayData.get("active")).longValue();
+            dayData.put("idle", Math.max(0L, maxActive - active));
+        }
         
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalResources", resourceRepository.count());
         stats.put("totalBookings", bookingRepository.count());
         stats.put("totalTickets", incidentTicketRepository.count());
+        stats.put("totalUsers", appUserRepository.count());
         stats.put("resourceBreakdown", resourceBreakdown);
         stats.put("topResources", topResources);
         stats.put("monthlyTrends", monthlyTrends);
+        stats.put("weeklyActivity", weeklyActivity);
         
         return ResponseEntity.ok(stats);
     }

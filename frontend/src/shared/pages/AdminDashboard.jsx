@@ -8,23 +8,28 @@ import {
   BarChart3,
 } from "lucide-react";
 import { dashboardService } from "../services/dashboardService";
+import { adminUserService } from "../services/adminUserService";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalResources: 0,
     totalBookings: 0,
     totalTickets: 0,
-    totalUsers: 156
+    totalUsers: 0
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const data = await dashboardService.getDashboardStats();
+        const [dashboardData, users] = await Promise.all([
+          dashboardService.getDashboardStats(),
+          adminUserService.getAllUsers()
+        ]);
         setStats(prev => ({
           ...prev,
-          ...data
+          ...dashboardData,
+          totalUsers: Array.isArray(users) ? users.length : 0
         }));
       } catch (error) {
         console.error('Failed to fetch dashboard stats:', error);
