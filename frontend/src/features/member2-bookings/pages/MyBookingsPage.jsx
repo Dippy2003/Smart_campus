@@ -4,8 +4,10 @@
 import React, { useState } from "react";
 import { getMyBookings, cancelBooking, updateBooking } from "../services/bookingService";
 import BookingStatusBadge from "../components/BookingStatusBadge";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 export default function MyBookingsPage() {
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const [input, setInput] = useState("");
   const [bookings, setBookings] = useState([]);
@@ -43,8 +45,9 @@ export default function MyBookingsPage() {
       setBookings((prev) =>
         prev.map((b) => (b.id === id ? { ...b, status: "CANCELLED" } : b))
       );
+      toast.success("Booking cancelled.");
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message || "Cancel failed.");
     }
   };
 
@@ -85,8 +88,10 @@ export default function MyBookingsPage() {
         prev.map((b) => (b.id === updated.id ? updated : b))
       );
       handleEditClose();
+      toast.success("Booking updated.");
     } catch (err) {
       setEditError(err.message);
+      toast.error(err.message || "Update failed.");
     } finally {
       setEditLoading(false);
     }
