@@ -25,15 +25,12 @@ import AdminTicketsPage from "./features/member3-incidents/pages/AdminTicketsPag
 import AdminTicketDetailsPage from "./features/member3-incidents/pages/AdminTicketDetailsPage";
 import MyResolvedTicketsPage from "./features/member3-incidents/pages/MyResolvedTicketsPage";
 import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminResolvedTicketsPage";
-<<<<<<< HEAD
 import MyCancelledTicketsPage from "./features/member3-incidents/pages/MyCancelledTicketsPage";
 import AdminCancelledTicketsPage from "./features/member3-incidents/pages/AdminCancelledTicketsPage";
 import TechnicianTicketsPage from "./features/member3-incidents/pages/TechnicianTicketsPage";
-=======
 // Member 4 Auth Imports
 import { AuthProvider } from "./features/member4-auth/Contexts/AuthContext";
 import LoginPage from "./features/member4-auth/pages/LoginPage";
->>>>>>> main
 
 function MainShell() {
   return (
@@ -95,7 +92,6 @@ export default function App() {
             {/* Set Member 4 to point to the Login/Auth dashboard */}
             <Route path="/member4" element={<LoginPage />} />
           </Route>
-<<<<<<< HEAD
 
           <Route path="/incidents" element={<IncidentsHomePage />}>
             <Route index element={<IncidentsIndexPage />} />
@@ -113,13 +109,8 @@ export default function App() {
           <Route path="/member2" element={<PlaceholderModulePage title="Member 2 Module" />} />
           <Route path="/member3" element={<PlaceholderModulePage title="Member 3 Module" />} />
           <Route path="/member4" element={<PlaceholderModulePage title="Member 4 Module" />} />
-        </Route>
-      </Routes>
-    </div>
-=======
         </Routes>
       </div>
     </AuthProvider>
->>>>>>> main
   );
 }
