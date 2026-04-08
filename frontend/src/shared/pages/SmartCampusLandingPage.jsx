@@ -14,6 +14,7 @@ import {
   Monitor,
   BarChart3,
   CheckCircle2,
+  ChevronDown,
 } from "lucide-react";
 
 function SmartCampusLandingPage() {
@@ -100,6 +101,7 @@ function SmartCampusLandingPage() {
   // to keep the landing page in sync with the live catalog.
   const [previewResources, setPreviewResources] = useState([]);
   const [previewError, setPreviewError] = useState("");
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   useEffect(() => {
     async function loadPreview() {
@@ -157,7 +159,41 @@ function SmartCampusLandingPage() {
   const quickLinks = [
     { label: "User Guide", href: "#resources" },
     { label: "Feature Overview", href: "#features" },
+    { label: "Q & A", href: "#faq" },
     { label: "Project Documentation", href: "#about" },
+  ];
+
+  const faqItems = [
+    {
+      question: "What is the Smart Campus Operations Hub?",
+      answer:
+        "It is a single place to browse campus facilities and equipment, request bookings, and report maintenance issues—with clear status tracking for everyone involved.",
+    },
+    {
+      question: "How do I book a room or piece of equipment?",
+      answer:
+        "Use Bookings from the navigation bar. Choose a resource, pick a time that fits the rules shown, and submit your request. You can follow approval or scheduling updates from your bookings view.",
+    },
+    {
+      question: "How do I report an incident or maintenance problem?",
+      answer:
+        "Open Incidents → Create Ticket, describe the issue, set priority and category, and add photos if helpful. You will receive updates on the ticket as staff or technicians progress the work.",
+    },
+    {
+      question: "Who can see my tickets and bookings?",
+      answer:
+        "You always see your own requests. Administrators and assigned technicians see only what they need to operate the system—such as approving bookings or handling assigned tickets.",
+    },
+    {
+      question: "How does the admin dashboard differ from the user view?",
+      answer:
+        "Admins manage resources, review bookings, assign work, and monitor campus-wide activity. Everyday users focus on discovering resources, submitting requests, and tracking their own items.",
+    },
+    {
+      question: "Is this a production university system?",
+      answer:
+        "This project is built for academic demonstration. It shows realistic workflows and data patterns that could be extended into a full production deployment with institutional authentication and policies.",
+    },
   ];
 
   return (
@@ -500,6 +536,60 @@ function SmartCampusLandingPage() {
                     <span>Data to support infrastructure planning and budgeting.</span>
                   </li>
                 </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" className="scroll-mt-28 mt-10 md:mt-12">
+          <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-7 shadow-xl shadow-slate-950/50 md:p-10">
+            <div className="absolute -left-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-blue-500/5 blur-3xl" />
+            <div className="relative">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-blue-300/90">
+                Q &amp; A
+              </p>
+              <h2 className="mt-2 text-xl font-semibold text-slate-50 sm:text-2xl">
+                Common questions
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">
+                Quick answers about bookings, incidents, and how different roles
+                use the hub.
+              </p>
+              <div className="mt-6 flex flex-col gap-2">
+                {faqItems.map((item, index) => {
+                  const isOpen = openFaqIndex === index;
+                  return (
+                    <div
+                      key={item.question}
+                      className="rounded-xl border border-slate-800/90 bg-slate-950/70 transition hover:border-slate-700"
+                    >
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setOpenFaqIndex(isOpen ? null : index)
+                        }
+                        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+                        aria-expanded={isOpen}
+                      >
+                        <span className="text-sm font-medium text-slate-100">
+                          {item.question}
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 shrink-0 text-blue-300 transition-transform ${
+                            isOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                      {isOpen && (
+                        <div className="border-t border-slate-800/80 px-4 pb-3 pt-0">
+                          <p className="pt-3 text-xs leading-relaxed text-slate-300">
+                            {item.answer}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

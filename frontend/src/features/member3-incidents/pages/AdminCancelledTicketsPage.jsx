@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import { getAllTickets } from "../services/ticketService";
 
-function isResolvedStatus(status) {
-  return status === "RESOLVED" || status === "CLOSED" || status === "REJECTED";
+function isCancelledStatus(status) {
+  return status === "CANCELLED";
 }
 
-export default function AdminResolvedTicketsPage() {
+export default function AdminCancelledTicketsPage() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ export default function AdminResolvedTicketsPage() {
     setLoading(true);
     try {
       const all = await getAllTickets();
-      setTickets(all.filter((t) => isResolvedStatus(t.status)));
+      setTickets(all.filter((t) => isCancelledStatus(t.status)));
     } finally {
       setLoading(false);
     }
@@ -30,10 +30,10 @@ export default function AdminResolvedTicketsPage() {
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h2 className="text-xl font-semibold tracking-tight text-slate-50">
-            Admin: Resolved Tickets
+            Admin: Cancelled Tickets
           </h2>
           <p className="mt-1 text-sm text-slate-300">
-            Tickets moved out of active workflow after resolution.
+            Tickets moved out of active workflow as cancelled.
           </p>
         </div>
         <Link
@@ -45,10 +45,10 @@ export default function AdminResolvedTicketsPage() {
       </div>
 
       {loading ? (
-        <p className="mt-6 text-sm text-slate-400">Loading resolved tickets...</p>
+        <p className="mt-6 text-sm text-slate-400">Loading cancelled tickets...</p>
       ) : tickets.length === 0 ? (
         <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-800 p-6 text-sm text-slate-300">
-          No resolved tickets available.
+          No cancelled tickets available.
         </div>
       ) : (
         <div className="mt-6 space-y-3">
@@ -83,4 +83,3 @@ export default function AdminResolvedTicketsPage() {
     </div>
   );
 }
-

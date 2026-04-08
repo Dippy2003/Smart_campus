@@ -9,6 +9,10 @@ import {
   getLastRequesterEmail,
 } from "../services/ticketService";
 
+function isActiveStatus(status) {
+  return !["RESOLVED", "CLOSED", "CANCELLED", "REJECTED"].includes(status);
+}
+
 export default function MyTicketsPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -34,7 +38,7 @@ export default function MyTicketsPage() {
     setOpenTicketId(null);
     try {
       const list = await getMyTickets(email);
-      setTickets(list);
+      setTickets(list.filter((t) => isActiveStatus(t.status)));
     } catch {
       setError("Unable to load your tickets. Please try again.");
       setTickets([]);
@@ -79,7 +83,13 @@ export default function MyTicketsPage() {
           to="/incidents/my-resolved"
           className="inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
         >
-          Go to Resolved Section
+          Resolved Tickets
+        </Link>
+        <Link
+          to="/incidents/my-cancelled"
+          className="ml-2 inline-flex items-center justify-center rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
+        >
+          Cancelled Tickets
         </Link>
       </div>
 
@@ -167,7 +177,42 @@ export default function MyTicketsPage() {
                       Submitted:{" "}
                       {new Date(openedTicket.createdAt).toLocaleString()}
                     </p>
+                    {openedTicket.assignedTechnician && (
+                      <p className="text-xs text-slate-600">
+                        Technician:{" "}
+                        <span className="font-semibold">
+                          {openedTicket.assignedTechnician}
+                        </span>
+                      </p>
+                    )}
+                    {openedTicket.solutionNote && (
+                      <p className="text-xs text-slate-600">
+                        Solution:{" "}
+                        <span className="font-semibold">
+                          {openedTicket.solutionNote}
+                        </span>
+                      </p>
+                    )}
                   </div>
+
+                  {openedTicket.attachments?.length > 0 && (
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                        Attachments
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {openedTicket.attachments.map((img, idx) => (
+                          <a key={idx} href={img} target="_blank" rel="noreferrer">
+                            <img
+                              src={img}
+                              alt={`Attachment ${idx + 1}`}
+                              className="h-14 w-14 rounded-md border border-slate-300 object-cover"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <TicketThread
                     updates={openedTicket.updates}

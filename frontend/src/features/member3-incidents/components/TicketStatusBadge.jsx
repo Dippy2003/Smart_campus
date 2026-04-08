@@ -10,6 +10,10 @@ export default function TicketStatusBadge({ status }) {
           ? "bg-emerald-500/10 text-emerald-200 border border-emerald-500/30"
           : normalized === "CLOSED"
             ? "bg-slate-500/10 text-slate-200 border border-slate-500/30"
+            : normalized === "CANCELLED"
+              ? "bg-red-500/10 text-red-200 border border-red-500/30"
+            : normalized === "REJECTED"
+              ? "bg-rose-500/10 text-rose-200 border border-rose-500/30"
             : "bg-slate-700/20 text-slate-200 border border-slate-700/30";
 
   return (
