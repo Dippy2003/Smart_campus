@@ -3,6 +3,18 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "../../features/member4-auth/Contexts/AuthContext";
 import NotificationBell from "../../features/member4-auth/components/NotificationBell";
+
+function isRenderableType(t) {
+  if (!t) return false;
+  const typ = typeof t;
+  if (typ === "function") return true;
+  if (typ === "object" && t.$$typeof) return true;
+  return false;
+}
+
+const NotificationBellSafe = isRenderableType(NotificationBell)
+  ? NotificationBell
+  : () => null;
 function pathToNavId(pathname) {
   if (pathname.startsWith("/resources")) return "resources";
   if (pathname.startsWith("/bookings")) return "bookings";
@@ -191,7 +203,7 @@ export default function PillNavbar() {
 
           <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none sm:justify-end">
             {/* INSERT NOTIFICATION BELL*/}
-            <NotificationBell pollInterval={30000} />
+            <NotificationBellSafe pollInterval={30000} />
             <Link
               to={dashboardTo}
               className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 sm:px-5"

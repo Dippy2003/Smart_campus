@@ -26,7 +26,7 @@ export default class AppErrorBoundary extends React.Component {
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900">Something went wrong</h2>
           <p className="mt-1 text-sm text-slate-600">
-            The page crashed unexpectedly. Please refresh.
+            The page crashed unexpectedly. Please refresh. If it keeps happening, sign out and sign back in.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <button

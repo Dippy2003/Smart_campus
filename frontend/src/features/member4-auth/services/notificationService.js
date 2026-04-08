@@ -8,8 +8,8 @@
  * Set VITE_API_BASE_URL in your .env to switch to real API.
  */
 
-const BASE_URL = import.meta.env?.VITE_API_BASE_URL || "";
-const USE_MOCK  = !BASE_URL;
+const BASE_URL = (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_BASE_URL) || "";
+const USE_MOCK = false; // backend is required for auth/session; keep mock data only as fallback
 
 /* ── Mock Data ────────────────────────────────────────────────── */
 const MOCK_KEY = "paf-notifications";
@@ -31,14 +31,14 @@ function saveMock(data) { localStorage.setItem(MOCK_KEY, JSON.stringify(data)); 
 function delay(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 function authHeaders() {
-  const user = JSON.parse(localStorage.getItem("paf-auth-user") || "null");
-  return { "Content-Type": "application/json", ...(user ? { Authorization: `Bearer ${user.id}` } : {}) };
+  return { "Content-Type": "application/json" };
 }
 
 /* ── Public API ───────────────────────────────────────────────── */
 export async function fetchNotifications() {
   if (USE_MOCK) { await delay(300); return getMock(); }
-  const res = await fetch(`${BASE_URL}/api/notifications`, { headers: authHeaders() });
+  const res = await fetch(`${BASE_URL}/api/notifications`, { headers: authHeaders(), credentials: "include" });
+  if (res.status === 401) return []; // not signed in
   if (!res.ok) throw new Error("Failed to fetch notifications");
   return res.json();
 }
@@ -50,7 +50,7 @@ export async function markAsRead(id) {
     saveMock(data);
     return data.find((n) => n.id === id);
   }
-  const res = await fetch(`${BASE_URL}/api/notifications/${id}/read`, { method: "PUT", headers: authHeaders() });
+  const res = await fetch(`${BASE_URL}/api/notifications/${encodeURIComponent(String(id))}/read`, { method: "PUT", headers: authHeaders(), credentials: "include" });
   if (!res.ok) throw new Error("Failed to mark as read");
   return res.json();
 }
