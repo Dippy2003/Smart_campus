@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, useLocation } from "react-router-dom";
 
 // Member 1 Imports
 import ResourcesPage from "./features/member1-resources/pages/ResourcesPage";
@@ -85,9 +85,18 @@ const RoleGuardSafe = isRenderableType(RoleGuard)
  * MainShell - Layout wrapper for standard pages
  */
 function MainShell() {
+  const location = useLocation();
+  const isBookingRoute = location.pathname.startsWith("/bookings");
+
   return (
     <div className="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:pt-20 lg:pb-10">
-      <main className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-lg shadow-slate-950/60 sm:p-6 lg:p-8">
+      <main
+        className={
+          isBookingRoute
+            ? "bg-transparent p-0 shadow-none"
+            : "rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-lg shadow-slate-950/60 sm:p-6 lg:p-8"
+        }
+      >
         <Outlet />
       </main>
     </div>

@@ -12,36 +12,33 @@ export default function BookingHomePage() {
     (path === "/create" && location.pathname === "/bookings");
 
   return (
-    <div className="mx-auto max-w-4xl px-5 py-6">
-      {/* Header */}
-      <div className="mb-6 pb-4 border-b border-slate-700">
-        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-          Booking Management
-        </h1>
-        <p className="mt-1 text-sm text-slate-400">
-          Book resources, view your requests, and manage approvals.
-        </p>
-      </div>
-
-      {/* Tab navigation — Create Booking and My Bookings only */}
-      <div className="mb-7 flex flex-wrap gap-2">
+    <div>
+      <style>{`
+        @keyframes bookingTabPop {
+          0% { transform: scale(0.96); }
+          60% { transform: scale(1.03); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
+      {/* Keep only route switcher so child pages own the full UI */}
+      <div className="mx-auto mb-4 flex max-w-[980px] justify-center px-6 pt-1">
+        <div className="inline-flex w-full max-w-max items-center gap-2 rounded-2xl border border-slate-700/70 bg-slate-900/60 p-1.5 shadow-lg shadow-slate-950/40 backdrop-blur">
         <Link to="/bookings/create" className={tabClass(isActive("/create"))}>
           Create Booking
         </Link>
         <Link to="/bookings/my" className={tabClass(isActive("/my"))}>
           My Bookings
         </Link>
+        </div>
       </div>
-
-      {/* Page content renders here */}
       <Outlet />
     </div>
   );
 }
 
 const tabClass = (active) =>
-  `inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${
+  `inline-flex min-w-[132px] items-center justify-center rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 active:scale-95 ${
     active
-      ? "bg-blue-600 text-white shadow-lg border border-blue-600"
-      : "border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:border-slate-500"
+      ? "animate-[bookingTabPop_220ms_ease-out] border border-indigo-400/80 bg-indigo-600 text-white shadow-md shadow-indigo-900/40"
+      : "border border-transparent bg-transparent text-slate-300 hover:-translate-y-[1px] hover:border-slate-600/70 hover:bg-slate-800/80 hover:text-slate-100"
   }`;

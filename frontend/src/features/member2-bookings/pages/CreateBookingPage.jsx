@@ -151,30 +151,199 @@ export default function CreateBookingPage() {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="mx-auto max-w-md">
-      <h2 className="mb-2 text-xl font-semibold text-white">
-        Create a Booking
-      </h2>
-      <p className="mb-6 text-sm text-slate-400">
-        Select a resource and choose your time slot.
-      </p>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
-      {message && (
-        <div className="mb-4 rounded-xl border border-green-700 bg-green-900/20 px-4 py-3 text-sm text-green-300">
-          {message}
-        </div>
-      )}
-      {error && (
-        <div className="mb-4 rounded-xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
-          {error}
-        </div>
-      )}
+        .cb-root {
+          font-family: 'DM Sans', sans-serif;
+          background: transparent;
+          min-height: auto;
+          padding: 0 1.5rem 2rem;
+          position: relative;
+          overflow-x: hidden;
+        }
+        .cb-inner {
+          position: relative;
+          z-index: 1;
+          max-width: 980px;
+          margin: 0 auto;
+          animation: cb-fade-in 0.5s ease both;
+        }
+        @keyframes cb-fade-in {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .cb-header {
+          margin-bottom: 1.25rem;
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+        .cb-header-left { display: flex; flex-direction: column; gap: 0.3rem; }
+        .cb-eyebrow {
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #6366f1;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .cb-eyebrow::before {
+          content: '';
+          display: inline-block;
+          width: 18px;
+          height: 2px;
+          background: #6366f1;
+          border-radius: 999px;
+        }
+        .cb-title {
+          font-family: 'Syne', sans-serif;
+          font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+          font-weight: 800;
+          color: #fff;
+          line-height: 1.1;
+          margin: 0;
+          letter-spacing: -0.02em;
+        }
+        .cb-title span {
+          background: linear-gradient(90deg, #818cf8, #22d3ee);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .cb-subtitle {
+          margin: 0.35rem 0 0;
+          font-size: 13.5px;
+          color: #6b7280;
+          font-weight: 300;
+        }
+        .cb-card {
+          background: rgba(15,23,42,0.55);
+          border: 1px solid rgba(148,163,184,0.20);
+          border-radius: 16px;
+          padding: 1.25rem 1.25rem;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+          max-width: 860px;
+        }
+        .cb-message {
+          margin-bottom: 1rem;
+          border-radius: 14px;
+          border: 1px solid rgba(34,197,94,0.35);
+          background: rgba(34,197,94,0.08);
+          color: #bbf7d0;
+          padding: 0.9rem 1rem;
+          font-size: 13px;
+        }
+        .cb-error {
+          margin-bottom: 1rem;
+          border-radius: 14px;
+          border: 1px solid rgba(239,68,68,0.35);
+          background: rgba(239,68,68,0.08);
+          color: #fecaca;
+          padding: 0.9rem 1rem;
+          font-size: 13px;
+        }
+        .cb-label {
+          display: block;
+          margin-bottom: 0.25rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #cbd5e1;
+        }
+        .cb-input {
+          width: 100%;
+          border-radius: 0.5rem;
+          border: 1px solid #475569;
+          background: rgba(30,41,59,0.82);
+          padding: 0.625rem 0.75rem;
+          color: #ffffff;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .cb-input:focus {
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+        }
+        .cb-input:disabled { opacity: 0.6; }
+        .cb-input--error {
+          border-color: #ef4444;
+        }
+        .cb-input--error:focus {
+          border-color: #ef4444;
+          box-shadow: 0 0 0 2px rgba(239,68,68,0.2);
+        }
+        .cb-helper {
+          margin-top: 5px;
+          font-size: 12px;
+        }
+        .cb-helper--error { color: #fca5a5; }
+        .cb-helper--ok { color: #6ee7b7; }
+        .cb-submit {
+          margin-top: 0.5rem;
+          width: 100%;
+          border-radius: 0.5rem;
+          border: none;
+          background: linear-gradient(135deg, #6366f1, #4f46e5);
+          padding: 0.75rem 1rem;
+          font-size: 0.875rem;
+          font-weight: 700;
+          color: #ffffff;
+          box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+          transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+          cursor: pointer;
+        }
+        .cb-submit:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px rgba(99,102,241,0.5);
+          background: linear-gradient(135deg, #818cf8, #6366f1);
+        }
+        .cb-submit:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+        .cb-time-wrap {
+          display: flex;
+          gap: 0.625rem;
+        }
+        .cb-time-sep {
+          align-self: center;
+          color: #94a3b8;
+          font-size: 0.875rem;
+        }
+        @media (min-width: 640px) {
+          .cb-card { padding: 1.35rem 1.4rem; }
+        }
+      `}</style>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="cb-root">
+        <div className="cb-inner">
+          <div className="cb-header">
+            <div className="cb-header-left">
+              <div className="cb-eyebrow">Bookings</div>
+              <h1 className="cb-title">
+                Create <span>booking</span>
+              </h1>
+              <p className="cb-subtitle">
+                Select a resource and choose your preferred time slot.
+              </p>
+            </div>
+          </div>
+
+          <div className="cb-card">
+            {message && <div className="cb-message">{message}</div>}
+            {error && <div className="cb-error">{error}</div>}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
 
         {/* Resource dropdown */}
         <div>
-          <label className="block text-sm font-semibold text-slate-300 mb-1">
+          <label className="cb-label">
             Resource *
           </label>
           <select
@@ -183,7 +352,7 @@ export default function CreateBookingPage() {
             onChange={handleChange}
             required
             disabled={resourcesLoading}
-            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors disabled:opacity-60"
+            className="cb-input"
           >
             <option value="" className="bg-slate-800">
               {resourcesLoading ? "Loading resources..." : "— Select a resource —"}
@@ -198,14 +367,14 @@ export default function CreateBookingPage() {
 
           {/* OUT_OF_SERVICE warning */}
           {isOutOfService && (
-            <p style={{ marginTop: "6px", fontSize: "12px", color: "#fca5a5", display: "flex", alignItems: "center", gap: "4px" }}>
+            <p className="cb-helper cb-helper--error" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
               ✗ This resource is currently out of service and cannot be booked.
             </p>
           )}
 
           {/* Availability window info */}
           {selectedResource && !isOutOfService && selectedResource.availabilityStart && selectedResource.availabilityEnd && (
-            <p style={{ marginTop: "6px", fontSize: "12px", color: "#6ee7b7", display: "flex", alignItems: "center", gap: "4px" }}>
+            <p className="cb-helper cb-helper--ok" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
               ✓ Available: {selectedResource.availabilityStart.substring(0, 5)} – {selectedResource.availabilityEnd.substring(0, 5)}
               &nbsp;·&nbsp; Max {selectedResource.capacity} people
             </p>
@@ -214,7 +383,7 @@ export default function CreateBookingPage() {
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-semibold text-slate-300 mb-1">
+          <label className="cb-label">
             Your Email *
           </label>
           <input
@@ -223,13 +392,13 @@ export default function CreateBookingPage() {
             value={form.bookedByEmail}
             readOnly
             required
-            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+            className="cb-input"
           />
         </div>
 
         {/* Purpose */}
         <div>
-          <label className="block text-sm font-semibold text-slate-300 mb-1">
+          <label className="cb-label">
             Purpose *
           </label>
           <input
@@ -238,13 +407,13 @@ export default function CreateBookingPage() {
             value={form.purpose}
             onChange={handleChange}
             required
-            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+            className="cb-input"
           />
         </div>
 
         {/* Attendees */}
         <div>
-          <label className="block text-sm font-semibold text-slate-300 mb-1">
+          <label className="cb-label">
             Number of Attendees
           </label>
           <input
@@ -255,17 +424,13 @@ export default function CreateBookingPage() {
             placeholder={selectedResource?.capacity ? `Max ${selectedResource.capacity}` : "e.g. 10"}
             value={form.attendees}
             onChange={handleChange}
-            className={`w-full rounded-lg border px-3 py-2.5 text-white placeholder:text-slate-400 bg-slate-800 focus:ring-2 transition-colors ${
-              capacityError
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                : "border-slate-600 focus:border-blue-500 focus:ring-blue-500/20"
-            }`}
+            className={`cb-input ${capacityError ? "cb-input--error" : ""}`}
           />
           {capacityError && (
-            <p style={{ marginTop: "5px", fontSize: "12px", color: "#fca5a5" }}>✗ {capacityError}</p>
+            <p className="cb-helper cb-helper--error">✗ {capacityError}</p>
           )}
           {!capacityError && selectedResource?.capacity && form.attendees && (
-            <p style={{ marginTop: "5px", fontSize: "12px", color: "#6ee7b7" }}>
+            <p className="cb-helper cb-helper--ok">
               ✓ Within capacity ({form.attendees}/{selectedResource.capacity})
             </p>
           )}
@@ -273,7 +438,7 @@ export default function CreateBookingPage() {
 
         {/* Date */}
         <div>
-          <label className="block text-sm font-semibold text-slate-300 mb-1">
+          <label className="cb-label">
             Booking Date *
           </label>
           <input
@@ -283,56 +448,51 @@ export default function CreateBookingPage() {
             onChange={handleChange}
             required
             min={today}
-            className="w-full rounded-lg border border-slate-600 bg-slate-800 px-3 py-2.5 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+            className="cb-input"
           />
         </div>
 
         {/* Time range */}
         <div>
-          <label className="block text-sm font-semibold text-slate-300 mb-1">
+          <label className="cb-label">
             Time Range *
           </label>
-          <div className="flex gap-2.5">
+          <div className="cb-time-wrap">
             <input
               name="startTime"
               type="time"
               value={form.startTime}
               onChange={handleChange}
               required
-              className={`flex-1 rounded-lg border px-3 py-2.5 text-white bg-slate-800 focus:ring-2 transition-colors ${
-                availabilityError
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                  : "border-slate-600 focus:border-blue-500 focus:ring-blue-500/20"
-              }`}
+              className={`cb-input ${availabilityError ? "cb-input--error" : ""}`}
             />
-            <span className="self-center text-slate-400 text-sm">to</span>
+            <span className="cb-time-sep">to</span>
             <input
               name="endTime"
               type="time"
               value={form.endTime}
               onChange={handleChange}
               required
-              className={`flex-1 rounded-lg border px-3 py-2.5 text-white bg-slate-800 focus:ring-2 transition-colors ${
-                availabilityError
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-                  : "border-slate-600 focus:border-blue-500 focus:ring-blue-500/20"
-              }`}
+              className={`cb-input ${availabilityError ? "cb-input--error" : ""}`}
             />
           </div>
           {/* Availability window error */}
           {availabilityError && (
-            <p style={{ marginTop: "5px", fontSize: "12px", color: "#fca5a5" }}>✗ {availabilityError}</p>
+            <p className="cb-helper cb-helper--error">✗ {availabilityError}</p>
           )}
         </div>
 
         <button
           type="submit"
           disabled={loading || resourcesLoading || hasBlockingError}
-          className="mt-2 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-blue-700"
+          className="cb-submit"
         >
           {loading ? "Submitting..." : "Submit Booking Request"}
         </button>
-      </form>
-    </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
