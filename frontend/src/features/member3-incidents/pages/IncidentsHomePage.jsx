@@ -13,7 +13,7 @@ function tabStyle(active) {
 
 export default function IncidentsHomePage() {
   const location = useLocation();
-  const { isAdmin } = useAuth();
+  const { isAdmin, isTechnician } = useAuth();
 
   const isActive = (path) =>
     location.pathname === `/incidents${path}` ||
@@ -32,37 +32,38 @@ export default function IncidentsHomePage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        {isAdmin ? (
-          <>
-            <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
-              Admin Panel
-            </Link>
-            <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
-              Admin Resolved
-            </Link>
-            <Link to="/incidents/admin-cancelled" className={tabStyle(isActive("/admin-cancelled"))}>
-              Admin Cancelled
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link to="/incidents/create" className={tabStyle(isActive("/create"))}>
-              Create Ticket
-            </Link>
-            <Link to="/incidents/my" className={tabStyle(isActive("/my"))}>
-              My Tickets
-            </Link>
-            <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
-              My Resolved
-            </Link>
-            <Link to="/incidents/my-cancelled" className={tabStyle(isActive("/my-cancelled"))}>
-              My Cancelled
-            </Link>
+        <>
+          <Link to="/incidents/create" className={tabStyle(isActive("/create"))}>
+            Create Ticket
+          </Link>
+          <Link to="/incidents/my" className={tabStyle(isActive("/my"))}>
+            My Tickets
+          </Link>
+          <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
+            My Resolved
+          </Link>
+          <Link to="/incidents/my-cancelled" className={tabStyle(isActive("/my-cancelled"))}>
+            My Cancelled
+          </Link>
+          {(isTechnician || isAdmin) && (
             <Link to="/incidents/technician" className={tabStyle(isActive("/technician"))}>
               Technician
             </Link>
-          </>
-        )}
+          )}
+          {isAdmin && (
+            <>
+              <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
+                Admin Panel
+              </Link>
+              <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
+                Admin Resolved
+              </Link>
+              <Link to="/incidents/admin-cancelled" className={tabStyle(isActive("/admin-cancelled"))}>
+                Admin Cancelled
+              </Link>
+            </>
+          )}
+        </>
       </div>
 
       <Outlet />

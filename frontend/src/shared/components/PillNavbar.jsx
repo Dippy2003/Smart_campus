@@ -45,13 +45,20 @@ export default function PillNavbar() {
   }, [isLanding, location.hash, location.pathname]);
 
   const routeItems = useMemo(
-    () => [
-      { id: "home", to: "/", label: "Home", end: true, type: "route" },
-      { id: "resources", to: "/resources", label: "Resources", end: false, type: "route" },
-      { id: "bookings", to: "/bookings", label: "Bookings", end: false, type: "route" },
-      { id: "incidents", to: "/incidents", label: "Incidents", end: false, type: "route" },
-    ],
-    []
+    () => {
+      const base = [
+        { id: "home", to: "/", label: "Home", end: true, type: "route" },
+        { id: "resources", to: "/resources", label: "Resources", end: false, type: "route" },
+      ];
+      // Admin navbar should stay focused on admin-relevant areas.
+      if (isAdmin) return base;
+      return [
+        ...base,
+        { id: "bookings", to: "/bookings", label: "Bookings", end: false, type: "route" },
+        { id: "incidents", to: "/incidents", label: "Incidents", end: false, type: "route" },
+      ];
+    },
+    [isAdmin]
   );
 
   const anchorItems = useMemo(
@@ -64,9 +71,10 @@ export default function PillNavbar() {
   );
 
   const desktopItems = useMemo(() => {
-    if (isLanding) return [...routeItems, ...anchorItems];
+    // Keep landing anchors for guests only; authenticated users should always see app routes.
+    if (isLanding && !isAuthenticated) return [...routeItems, ...anchorItems];
     return routeItems;
-  }, [isLanding, routeItems, anchorItems]);
+  }, [isLanding, isAuthenticated, routeItems, anchorItems]);
 
   const containerRef = useRef(null);
   const linkRefs = useRef({});
@@ -128,7 +136,7 @@ export default function PillNavbar() {
 
   const mobileBtnClass = "inline-flex rounded-full border border-slate-600 p-2 text-slate-200";
 
-  const mobilePanelClass = "mt-3 flex flex-col gap-1 rounded-2xl border border-slate-700 bg-slate-900 p-3 shadow-lg lg:hidden";
+  const mobilePanelClass = "mt-3 flex flex-col gap-1 rounded-2xl border border-slate-700 bg-slate-900 p-3 shadow-lg md:hidden";
 
   const isRouteActive = (item, isActive) => {
     if (item.type !== "route") return false;
@@ -159,12 +167,12 @@ export default function PillNavbar() {
       `}</style>
       <div className="mx-auto flex max-w-6xl flex-col items-stretch px-4 py-4 sm:items-center">
         <nav
-          className={`mx-auto flex w-full max-w-5xl items-center justify-end gap-2 rounded-full px-2 py-2 pl-3 lg:justify-between lg:pl-4 lg:pr-2 ${pillClass}`}
+          className={`mx-auto flex w-full max-w-5xl items-center justify-end gap-2 rounded-full px-2 py-2 pl-3 md:justify-between md:pl-4 md:pr-2 ${pillClass}`}
           aria-label="Main navigation"
         >
           <div
             ref={containerRef}
-            className="relative hidden min-h-[2.25rem] min-w-0 flex-1 flex-wrap items-center gap-x-0 gap-y-2 lg:flex"
+            className="relative hidden min-h-[2.25rem] min-w-0 flex-1 flex-wrap items-center gap-x-0 gap-y-2 md:flex"
           >
             {indicator.ready && indicator.width > 0 && (
               <span
@@ -214,19 +222,19 @@ export default function PillNavbar() {
             })}
           </div>
 
-          <div className="flex flex-1 items-center justify-end gap-2 lg:flex-none lg:justify-end">
+          <div className="flex flex-1 items-center justify-end gap-2 md:flex-none md:justify-end">
             {isAuthenticated ? (
               <>
                 <Link
                   to={dashboardTo}
-                  className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 lg:px-5"
+                  className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 md:px-5"
                 >
                   Dashboard
                 </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="hidden shrink-0 items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition-all duration-200 hover:-translate-y-[1px] hover:bg-slate-700 active:scale-95 lg:inline-flex"
+                  className="hidden shrink-0 items-center gap-1.5 rounded-full border border-rose-400/40 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-100 shadow-sm shadow-rose-900/20 transition-all duration-200 hover:-translate-y-[1px] hover:bg-rose-500/20 hover:text-white active:scale-95 md:inline-flex"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
@@ -236,14 +244,14 @@ export default function PillNavbar() {
             ) : (
               <Link
                 to="/admin/login"
-                className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 lg:px-5"
+                className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-[1px] hover:bg-blue-500 active:scale-95 md:px-5"
               >
                 Login
               </Link>
             )}
             <button
               type="button"
-              className={`${mobileBtnClass} lg:hidden`}
+              className={`${mobileBtnClass} md:hidden`}
               aria-expanded={mobileOpen}
               aria-label="Toggle menu"
               onClick={() => setMobileOpen((o) => !o)}
@@ -291,7 +299,7 @@ export default function PillNavbar() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-200 transition-colors hover:bg-slate-800"
+                className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-3 py-2.5 text-left text-sm font-semibold text-rose-100 transition-colors hover:bg-rose-500/20"
               >
                 Logout
               </button>
