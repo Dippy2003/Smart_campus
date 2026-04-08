@@ -6,6 +6,7 @@ import { getAllBookings, approveBooking, rejectBooking } from "../services/booki
 import BookingStatusBadge from "../components/BookingStatusBadge";
 import ApproveRejectModal from "../components/ApproveRejectModal";
 
+const BASE_URL = "http://localhost:8080/api/bookings";
 const STATUS_FILTERS = ["ALL", "PENDING", "APPROVED", "REJECTED", "CANCELLED"];
 
 export default function AdminBookingsPage() {
@@ -43,9 +44,19 @@ export default function AdminBookingsPage() {
     fetchBookings();
   };
 
+  // DELETE booking — admin permanently removes a booking
+  const handleDelete = async (id) => {
+    if (!window.confirm("Permanently delete this booking? This cannot be undone.")) return;
+    try {
+      await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+      setBookings((prev) => prev.filter((b) => b.id !== id));
+    } catch (err) {
+      alert("Failed to delete booking.");
+    }
+  };
+
   const pendingCount = bookings.filter((b) => b.status === "PENDING").length;
 
-  // Search filter — by email or resource name
   const filteredBookings = bookings.filter((b) => {
     if (!search.trim()) return true;
     const q = search.toLowerCase();
@@ -60,8 +71,9 @@ export default function AdminBookingsPage() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div>
+          {/* ── HEADER CHANGED TO "Booking Management" ── */}
           <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 600, color: "#fff" }}>
-            Admin — Booking Requests
+            Booking Management
           </h2>
           {pendingCount > 0 && (
             <p style={{ margin: "4px 0 0", fontSize: "13px", color: "#fcd34d" }}>
@@ -83,17 +95,7 @@ export default function AdminBookingsPage() {
         placeholder="Search by email, resource or purpose..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{
-          width: "100%",
-          marginBottom: "14px",
-          padding: "9px 14px",
-          borderRadius: "8px",
-          border: "1px solid #475569",
-          background: "#1e293b",
-          color: "#fff",
-          fontSize: "13px",
-          boxSizing: "border-box",
-        }}
+        style={{ width: "100%", marginBottom: "14px", padding: "9px 14px", borderRadius: "8px", border: "1px solid #475569", background: "#1e293b", color: "#fff", fontSize: "13px", boxSizing: "border-box" }}
       />
 
       {/* Status filter tabs */}
@@ -102,16 +104,7 @@ export default function AdminBookingsPage() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            style={{
-              padding: "6px 16px",
-              borderRadius: "999px",
-              border: "1px solid #475569",
-              background: filter === s ? "#2563eb" : "#1e293b",
-              color: filter === s ? "#fff" : "#94a3b8",
-              fontWeight: 600,
-              cursor: "pointer",
-              fontSize: "13px",
-            }}
+            style={{ padding: "6px 16px", borderRadius: "999px", border: "1px solid #475569", background: filter === s ? "#2563eb" : "#1e293b", color: filter === s ? "#fff" : "#94a3b8", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}
           >
             {s}
           </button>
@@ -121,9 +114,7 @@ export default function AdminBookingsPage() {
       {loading && <p style={{ color: "#94a3b8" }}>Loading...</p>}
 
       {!loading && filteredBookings.length === 0 && (
-        <p style={{ color: "#94a3b8", textAlign: "center", padding: "40px" }}>
-          No bookings found.
-        </p>
+        <p style={{ color: "#94a3b8", textAlign: "center", padding: "40px" }}>No bookings found.</p>
       )}
 
       {!loading && filteredBookings.length > 0 && (
@@ -155,24 +146,24 @@ export default function AdminBookingsPage() {
                     <BookingStatusBadge status={b.status} />
                   </td>
                   <td style={{ padding: "10px 12px" }}>
-                    {b.status === "PENDING" && (
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      {/* Review button — only for PENDING */}
+                      {b.status === "PENDING" && (
+                        <button
+                          onClick={() => setSelected(b)}
+                          style={{ padding: "5px 12px", borderRadius: "6px", background: "#1d4ed8", color: "#fff", border: "none", cursor: "pointer", fontWeight: 600, fontSize: "12px", whiteSpace: "nowrap" }}
+                        >
+                          Review
+                        </button>
+                      )}
+                      {/* Delete button — admin removes booking permanently */}
                       <button
-                        onClick={() => setSelected(b)}
-                        style={{
-                          padding: "5px 12px",
-                          borderRadius: "6px",
-                          background: "#1d4ed8",
-                          color: "#fff",
-                          border: "none",
-                          cursor: "pointer",
-                          fontWeight: 600,
-                          fontSize: "12px",
-                          whiteSpace: "nowrap",
-                        }}
+                        onClick={() => handleDelete(b.id)}
+                        style={{ padding: "5px 12px", borderRadius: "6px", background: "#450a0a", color: "#fca5a5", border: "1px solid #991b1b", cursor: "pointer", fontWeight: 600, fontSize: "12px", whiteSpace: "nowrap" }}
                       >
-                        Review
+                        Delete
                       </button>
-                    )}
+                    </div>
                   </td>
                 </tr>
               ))}
