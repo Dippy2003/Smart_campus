@@ -6,15 +6,16 @@ import { Link } from "react-router-dom";
 import {
   getMyTickets,
   markTicketNotificationsRead,
-  getLastRequesterEmail,
 } from "../services/ticketService";
+import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
 function isActiveStatus(status) {
   return !["RESOLVED", "CLOSED", "CANCELLED", "REJECTED"].includes(status);
 }
 
 export default function MyTicketsPage() {
-  const [email, setEmail] = useState("");
+  const { user, loading: authLoading } = useAuth();
+  const email = user?.email ?? "";
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
@@ -22,16 +23,8 @@ export default function MyTicketsPage() {
 
   const [openTicketId, setOpenTicketId] = useState(null);
 
-  React.useEffect(() => {
-    const lastEmail = getLastRequesterEmail();
-    if (!email && lastEmail) {
-      setEmail(lastEmail);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchTickets = async (e) => {
-    e.preventDefault();
+  const fetchTickets = async () => {
+    if (!email) return;
     setError("");
     setSubmitted(true);
     setLoading(true);
@@ -46,6 +39,16 @@ export default function MyTicketsPage() {
       setLoading(false);
     }
   };
+
+  React.useEffect(() => {
+    if (authLoading) return;
+    if (!email) {
+      setTickets([]);
+      setSubmitted(false);
+      return;
+    }
+    fetchTickets();
+  }, [email, authLoading]);
 
   const unreadCount = useMemo(() => {
     return tickets.reduce(
@@ -75,8 +78,7 @@ export default function MyTicketsPage() {
         My Tickets
       </h2>
       <p className="mt-1 text-sm text-slate-300">
-        Enter the email you used when reporting the incident. You will see your
-        tickets, updates, and notifications here.
+        Your tickets are loaded automatically from your logged-in account.
       </p>
       <div className="mt-3">
         <Link
@@ -93,25 +95,11 @@ export default function MyTicketsPage() {
         </Link>
       </div>
 
-      <form onSubmit={fetchTickets} className="mt-6 flex flex-col gap-4 md:flex-row md:items-end">
-        <label className="w-full md:flex-1 grid gap-1 text-xs font-medium uppercase tracking-wide text-slate-400">
-          Email *
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            required
-            placeholder="you@example.com"
-            className="h-10 rounded-lg border border-slate-600 bg-slate-800 px-3 text-sm text-slate-50 outline-none ring-0 transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 placeholder:text-slate-400"
-          />
-        </label>
-        <button
-          type="submit"
-          className="inline-flex justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-blue-500"
-        >
-          {loading ? "Loading..." : "Search"}
-        </button>
-      </form>
+      {!authLoading && !email && (
+        <div className="mt-6 rounded-2xl border border-amber-700 bg-amber-900/20 px-4 py-3 text-sm text-amber-300">
+          Please sign in to view your tickets.
+        </div>
+      )}
 
       {error && (
         <div className="mt-4 rounded-2xl border border-red-700 bg-red-900/20 px-4 py-3 text-sm text-red-300">
