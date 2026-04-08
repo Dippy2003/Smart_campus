@@ -3,6 +3,7 @@ import ResourceTable from "../components/ResourceTable";
 import ResourceCard from "../components/ResourceCard";
 import { getAllResources } from "../services/resourceApi";
 import { exportResourcesToCsv } from "../utils/resourceExport";
+import { useToast } from "../../../shared/components/ToastProvider";
 
 const TYPES = ["", "LECTURE_HALL", "LAB", "MEETING_ROOM", "EQUIPMENT"];
 const STATUSES = ["", "ACTIVE", "OUT_OF_SERVICE"];
@@ -22,6 +23,7 @@ const TYPE_META = {
 };
 
 export default function ResourcesPage() {
+  const toast = useToast();
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -116,9 +118,11 @@ export default function ResourcesPage() {
   const handleExportCsv = () => {
     const stamp = new Date().toISOString().slice(0, 10);
     exportResourcesToCsv(sortedResources, `campus-resources-${stamp}.csv`);
+    toast.success("CSV downloaded.");
   };
 
   const handlePrintList = () => {
+    toast.info("Opening print dialog…");
     window.print();
   };
 
