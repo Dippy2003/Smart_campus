@@ -1,17 +1,38 @@
 // Member2 - Bathiya | Booking Management Module B
 // bookingService.js — API service layer for all booking operations
 
-const BASE_URL = "http://localhost:8080/api/bookings";
-export const RESOURCES_URL = "http://localhost:8080/resources";
+const API_BASE =
+  (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_BASE_URL) || "";
+const BASE_URL = `${API_BASE}/api/bookings`;
+export const RESOURCES_URL = `${API_BASE}/resources`;
+
+const getAuthToken = () => {
+  if (typeof window === "undefined") return "";
+  return (
+    window.localStorage.getItem("token") ||
+    window.localStorage.getItem("authToken") ||
+    window.localStorage.getItem("accessToken") ||
+    ""
+  );
+};
 
 // Helper — shared fetch with error handling
 const apiFetch = async (url, options = {}) => {
+  const token = getAuthToken();
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeader,
+      ...(options.headers || {}),
+    },
     ...options,
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || data.message || "Request failed");
+
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(data?.error || data?.message || "Request failed");
   return data;
 };
 

@@ -1,6 +1,31 @@
 const STORAGE_KEY = "smart-campus-incident-tickets-v1";
 const LAST_EMAIL_KEY = "smart-campus-last-incident-email-v1";
-const API_BASE_URL = "http://localhost:8080/api/incidents";
+const API_BASE =
+  (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_BASE_URL) || "";
+const API_BASE_URL = `${API_BASE}/api/incidents`;
+
+function getAuthToken() {
+  if (typeof window === "undefined") return "";
+  return (
+    window.localStorage.getItem("token") ||
+    window.localStorage.getItem("authToken") ||
+    window.localStorage.getItem("accessToken") ||
+    ""
+  );
+}
+
+async function authFetch(url, options = {}) {
+  const token = getAuthToken();
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+  return fetch(url, {
+    credentials: "include",
+    ...options,
+    headers: {
+      ...authHeader,
+      ...(options.headers || {}),
+    },
+  });
+}
 
 function safeParse(json) {
   try {
@@ -225,7 +250,7 @@ export async function createTicket({
   window.localStorage.setItem(LAST_EMAIL_KEY, String(requesterEmail || "").trim().toLowerCase());
 
   try {
-    const res = await fetch(API_BASE_URL, {
+    const res = await authFetch(API_BASE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -241,7 +266,7 @@ export async function createTicket({
 
 export async function getAllTickets() {
   try {
-    const res = await fetch(API_BASE_URL);
+    const res = await authFetch(API_BASE_URL);
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Failed to fetch tickets");
     return data;
@@ -253,7 +278,7 @@ export async function getAllTickets() {
 export async function getMyTickets(email) {
   const safeEmail = String(email || "").trim();
   try {
-    const res = await fetch(
+    const res = await authFetch(
       `${API_BASE_URL}/my?email=${encodeURIComponent(safeEmail)}`
     );
     const data = await res.json();
@@ -267,7 +292,7 @@ export async function getMyTickets(email) {
 export async function getTechnicianTickets(email) {
   const safeEmail = String(email || "").trim();
   try {
-    const res = await fetch(
+    const res = await authFetch(
       `${API_BASE_URL}/technician?email=${encodeURIComponent(safeEmail)}`
     );
     const data = await res.json();
@@ -283,7 +308,7 @@ export async function getTechnicianTickets(email) {
 
 export async function getRegisteredTechnicians() {
   try {
-    const res = await fetch(`${API_BASE_URL}/technicians`);
+    const res = await authFetch(`${API_BASE_URL}/technicians`);
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Failed to fetch technicians");
     return Array.isArray(data) ? data : [];
@@ -313,7 +338,7 @@ export async function getRegisteredTechnicians() {
 
 export async function getTicketById(id) {
   try {
-    const res = await fetch(`${API_BASE_URL}/${id}`);
+    const res = await authFetch(`${API_BASE_URL}/${id}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Ticket not found");
     return data;
@@ -324,7 +349,7 @@ export async function getTicketById(id) {
 
 export async function updateTicketStatus(id, status, assignedTechnician, solutionNote) {
   try {
-    const res = await fetch(`${API_BASE_URL}/${id}/status`, {
+    const res = await authFetch(`${API_BASE_URL}/${id}/status`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status, assignedTechnician, solutionNote }),
@@ -339,7 +364,7 @@ export async function updateTicketStatus(id, status, assignedTechnician, solutio
 
 export async function addAdminReply({ id, replyMessage, sendNotification }) {
   try {
-    const res = await fetch(`${API_BASE_URL}/${id}/reply`, {
+    const res = await authFetch(`${API_BASE_URL}/${id}/reply`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ replyMessage, sendNotification }),
@@ -354,7 +379,7 @@ export async function addAdminReply({ id, replyMessage, sendNotification }) {
 
 export async function markTicketNotificationsRead({ id, email }) {
   try {
-    const res = await fetch(`${API_BASE_URL}/${id}/notifications/read`, {
+    const res = await authFetch(`${API_BASE_URL}/${id}/notifications/read`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

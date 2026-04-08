@@ -7,8 +7,20 @@ import BookingStatusBadge from "../components/BookingStatusBadge";
 import ApproveRejectModal from "../components/ApproveRejectModal";
 import { useToast } from "../../../shared/components/ToastProvider";
 
-const BASE_URL = "http://localhost:8080/api/bookings";
+const API_BASE =
+  (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_BASE_URL) || "";
+const BASE_URL = `${API_BASE}/api/bookings`;
 const STATUS_FILTERS = ["ALL", "PENDING", "APPROVED", "REJECTED", "CANCELLED"];
+
+const getAuthToken = () => {
+  if (typeof window === "undefined") return "";
+  return (
+    window.localStorage.getItem("token") ||
+    window.localStorage.getItem("authToken") ||
+    window.localStorage.getItem("accessToken") ||
+    ""
+  );
+};
 
 export default function AdminBookingsPage() {
   const toast = useToast();
@@ -60,7 +72,16 @@ export default function AdminBookingsPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("Permanently delete this booking? This cannot be undone.")) return;
     try {
-      await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+      const token = getAuthToken();
+      const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await fetch(`${BASE_URL}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          ...authHeader,
+        },
+      });
+      if (!res.ok) throw new Error("Delete failed");
       setBookings((prev) => prev.filter((b) => b.id !== id));
       toast.success("Booking deleted.");
     } catch (err) {
