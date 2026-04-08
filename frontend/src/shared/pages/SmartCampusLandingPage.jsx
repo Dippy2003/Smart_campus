@@ -281,73 +281,73 @@ function SmartCampusLandingPage() {
 
           <div className="relative">
             <div className="absolute -inset-6 -z-10 bg-gradient-to-br from-blue-500/10 via-sky-400/05 to-blue-900/10 blur-3xl" />
-            <div className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 shadow-2xl shadow-blue-900/40 md:p-10">
+            <div className="relative overflow-hidden rounded-3xl border border-slate-800/90 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-5 shadow-2xl shadow-blue-900/40 md:p-8">
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-4">
-                  <div className="rounded-2xl bg-slate-900/80 p-4 shadow-lg shadow-slate-950/80">
+                <div className="grid gap-4">
+                  <div className="rounded-2xl border border-slate-800/70 bg-slate-900/80 p-5 shadow-lg shadow-slate-950/80">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-semibold text-slate-300">
                         Live Bookings
                       </span>
-                      <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-xs text-blue-300">
+                      <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-2.5 py-0.5 text-xs text-blue-300">
                         Campus
                       </span>
                     </div>
-                    <p className="mt-3 text-2xl font-semibold text-blue-300">
+                    <p className="mt-4 text-3xl font-semibold leading-none text-blue-300">
                       32
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-2 text-xs leading-relaxed text-slate-400">
                       Active reservations across halls and labs
                     </p>
                   </div>
 
-                  <div className="rounded-2xl border border-blue-500/20 bg-slate-950/70 p-4 shadow-lg shadow-blue-900/40">
+                  <div className="rounded-2xl border border-blue-500/25 bg-slate-950/75 p-5 shadow-lg shadow-blue-900/40">
                     <p className="text-xs font-semibold text-slate-200">
                       Maintenance Queue
                     </p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-2xl font-semibold text-blue-300">
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-3xl font-semibold leading-none text-blue-300">
                         12
                       </span>
-                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-300">
+                      <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs text-emerald-300">
                         8 In Progress
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-2 text-xs leading-relaxed text-slate-400">
                       Technicians are resolving reported incidents.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between gap-4">
-                  <div className="rounded-2xl bg-slate-900/80 p-4 shadow-lg shadow-slate-950/80">
+                <div className="grid gap-4">
+                  <div className="rounded-2xl border border-slate-800/70 bg-slate-900/80 p-5 shadow-lg shadow-slate-950/80">
                     <p className="text-xs font-semibold text-slate-200">
                       Today&apos;s Schedule
                     </p>
-                    <ul className="mt-3 space-y-2 text-xs text-slate-300">
-                      <li className="flex items-center justify-between">
+                    <ul className="mt-4 space-y-2.5 text-xs text-slate-300">
+                      <li className="flex items-center justify-between gap-4 rounded-lg border border-slate-800/60 bg-slate-950/30 px-2.5 py-1.5">
                         <span>Lecture Hall A</span>
                         <span className="text-slate-400">08:00–10:00</span>
                       </li>
-                      <li className="flex items-center justify-between">
+                      <li className="flex items-center justify-between gap-4 rounded-lg border border-slate-800/60 bg-slate-950/30 px-2.5 py-1.5">
                         <span>Computer Lab 1</span>
                         <span className="text-slate-400">11:00–13:00</span>
                       </li>
-                      <li className="flex items-center justify-between">
+                      <li className="flex items-center justify-between gap-4 rounded-lg border border-slate-800/60 bg-slate-950/30 px-2.5 py-1.5">
                         <span>Meeting Room B</span>
                         <span className="text-slate-400">15:00–16:30</span>
                       </li>
                     </ul>
                   </div>
-                  <div className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-950/80 p-3 text-xs text-slate-300">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/15">
+                  <div className="flex items-start gap-3 rounded-2xl border border-slate-800/90 bg-slate-950/85 p-4 text-xs text-slate-300">
+                    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/15">
                       <AlertTriangle className="h-4 w-4 text-blue-300" />
                     </div>
                     <div>
                       <p className="font-semibold text-slate-100">
                         Priority Incident
                       </p>
-                      <p className="text-[11px] text-slate-400">
+                      <p className="mt-1 text-[11px] leading-relaxed text-slate-400">
                         Projector X200 reported as faulty in Lecture Hall B. Ticket
                         assigned to AV technician.
                       </p>
@@ -355,7 +355,7 @@ function SmartCampusLandingPage() {
                   </div>
                 </div>
               </div>
-              <p className="mt-5 text-center text-[11px] text-slate-500">
+              <p className="mt-6 text-center text-[11px] text-slate-500">
                 Dashboard-style illustration showcasing bookings, incidents, and
                 resource utilization for the Smart Campus Operations Hub.
               </p>
