@@ -5,6 +5,7 @@ import backend.model.*;
 import backend.service.IncidentTicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,14 +24,14 @@ public class IncidentTicketController {
 
     // POST /api/incidents
     @PostMapping
-    public ResponseEntity<?> createTicket(@RequestBody IncidentTicketCreateRequest req) {
+    public ResponseEntity<?> createTicket(@RequestBody IncidentTicketCreateRequest req, Authentication auth) {
         try {
             TicketCategory category = TicketCategory.valueOf(req.getCategory().toUpperCase());
             TicketType ticketType = TicketType.valueOf(req.getTicketType().toUpperCase());
             TicketPriority priority = TicketPriority.valueOf(req.getPriority().toUpperCase());
 
             IncidentTicket created = incidentTicketService.createTicket(
-                    req.getRequesterEmail(),
+                    (auth != null ? auth.getName() : req.getRequesterEmail()),
                     req.getTitle(),
                     req.getDescription(),
                     ticketType,
@@ -48,8 +49,8 @@ public class IncidentTicketController {
 
     // GET /api/incidents/my?email=xxx
     @GetMapping("/my")
-    public ResponseEntity<List<IncidentTicket>> getMyTickets(@RequestParam String email) {
-        return ResponseEntity.ok(incidentTicketService.getMyTickets(email));
+    public ResponseEntity<List<IncidentTicket>> getMyTickets(@RequestParam(required = false) String email, Authentication auth) {
+        return ResponseEntity.ok(incidentTicketService.getMyTickets(auth != null ? auth.getName() : email));
     }
 
     // GET /api/incidents/technician?email=tech@campus.lk

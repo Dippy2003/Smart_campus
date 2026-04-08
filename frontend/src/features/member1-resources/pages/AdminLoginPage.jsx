@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAdminAuth } from "../../../shared/auth/AdminAuthContext";
+import { useAuth } from "../../features/member4-auth/Contexts/AuthContext";
 
 export default function AdminLoginPage() {
-  const { login } = useAdminAuth();
+  const { login } = useAuth();
   const nav = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState("");

@@ -5,6 +5,8 @@ import backend.model.BookingStatus;
 import backend.model.resourcesModel;
 import backend.repository.BookingRepository;
 import backend.repository.ResourceRepository;
+import backend.notification.NotificationService;
+import backend.notification.NotificationType;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,11 +28,14 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final ResourceRepository resourceRepository;
+    private final NotificationService notifications;
 
     public BookingService(BookingRepository bookingRepository,
-                          ResourceRepository resourceRepository) {
+                          ResourceRepository resourceRepository,
+                          NotificationService notifications) {
         this.bookingRepository = bookingRepository;
         this.resourceRepository = resourceRepository;
+        this.notifications = notifications;
     }
 
     // CREATE booking with full validation, capacity check and conflict check
@@ -180,7 +185,14 @@ public class BookingService {
         }
         booking.setStatus(BookingStatus.APPROVED);
         booking.setAdminReason(reason);
-        return bookingRepository.save(booking);
+        Booking saved = bookingRepository.save(booking);
+        notifications.notify(
+                saved.getBookedByEmail(),
+                NotificationType.BOOKING_APPROVED,
+                "Booking Approved",
+                "Your booking #" + saved.getId() + " has been approved."
+        );
+        return saved;
     }
 
     // REJECT booking (admin only)
@@ -192,7 +204,14 @@ public class BookingService {
         }
         booking.setStatus(BookingStatus.REJECTED);
         booking.setAdminReason(reason);
-        return bookingRepository.save(booking);
+        Booking saved = bookingRepository.save(booking);
+        notifications.notify(
+                saved.getBookedByEmail(),
+                NotificationType.BOOKING_REJECTED,
+                "Booking Rejected",
+                "Your booking #" + saved.getId() + " was rejected. " + (reason == null ? "" : reason)
+        );
+        return saved;
     }
 
     // CANCEL booking (user only)
