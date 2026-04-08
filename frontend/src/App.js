@@ -12,6 +12,8 @@ import HomePage from "./shared/pages/HomePage";
 import SmartCampusLandingPage from "./shared/pages/SmartCampusLandingPage";
 import AdminDashboard from "./shared/pages/AdminDashboard";
 import AdminAnalyticsPage from "./shared/pages/AdminAnalyticsPage";
+import AdminUsersPage from "./shared/pages/AdminUsersPage";
+import AdminAddUserPage from "./shared/pages/AdminAddUserPage";
 import PlaceholderModulePage from "./shared/pages/PlaceholderModulePage";
 import PillNavbar from "./shared/components/PillNavbar";
 
@@ -119,6 +121,8 @@ export default function App() {
                 }
               />
               <Route path="/admin/analytics" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AdminAnalyticsPage} name="AdminAnalyticsPage" /></RoleGuardSafe>} />
+              <Route path="/admin/users" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AdminUsersPage} name="AdminUsersPage" /></RoleGuardSafe>} />
+              <Route path="/admin/users/new" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AdminAddUserPage} name="AdminAddUserPage" /></RoleGuardSafe>} />
               <Route path="/admin/resources" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminResourcesPage} name="AdminResourcesPage" /></RoleGuardSafe>} />
               <Route path="/admin/resources/new" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AddResourcePage} name="AddResourcePage" /></RoleGuardSafe>} />
               <Route path="/admin/resources/:id/edit" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={EditResourcePage} name="EditResourcePage" /></RoleGuardSafe>} />

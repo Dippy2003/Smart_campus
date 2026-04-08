@@ -67,6 +67,16 @@ export default function AdminDashboard() {
       color: "amber",
     },
     {
+      title: "User Management",
+      description: "Manage user accounts and roles",
+      icon: Users,
+      links: [
+        { label: "View All Users", to: "/admin/users" },
+        { label: "Add New User", to: "/admin/users/new" },
+      ],
+      color: "purple",
+    },
+    {
       title: "Analytics",
       description: "View system statistics and reports",
       icon: BarChart3,
