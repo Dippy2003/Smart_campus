@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllResources } from "../../features/member1-resources/services/resourceApi";
+import { useAuth } from "../../features/member4-auth/Contexts/AuthContext";
 import {
   Building2,
   CalendarClock,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 
 function SmartCampusLandingPage() {
+  const { isAuthenticated } = useAuth();
   const features = [
     {
       icon: Building2,
@@ -225,13 +227,15 @@ function SmartCampusLandingPage() {
               >
                 Get Started
               </Link>
-              <Link
-                to="/admin/login"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/60 px-5 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-blue-500/70 hover:bg-slate-900"
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Login</span>
-              </Link>
+              {!isAuthenticated && (
+                <Link
+                  to="/admin/login"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/60 px-5 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-blue-500/70 hover:bg-slate-900"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Login</span>
+                </Link>
+              )}
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-400 sm:text-sm">
@@ -504,12 +508,14 @@ function SmartCampusLandingPage() {
                   maintenance activities are transparent and accountable.
                 </p>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <Link
-                    to="/admin/login"
-                    className="inline-flex items-center justify-center rounded-full bg-blue-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-blue-500/40 transition hover:bg-blue-400"
-                  >
-                    Login Now
-                  </Link>
+                  {!isAuthenticated && (
+                    <Link
+                      to="/admin/login"
+                      className="inline-flex items-center justify-center rounded-full bg-blue-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-blue-500/40 transition hover:bg-blue-400"
+                    >
+                      Login Now
+                    </Link>
+                  )}
                   <Link
                     to="/resources"
                     className="inline-flex items-center justify-center rounded-full border border-slate-200/70 bg-slate-950/40 px-5 py-2.5 text-sm font-semibold text-slate-50 transition hover:border-blue-200 hover:bg-slate-900/70"

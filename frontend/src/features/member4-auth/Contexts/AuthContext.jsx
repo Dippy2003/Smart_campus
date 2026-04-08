@@ -34,9 +34,10 @@ export function AuthProvider({ children }) {
     (async () => {
       try {
         const me = await fetchMe();
-        setUser(me || null);
-        if (me) window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(me));
-        else window.localStorage.removeItem(AUTH_STORAGE_KEY);
+        // Keep cached user when backend returns empty (helps preserve session UX on reload).
+        if (me) {
+          persist(me);
+        }
       } catch (err) {
         // If backend isn't ready yet, keep cached user but expose error for UI.
         const e = normalizeApiError(err);

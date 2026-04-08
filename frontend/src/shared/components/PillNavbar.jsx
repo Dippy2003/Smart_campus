@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { useAuth } from "../../features/member4-auth/Contexts/AuthContext";
 import NotificationBell from "../../features/member4-auth/components/NotificationBell";
 
@@ -26,7 +26,7 @@ function pathToNavId(pathname) {
 }
 
 export default function PillNavbar() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isLanding = location.pathname === "/";
@@ -142,6 +142,11 @@ export default function PillNavbar() {
     return activeId === item.id;
   };
 
+  const handleLogout = async () => {
+    await logout();
+    setMobileOpen(false);
+  };
+
   return (
     <header className={headerClass}>
       <div className="mx-auto flex max-w-6xl flex-col items-stretch px-4 py-4 sm:items-center">
@@ -202,14 +207,32 @@ export default function PillNavbar() {
           </div>
 
           <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none sm:justify-end">
-            {/* INSERT NOTIFICATION BELL*/}
-            <NotificationBellSafe pollInterval={30000} />
-            <Link
-              to={dashboardTo}
-              className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 sm:px-5"
-            >
-              Dashboard
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <NotificationBellSafe pollInterval={30000} />
+                <Link
+                  to={dashboardTo}
+                  className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 sm:px-5"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="hidden shrink-0 items-center gap-1 rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-slate-700 sm:inline-flex"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/admin/login"
+                className="shrink-0 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 sm:px-5"
+              >
+                Login
+              </Link>
+            )}
             <button
               type="button"
               className={`${mobileBtnClass} sm:hidden`}
@@ -256,6 +279,15 @@ export default function PillNavbar() {
                   {item.label}
                 </a>
               ))}
+            {isAuthenticated && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-200 transition-colors hover:bg-slate-800"
+              >
+                Logout
+              </button>
+            )}
           </div>
         )}
       </div>
