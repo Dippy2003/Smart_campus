@@ -2,6 +2,7 @@ package backend.auth;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,11 +24,14 @@ import java.util.Map;
 public class AdminUserController {
 
     private final AppUserRepository users;
+    private final PasswordEncoder encoder;
 
-    public AdminUserController(AppUserRepository users) {
+    public AdminUserController(AppUserRepository users, PasswordEncoder encoder) {
         this.users = users;
+        this.encoder = encoder;
     }
 
+    public record CreateUserRequest(String name, String email, String password, String role) {}
     public record UpdateUserRequest(String name, String email, String role) {}
 
     @GetMapping("/signups/daily")
@@ -59,6 +64,48 @@ public class AdminUserController {
                 ))
                 .toList();
         return ResponseEntity.ok(allUsers);
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<?> createUser(@RequestBody CreateUserRequest req) {
+        String name = req.name() == null ? "" : req.name().trim();
+        String email = req.email() == null ? "" : req.email().trim().toLowerCase();
+        String password = req.password() == null ? "" : req.password();
+        String role = req.role() == null ? "" : req.role().trim().toUpperCase();
+
+        if (name.isBlank() || email.isBlank() || password.isBlank() || role.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Name, email, password and role are required."));
+        }
+        if (password.length() < 8) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Password must be at least 8 characters."));
+        }
+        if (!password.matches(".*[A-Z].*") || !password.matches(".*\\d.*")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Password must contain at least one uppercase letter and one number."));
+        }
+
+        UserRole parsedRole;
+        try {
+            parsedRole = UserRole.valueOf(role);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid role. Use USER, ADMIN or TECHNICIAN."));
+        }
+
+        if (users.findByEmail(email).isPresent()) {
+            return ResponseEntity.status(409).body(Map.of("message", "An account with this email already exists."));
+        }
+
+        AppUser created = new AppUser(name, email, encoder.encode(password), parsedRole);
+        created.setAvatarUrl("https://api.dicebear.com/7.x/initials/svg?seed=" + java.net.URLEncoder.encode(name, java.nio.charset.StandardCharsets.UTF_8));
+        users.save(created);
+
+        return ResponseEntity.status(201).body(Map.of(
+                "id", created.getId(),
+                "name", created.getName(),
+                "email", created.getEmail(),
+                "role", created.getRole().name(),
+                "avatar", created.getAvatarUrl() == null ? "" : created.getAvatarUrl(),
+                "createdAt", created.getCreatedAt() == null ? "" : created.getCreatedAt().toString()
+        ));
     }
 
     @PutMapping("/users/{id}")
