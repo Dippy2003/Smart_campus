@@ -203,7 +203,7 @@ function SmartCampusLandingPage() {
           <div className="space-y-6">
             <span className="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-300">
               <CheckCircle2 className="h-3.5 w-3.5" />
-              Final-Year Project Ready
+               Smart Campus Operations Hub
             </span>
             <h1 className="text-3xl font-semibold tracking-tight text-slate-50 sm:text-4xl lg:text-5xl">
               Manage Campus Resources{" "}
