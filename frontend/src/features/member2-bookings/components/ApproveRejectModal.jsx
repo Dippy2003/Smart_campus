@@ -45,27 +45,31 @@ export default function ApproveRejectModal({ booking, onApprove, onReject, onClo
     >
       <div
         style={{
-          background: "#fff",
+          background: "#0f172a",
+          border: "1px solid #334155",
           borderRadius: "14px",
           padding: "28px",
           width: "100%",
           maxWidth: "440px",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+          boxShadow: "0 20px 60px rgba(2, 6, 23, 0.65)",
+          color: "#e2e8f0",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: 700 }}>
+        <h3 style={{ margin: "0 0 4px", fontSize: "18px", fontWeight: 700, color: "#f8fafc" }}>
           Review Booking #{booking.id}
         </h3>
 
         {/* Booking summary */}
         <div style={{
-          background: "#f9fafb",
+          background: "#1e293b",
+          border: "1px solid #334155",
           borderRadius: "8px",
           padding: "12px 14px",
           margin: "14px 0",
           fontSize: "13px",
           lineHeight: "1.7",
+          color: "#cbd5e1",
         }}>
           <p style={{ margin: "0 0 4px" }}>
             <strong>Resource:</strong> {booking.resource?.name} — {booking.resource?.location}
@@ -82,10 +86,10 @@ export default function ApproveRejectModal({ booking, onApprove, onReject, onClo
           </p>
         </div>
 
-        <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: 4 }}>
+        <label style={{ display: "block", fontSize: "13px", fontWeight: 600, marginBottom: 4, color: "#e2e8f0" }}>
           Reason
           <span style={{ color: "#ef4444", marginLeft: 2 }}>*</span>
-          <span style={{ fontWeight: 400, color: "#6b7280", marginLeft: 4 }}>(required for rejection)</span>
+          <span style={{ fontWeight: 400, color: "#94a3b8", marginLeft: 4 }}>(required for rejection)</span>
         </label>
         <textarea
           rows={3}
@@ -95,7 +99,9 @@ export default function ApproveRejectModal({ booking, onApprove, onReject, onClo
           style={{
             width: "100%",
             borderRadius: "8px",
-            border: reasonError ? "1px solid #ef4444" : "1px solid #d1d5db",
+            border: reasonError ? "1px solid #ef4444" : "1px solid #475569",
+            background: "#0b1220",
+            color: "#e2e8f0",
             padding: "8px 12px",
             fontSize: "13px",
             resize: "vertical",
@@ -112,13 +118,13 @@ export default function ApproveRejectModal({ booking, onApprove, onReject, onClo
         <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
           <button
             onClick={onClose}
-            style={{ padding: "9px 18px", borderRadius: "8px", border: "1px solid #d1d5db", background: "#fff", color: "#374151", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}
+            style={{ padding: "9px 18px", borderRadius: "8px", border: "1px solid #475569", background: "#1e293b", color: "#cbd5e1", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}
           >
             Cancel
           </button>
           <button
             onClick={handleReject}
-            style={{ padding: "9px 18px", borderRadius: "8px", border: "none", background: "#fef2f2", color: "#991b1b", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}
+            style={{ padding: "9px 18px", borderRadius: "8px", border: "1px solid #991b1b", background: "#450a0a", color: "#fca5a5", fontWeight: 600, cursor: "pointer", fontSize: "13px" }}
           >
             Reject
           </button>
