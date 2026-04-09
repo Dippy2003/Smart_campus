@@ -17,7 +17,7 @@ function getAuthToken() {
 async function authFetch(url, options = {}) {
   const token = getAuthToken();
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
-  return fetch(url, {
+  const res = await fetch(url, {
     credentials: "include",
     ...options,
     headers: {
@@ -25,6 +25,13 @@ async function authFetch(url, options = {}) {
       ...(options.headers || {}),
     },
   });
+  if (res.status === 401) {
+    window.dispatchEvent(new CustomEvent("paf:session-expired"));
+    const err = new Error("Session expired");
+    err.isAuthFailure = true;
+    throw err;
+  }
+  return res;
 }
 
 function safeParse(json) {
@@ -259,7 +266,8 @@ export async function createTicket({
     const data = await res.json().catch(() => null);
     if (!res.ok) throw new Error(data?.error || "Failed to create ticket");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return createTicketLocal(payload);
   }
 }
@@ -270,7 +278,8 @@ export async function getAllTickets() {
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Failed to fetch tickets");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return getAllTicketsLocal();
   }
 }
@@ -284,7 +293,8 @@ export async function getMyTickets(email) {
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Failed to fetch tickets");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return getMyTicketsLocal(safeEmail);
   }
 }
@@ -298,7 +308,8 @@ export async function getTechnicianTickets(email) {
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Failed to fetch technician tickets");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     const norm = safeEmail.toLowerCase();
     return getAllTicketsLocal().filter(
       (t) => String(t.assignedTechnician || "").toLowerCase() === norm
@@ -312,7 +323,8 @@ export async function getRegisteredTechnicians() {
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Failed to fetch technicians");
     return Array.isArray(data) ? data : [];
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return [
       {
         email: "electrician@campus.lk",
@@ -342,7 +354,8 @@ export async function getTicketById(id) {
     const data = await res.json();
     if (!res.ok) throw new Error(data?.error || "Ticket not found");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return getTicketByIdLocal(id);
   }
 }
@@ -357,7 +370,8 @@ export async function updateTicketStatus(id, status, assignedTechnician, solutio
     const data = await res.json().catch(() => null);
     if (!res.ok) throw new Error(data?.error || "Failed to update status");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return updateTicketStatusLocal(id, status, assignedTechnician, solutionNote);
   }
 }
@@ -372,7 +386,8 @@ export async function addAdminReply({ id, replyMessage, sendNotification }) {
     const data = await res.json().catch(() => null);
     if (!res.ok) throw new Error(data?.error || "Failed to send reply");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return addAdminReplyLocal({ id, replyMessage, sendNotification });
   }
 }
@@ -387,7 +402,8 @@ export async function markTicketNotificationsRead({ id, email }) {
     const data = await res.json().catch(() => null);
     if (!res.ok) throw new Error(data?.error || "Failed to mark notifications");
     return data;
-  } catch {
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
     return markTicketNotificationsReadLocal({ id, email });
   }
 }

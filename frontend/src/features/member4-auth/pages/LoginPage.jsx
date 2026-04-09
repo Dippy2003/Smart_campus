@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 
@@ -85,8 +85,14 @@ function PasswordStrength({ password }) {
 
 function Alert({ type, message }) {
   if (!message) return null;
+  const styles =
+    type === "error"
+      ? "border-red-500/50 bg-red-950/30 text-red-200"
+      : type === "warning"
+        ? "border-amber-500/50 bg-amber-950/30 text-amber-100"
+        : "border-emerald-500/50 bg-emerald-950/30 text-emerald-200";
   return (
-    <div className={`rounded-xl border px-4 py-3 text-sm ${type === "error" ? "border-red-500/50 bg-red-950/30 text-red-200" : "border-emerald-500/50 bg-emerald-950/30 text-emerald-200"}`}>
+    <div className={`rounded-xl border px-4 py-3 text-sm ${styles}`}>
       {message}
     </div>
   );
@@ -104,7 +110,19 @@ function SignInForm({ onForgot, onSwitch }) {
   const [password, setPassword] = useState("");
   const [errors, setErrors]     = useState({});
   const [alert, setAlert]       = useState(null);
+  const [sessionNotice, setSessionNotice] = useState(null);
   const [loading, setLoading]   = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("session") === "expired") {
+      setSessionNotice(
+        "Your session expired after 30 minutes of inactivity. Please sign in again."
+      );
+      const next = new URLSearchParams(searchParams);
+      next.delete("session");
+      navigate({ search: next.toString() ? `?${next}` : "" }, { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   const validate = () => {
     const e = {};
@@ -137,6 +155,7 @@ function SignInForm({ onForgot, onSwitch }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      {sessionNotice && <Alert type="warning" message={sessionNotice} />}
       <Alert {...(alert || {})} />
 
       <InputField id="si-email"    label="Email address" type="email"    value={email}    onChange={setEmail}    placeholder="you@example.com" autoComplete="email"           error={errors.email} />
