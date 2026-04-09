@@ -34,6 +34,7 @@ import MyResolvedTicketsPage from "./features/member3-incidents/pages/MyResolved
 import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminResolvedTicketsPage";
 import MyCancelledTicketsPage from "./features/member3-incidents/pages/MyCancelledTicketsPage";
 import AdminCancelledTicketsPage from "./features/member3-incidents/pages/AdminCancelledTicketsPage";
+import NonAdminIncidentGuard from "./features/member3-incidents/components/NonAdminIncidentGuard";
 import TechnicianTicketsPage from "./features/member3-incidents/pages/TechnicianTicketsPage";
 import { ToastProvider } from "./shared/components/ToastProvider";
 import AppErrorBoundary from "./features/member4-auth/components/AppErrorBoundary";
@@ -151,13 +152,13 @@ export default function App() {
 
                 {/* Member 3 - Incidents */}
                 <Route path="/incidents" element={<SafeComponent component={IncidentsHomePage} name="IncidentsHomePage" />}>
-                  <Route index element={<SafeComponent component={CreateTicketPage} name="CreateTicketPage" />} />
-                  <Route path="create" element={<SafeComponent component={CreateTicketPage} name="CreateTicketPage" />} />
-                  <Route path="my" element={<AuthGuardSafe><SafeComponent component={MyTicketsPage} name="MyTicketsPage" /></AuthGuardSafe>} />
-                  <Route path="my-resolved" element={<AuthGuardSafe><SafeComponent component={MyResolvedTicketsPage} name="MyResolvedTicketsPage" /></AuthGuardSafe>} />
-                  <Route path="my-cancelled" element={<AuthGuardSafe><SafeComponent component={MyCancelledTicketsPage} name="MyCancelledTicketsPage" /></AuthGuardSafe>} />
+                  <Route index element={<SafeComponent component={IncidentsIndexPage} name="IncidentsIndexPage" />} />
+                  <Route path="create" element={<NonAdminIncidentGuard><SafeComponent component={CreateTicketPage} name="CreateTicketPage" /></NonAdminIncidentGuard>} />
+                  <Route path="my" element={<AuthGuardSafe><NonAdminIncidentGuard><SafeComponent component={MyTicketsPage} name="MyTicketsPage" /></NonAdminIncidentGuard></AuthGuardSafe>} />
+                  <Route path="my-resolved" element={<AuthGuardSafe><NonAdminIncidentGuard><SafeComponent component={MyResolvedTicketsPage} name="MyResolvedTicketsPage" /></NonAdminIncidentGuard></AuthGuardSafe>} />
+                  <Route path="my-cancelled" element={<AuthGuardSafe><NonAdminIncidentGuard><SafeComponent component={MyCancelledTicketsPage} name="MyCancelledTicketsPage" /></NonAdminIncidentGuard></AuthGuardSafe>} />
 
-                  <Route path="technician" element={<RoleGuardSafe roles={["TECHNICIAN"]}><SafeComponent component={TechnicianTicketsPage} name="TechnicianTicketsPage" /></RoleGuardSafe>} />
+                  <Route path="technician" element={<RoleGuardSafe roles={["TECHNICIAN", "ADMIN"]}><SafeComponent component={TechnicianTicketsPage} name="TechnicianTicketsPage" /></RoleGuardSafe>} />
 
                   <Route path="admin" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminTicketsPage} name="AdminTicketsPage" /></RoleGuardSafe>} />
                   <Route path="admin-resolved" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminResolvedTicketsPage} name="AdminResolvedTicketsPage" /></RoleGuardSafe>} />

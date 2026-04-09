@@ -33,18 +33,22 @@ export default function IncidentsHomePage() {
 
       <div className="flex flex-wrap items-center gap-2">
         <>
-          <Link to="/incidents/create" className={tabStyle(isActive("/create"))}>
-            Create Ticket
-          </Link>
-          <Link to="/incidents/my" className={tabStyle(isActive("/my"))}>
-            My Tickets
-          </Link>
-          <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
-            My Resolved
-          </Link>
-          <Link to="/incidents/my-cancelled" className={tabStyle(isActive("/my-cancelled"))}>
-            My Cancelled
-          </Link>
+          {!isAdmin && (
+            <>
+              <Link to="/incidents/create" className={tabStyle(isActive("/create"))}>
+                Create Ticket
+              </Link>
+              <Link to="/incidents/my" className={tabStyle(isActive("/my"))}>
+                My Tickets
+              </Link>
+              <Link to="/incidents/my-resolved" className={tabStyle(isActive("/my-resolved"))}>
+                My Resolved
+              </Link>
+              <Link to="/incidents/my-cancelled" className={tabStyle(isActive("/my-cancelled"))}>
+                My Cancelled
+              </Link>
+            </>
+          )}
           {(isTechnician || isAdmin) && (
             <Link to="/incidents/technician" className={tabStyle(isActive("/technician"))}>
               Technician
