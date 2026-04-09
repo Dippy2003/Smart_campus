@@ -81,6 +81,10 @@ export default function AdminBookingsPage() {
           ...authHeader,
         },
       });
+      if (res.status === 401) {
+        window.dispatchEvent(new CustomEvent("paf:session-expired"));
+        throw new Error("Session expired");
+      }
       if (!res.ok) throw new Error("Delete failed");
       setBookings((prev) => prev.filter((b) => b.id !== id));
       toast.success("Booking deleted.");

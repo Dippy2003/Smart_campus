@@ -47,7 +47,10 @@ function authHeaders() {
 export async function fetchNotifications() {
   if (USE_MOCK) { await delay(300); return getMock(); }
   const res = await fetch(`${BASE_URL}/api/notifications`, { headers: authHeaders(), credentials: "include" });
-  if (res.status === 401) return []; // not signed in
+  if (res.status === 401) {
+    window.dispatchEvent(new CustomEvent("paf:session-expired"));
+    return [];
+  }
   if (!res.ok) throw new Error("Failed to fetch notifications");
   return res.json();
 }
@@ -60,6 +63,10 @@ export async function markAsRead(id) {
     return data.find((n) => n.id === id);
   }
   const res = await fetch(`${BASE_URL}/api/notifications/${encodeURIComponent(String(id))}/read`, { method: "PUT", headers: authHeaders(), credentials: "include" });
+  if (res.status === 401) {
+    window.dispatchEvent(new CustomEvent("paf:session-expired"));
+    throw new Error("Session expired");
+  }
   if (!res.ok) throw new Error("Failed to mark as read");
   return res.json();
 }

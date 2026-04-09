@@ -31,6 +31,10 @@ const apiFetch = async (url, options = {}) => {
     ...options,
   });
 
+  if (res.status === 401) {
+    window.dispatchEvent(new CustomEvent("paf:session-expired"));
+  }
+
   const data = await res.json().catch(() => null);
   if (!res.ok) throw new Error(data?.error || data?.message || "Request failed");
   return data;
