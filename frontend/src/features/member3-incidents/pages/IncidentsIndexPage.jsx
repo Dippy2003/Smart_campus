@@ -4,7 +4,7 @@ import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 import CreateTicketPage from "./CreateTicketPage";
 
 export default function IncidentsIndexPage() {
-  const { isAdmin, loading } = useAuth();
+  const { isTechnician, loading } = useAuth();
 
   if (loading) {
     return (
@@ -14,6 +14,6 @@ export default function IncidentsIndexPage() {
     );
   }
 
-  if (isAdmin) return <Navigate to="/incidents/admin" replace />;
+  if (isTechnician) return <Navigate to="/incidents/admin" replace />;
   return <CreateTicketPage />;
 }

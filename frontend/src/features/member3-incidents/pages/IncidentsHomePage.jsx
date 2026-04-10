@@ -13,7 +13,7 @@ function tabStyle(active) {
 
 export default function IncidentsHomePage() {
   const location = useLocation();
-  const { isAdmin, isTechnician } = useAuth();
+  const { isTechnician } = useAuth();
 
   const isActive = (path) =>
     location.pathname === `/incidents${path}` ||
@@ -33,7 +33,7 @@ export default function IncidentsHomePage() {
 
       <div className="flex flex-wrap items-center gap-2">
         <>
-          {!isAdmin && (
+          {!isTechnician && (
             <>
               <Link to="/incidents/create" className={tabStyle(isActive("/create"))}>
                 Create Ticket
@@ -49,21 +49,19 @@ export default function IncidentsHomePage() {
               </Link>
             </>
           )}
-          {(isTechnician || isAdmin) && (
-            <Link to="/incidents/technician" className={tabStyle(isActive("/technician"))}>
-              Technician
-            </Link>
-          )}
-          {isAdmin && (
+          {isTechnician && (
             <>
+              <Link to="/incidents/technician" className={tabStyle(isActive("/technician"))}>
+                Technician
+              </Link>
               <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
-                Admin Panel
+                Ticket Management
               </Link>
               <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
-                Admin Resolved
+                Resolved
               </Link>
               <Link to="/incidents/admin-cancelled" className={tabStyle(isActive("/admin-cancelled"))}>
-                Admin Cancelled
+                Cancelled
               </Link>
             </>
           )}

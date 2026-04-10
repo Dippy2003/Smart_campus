@@ -149,7 +149,9 @@ function SignInForm({ onForgot, onSwitch }) {
       return;
     }
 
-    const from = searchParams.get("from") || (result.role === "ADMIN" ? "/admin/dashboard" : "/");
+    const from =
+      searchParams.get("from") ||
+      (result.role === "ADMIN" ? "/admin/dashboard" : result.role === "TECHNICIAN" ? "/incidents/admin" : "/");
     navigate(from, { replace: true });
   };
 

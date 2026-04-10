@@ -652,7 +652,6 @@ export default function AdminAnalyticsPage() {
                 {[
                   { to: "/admin/resources",  label: "Manage Resources",  icon: Settings,       bg: "linear-gradient(135deg,#6366f1,#4f46e5)" },
                   { to: "/bookings/admin",   label: "Manage Bookings",   icon: Calendar,       bg: "linear-gradient(135deg,#10b981,#059669)" },
-                  { to: "/incidents/admin",  label: "Manage Tickets",    icon: AlertTriangle,  bg: "linear-gradient(135deg,#f59e0b,#ea580c)" },
                   { to: "/admin/users",      label: "Manage Users",      icon: Users,          bg: "linear-gradient(135deg,#a855f7,#6366f1)" },
                   { to: "/admin/dashboard",  label: "Back to Dashboard", icon: BarChart3,      bg: "linear-gradient(135deg,#334155,#1e293b)" },
                 ].map(({ to, label, icon: Icon, bg }) => (
