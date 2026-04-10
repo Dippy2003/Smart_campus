@@ -93,6 +93,7 @@ export default function CreateTicketPage() {
           priority: "NORMAL",
         });
         setAttachments([]);
+        navigate("/incidents/my");
       } catch (e) {
         const msg =
           e?.message || "Could not create the ticket. Please try again.";
