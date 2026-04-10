@@ -18,6 +18,26 @@ export const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+function shouldIgnore401SessionBroadcast(config) {
+  const url = String(config?.url || "");
+  return (
+    url.includes("/api/auth/login") ||
+    url.includes("/api/auth/register")
+  );
+}
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+    const cfg = error?.config;
+    if (status === 401 && cfg && !shouldIgnore401SessionBroadcast(cfg)) {
+      window.dispatchEvent(new CustomEvent("paf:session-expired"));
+    }
+    return Promise.reject(error);
+  }
+);
+
 function toMessage(err) {
   const status = err?.response?.status;
   const data = err?.response?.data;
@@ -28,7 +48,9 @@ function toMessage(err) {
     err?.message ||
     "Something went wrong.";
 
-  if (status === 401) return "Your session expired. Please sign in again.";
+  if (status === 401) {
+    return "Your session expired after 30 minutes of inactivity. Please sign in again.";
+  }
   if (status === 403) return "You don’t have permission to access this.";
   return msg;
 }

@@ -7,9 +7,11 @@ import {
 } from "recharts";
 import {
   BarChart3, Calendar, Settings, Users, AlertTriangle,
-  TrendingUp, TrendingDown, ArrowUpRight
+  TrendingUp, TrendingDown, ArrowUpRight, Download
 } from "lucide-react";
 import { dashboardService } from "../services/dashboardService";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 function clamp01(n) {
@@ -167,6 +169,57 @@ export default function AdminAnalyticsPage() {
     return { totalResources, totalBookings, totalTickets, totalUsers, utilizationRate, resourceBreakdown, topResources, monthlyTrends, weeklyActivity };
   }, [stats]);
 
+  const handleDownloadPdf = () => {
+    if (loading) return;
+
+    const doc = new jsPDF();
+    const generatedAt = new Date().toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    doc.setFontSize(18);
+    doc.text("Admin Analytics Report", 14, 18);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated: ${generatedAt}`, 14, 25);
+
+    autoTable(doc, {
+      startY: 32,
+      head: [["Metric", "Value"]],
+      body: [
+        ["Total Resources", String(computed.totalResources)],
+        ["Total Bookings", String(computed.totalBookings)],
+        ["Open Tickets", String(computed.totalTickets)],
+        ["Registered Users", String(computed.totalUsers)],
+        ["Utilization Rate", `${computed.utilizationRate}%`],
+      ],
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [79, 70, 229] },
+    });
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 10,
+      head: [["Resource Type", "Count"]],
+      body: computed.resourceBreakdown.map((row) => [row.name, String(row.value)]),
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [16, 185, 129] },
+    });
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 10,
+      head: [["Top Resource", "Type", "Bookings"]],
+      body: computed.topResources.map((row) => [row.name, row.type, String(row.bookings)]),
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [245, 158, 11] },
+    });
+
+    doc.save("admin-analytics-report.pdf");
+  };
+
   return (
     <>
       <style>{`
@@ -253,6 +306,24 @@ export default function AdminAnalyticsPage() {
           background: rgba(255,255,255,0.07);
           transform: translateY(-1px); color: #fff;
         }
+        .aa-header-actions {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+          flex-wrap: wrap;
+        }
+        .aa-download {
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 0 16px; height: 40px; border-radius: 12px;
+          background: linear-gradient(135deg,#6366f1,#4f46e5);
+          border: 1px solid rgba(129,140,248,0.45);
+          color: #fff;
+          font-size: 13px; font-weight: 700;
+          cursor: pointer;
+          transition: transform 0.2s, filter 0.2s;
+        }
+        .aa-download:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.05); }
+        .aa-download:disabled { opacity: 0.65; cursor: not-allowed; }
 
         /* ── Error ── */
         .aa-error {
@@ -421,9 +492,15 @@ export default function AdminAnalyticsPage() {
               <h1 className="aa-title">System <span>Analytics</span></h1>
               <p className="aa-subtitle">Live overview of resources, bookings, tickets and usage trends.</p>
             </div>
-            <Link to="/admin/dashboard" className="aa-back">
-              ← Back to dashboard
-            </Link>
+            <div className="aa-header-actions">
+              <button className="aa-download" onClick={handleDownloadPdf} disabled={loading}>
+                <Download size={14} />
+                Download PDF
+              </button>
+              <Link to="/admin/dashboard" className="aa-back">
+                ← Back to dashboard
+              </Link>
+            </div>
           </div>
 
           {error && <div className="aa-error">⚠️ {error}</div>}
@@ -575,7 +652,6 @@ export default function AdminAnalyticsPage() {
                 {[
                   { to: "/admin/resources",  label: "Manage Resources",  icon: Settings,       bg: "linear-gradient(135deg,#6366f1,#4f46e5)" },
                   { to: "/bookings/admin",   label: "Manage Bookings",   icon: Calendar,       bg: "linear-gradient(135deg,#10b981,#059669)" },
-                  { to: "/incidents/admin",  label: "Manage Tickets",    icon: AlertTriangle,  bg: "linear-gradient(135deg,#f59e0b,#ea580c)" },
                   { to: "/admin/users",      label: "Manage Users",      icon: Users,          bg: "linear-gradient(135deg,#a855f7,#6366f1)" },
                   { to: "/admin/dashboard",  label: "Back to Dashboard", icon: BarChart3,      bg: "linear-gradient(135deg,#334155,#1e293b)" },
                 ].map(({ to, label, icon: Icon, bg }) => (

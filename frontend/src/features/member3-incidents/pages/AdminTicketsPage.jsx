@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import { getAllTickets } from "../services/ticketService";
 
@@ -30,9 +31,13 @@ export default function AdminTicketsPage() {
       setTickets(
         list.filter((t) => !["RESOLVED", "CLOSED", "CANCELLED", "REJECTED"].includes(t.status))
       );
+      return true;
     } catch {
-      setError("Unable to load tickets.");
+      const msg = "Unable to load tickets.";
+      setError(msg);
+      toast.error(msg);
       setTickets([]);
+      return false;
     } finally {
       setLoading(false);
     }
@@ -271,7 +276,10 @@ export default function AdminTicketsPage() {
       <div className="mt-4 text-right">
         <button
           type="button"
-          onClick={load}
+          onClick={async () => {
+            const ok = await load();
+            if (ok) toast.success("Tickets refreshed.");
+          }}
           className="rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-slate-700"
         >
           Refresh

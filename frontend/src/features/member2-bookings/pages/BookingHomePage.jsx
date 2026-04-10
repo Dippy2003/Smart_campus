@@ -6,6 +6,7 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 
 export default function BookingHomePage() {
   const location = useLocation();
+  const isAdminBookingsRoute = location.pathname.startsWith("/bookings/admin");
 
   const isActive = (path) =>
     location.pathname === `/bookings${path}` ||
@@ -20,17 +21,19 @@ export default function BookingHomePage() {
           100% { transform: scale(1); }
         }
       `}</style>
-      {/* Keep only route switcher so child pages own the full UI */}
-      <div className="mx-auto mb-4 flex max-w-[980px] justify-center px-6 pt-1">
-        <div className="inline-flex w-full max-w-max items-center gap-2 rounded-2xl border border-slate-700/70 bg-slate-900/60 p-1.5 shadow-lg shadow-slate-950/40 backdrop-blur">
-        <Link to="/bookings/create" className={tabClass(isActive("/create"))}>
-          Create Booking
-        </Link>
-        <Link to="/bookings/my" className={tabClass(isActive("/my"))}>
-          My Bookings
-        </Link>
+      {/* Show member tabs only on non-admin booking routes */}
+      {!isAdminBookingsRoute && (
+        <div className="mx-auto mb-4 flex max-w-[980px] justify-center px-6 pt-1">
+          <div className="inline-flex w-full max-w-max items-center gap-2 rounded-2xl border border-slate-700/70 bg-slate-900/60 p-1.5 shadow-lg shadow-slate-950/40 backdrop-blur">
+            <Link to="/bookings/create" className={tabClass(isActive("/create"))}>
+              Create Booking
+            </Link>
+            <Link to="/bookings/my" className={tabClass(isActive("/my"))}>
+              My Bookings
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
       <Outlet />
     </div>
   );

@@ -2,11 +2,13 @@
 // CreateBookingPage.jsx — form to create a new booking request
 
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { createBooking, RESOURCES_URL } from "../services/bookingService";
 import { useToast } from "../../../shared/components/ToastProvider";
 import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
 export default function CreateBookingPage() {
+  const location = useLocation();
   const toast = useToast();
   const { user } = useAuth();
   const sessionEmail = user?.email ?? "";
@@ -44,6 +46,30 @@ export default function CreateBookingPage() {
     if (!sessionEmail) return;
     setForm((prev) => ({ ...prev, bookedByEmail: sessionEmail }));
   }, [sessionEmail]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const prefillDate = params.get("date") || "";
+    const prefillResourceId = params.get("resourceId") || "";
+    if (!prefillDate && !prefillResourceId) return;
+    const todayIso = new Date().toISOString().split("T")[0];
+    const safeDate = prefillDate && prefillDate < todayIso ? "" : prefillDate;
+
+    setForm((prev) => ({
+      ...prev,
+      bookingDate: safeDate || prev.bookingDate,
+      resourceId: prefillResourceId || prev.resourceId,
+    }));
+
+    if (prefillDate && prefillDate < todayIso) {
+      toast.error("You cannot book a date before today.");
+    }
+
+    if (prefillResourceId) {
+      const found = resources.find((r) => r.id === Number(prefillResourceId));
+      setSelectedResource(found || null);
+    }
+  }, [location.search, resources, toast]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -102,6 +128,12 @@ export default function CreateBookingPage() {
     }
     if (!form.resourceId) {
       setError("Please select a resource.");
+      return;
+    }
+    if (form.bookingDate && form.bookingDate < today) {
+      const msg = "You cannot book a date before today.";
+      setError(msg);
+      toast.error(msg);
       return;
     }
     if (isOutOfService) {

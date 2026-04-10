@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import TicketListItem from "../components/TicketListItem";
-import { getMyTickets } from "../services/ticketService";
+import { deleteResolvedTicket, getMyTickets } from "../services/ticketService";
 import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
 function isResolvedStatus(status) {
@@ -15,8 +16,9 @@ export default function MyResolvedTicketsPage() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [tickets, setTickets] = useState([]);
+  const [deletingId, setDeletingId] = useState(null);
 
-  const fetchResolved = async () => {
+  const fetchResolved = useCallback(async () => {
     if (!email) return;
     setLoading(true);
     setSubmitted(true);
@@ -25,12 +27,14 @@ export default function MyResolvedTicketsPage() {
       const all = await getMyTickets(email);
       setTickets(all.filter((t) => isResolvedStatus(t.status)));
     } catch {
-      setError("Unable to load resolved tickets.");
+      const msg = "Unable to load resolved tickets.";
+      setError(msg);
+      toast.error(msg);
       setTickets([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [email]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -40,7 +44,35 @@ export default function MyResolvedTicketsPage() {
       return;
     }
     fetchResolved();
-  }, [email, authLoading]);
+  }, [email, authLoading, fetchResolved]);
+
+  const handleDelete = async (ticketId) => {
+    if (
+      !window.confirm(
+        "Remove this ticket from your list? This permanently deletes the record."
+      )
+    ) {
+      return;
+    }
+    setDeletingId(ticketId);
+    try {
+      const ok = await deleteResolvedTicket(ticketId);
+      if (ok) {
+        toast.success("Ticket deleted.");
+        await fetchResolved();
+      } else {
+        const msg = "Could not delete the ticket.";
+        setError(msg);
+        toast.error(msg);
+      }
+    } catch {
+      const msg = "Could not delete the ticket.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="rounded-2xl border border-slate-700/70 bg-slate-900/70 p-5 shadow-lg shadow-slate-950/30 backdrop-blur">
@@ -82,7 +114,23 @@ export default function MyResolvedTicketsPage() {
       {tickets.length > 0 && (
         <div className="mt-6 space-y-4">
           {tickets.map((t) => (
-            <TicketListItem key={t.id} ticket={t} onOpen={() => {}} />
+            <TicketListItem
+              key={t.id}
+              ticket={t}
+              onOpen={() => {}}
+              footer={
+                <div className="flex justify-end border-t border-slate-800 bg-slate-950/50 px-5 py-3">
+                  <button
+                    type="button"
+                    disabled={deletingId === t.id}
+                    onClick={() => handleDelete(t.id)}
+                    className="rounded-full border border-rose-500/40 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-200 transition hover:bg-rose-500/20 disabled:opacity-50"
+                  >
+                    {deletingId === t.id ? "Deleting…" : "Delete"}
+                  </button>
+                </div>
+              }
+            />
           ))}
         </div>
       )}

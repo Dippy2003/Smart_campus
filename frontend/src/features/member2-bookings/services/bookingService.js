@@ -31,6 +31,10 @@ const apiFetch = async (url, options = {}) => {
     ...options,
   });
 
+  if (res.status === 401) {
+    window.dispatchEvent(new CustomEvent("paf:session-expired"));
+  }
+
   const data = await res.json().catch(() => null);
   if (!res.ok) throw new Error(data?.error || data?.message || "Request failed");
   return data;
@@ -53,6 +57,11 @@ export const getMyBookings = async (email) => {
 export const getAllBookings = async (status = "") => {
   const url = status ? `${BASE_URL}?status=${status}` : BASE_URL;
   return apiFetch(url);
+};
+
+// GET /api/bookings — calendar view helper (client-side month filtering)
+export const getBookingsForCalendar = async () => {
+  return apiFetch(BASE_URL);
 };
 
 // GET /api/bookings/stats — get booking counts by status

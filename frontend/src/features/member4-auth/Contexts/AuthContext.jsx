@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   fetchMe,
   loginWithPassword,
@@ -16,10 +17,29 @@ import { normalizeApiError } from "../services/api";
 const AuthContext = createContext(null);
 const AUTH_STORAGE_KEY = "paf-auth-user"; // offline cache only (UI convenience)
 
+const SESSION_EXPIRED_MESSAGE =
+  "Your session expired after 30 minutes of inactivity. Please sign in again.";
+
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null); // { id, name, email, role, avatar }
   const [loading, setLoading] = useState(true);
   const [lastError, setLastError] = useState(null);
+
+  useEffect(() => {
+    const onSessionExpired = () => {
+      setUser(null);
+      window.localStorage.removeItem(AUTH_STORAGE_KEY);
+      setLastError({ status: 401, message: SESSION_EXPIRED_MESSAGE });
+      const path = window.location.pathname;
+      const onLoginPage = path === "/login" || path === "/admin/login";
+      if (!onLoginPage) {
+        navigate("/login?session=expired", { replace: true });
+      }
+    };
+    window.addEventListener("paf:session-expired", onSessionExpired);
+    return () => window.removeEventListener("paf:session-expired", onSessionExpired);
+  }, [navigate]);
 
   useEffect(() => {
     // 1) Warm start from cache (so navbar doesn't flash)

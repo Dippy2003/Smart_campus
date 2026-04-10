@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import TicketListItem from "../components/TicketListItem";
 import { getMyTickets } from "../services/ticketService";
 import { useAuth } from "../../member4-auth/Contexts/AuthContext";
@@ -16,7 +17,7 @@ export default function MyCancelledTicketsPage() {
   const [error, setError] = useState("");
   const [tickets, setTickets] = useState([]);
 
-  const fetchCancelled = async () => {
+  const fetchCancelled = useCallback(async () => {
     if (!email) return;
     setLoading(true);
     setSubmitted(true);
@@ -25,12 +26,14 @@ export default function MyCancelledTicketsPage() {
       const all = await getMyTickets(email);
       setTickets(all.filter((t) => isCancelledStatus(t.status)));
     } catch {
-      setError("Unable to load cancelled tickets.");
+      const msg = "Unable to load cancelled tickets.";
+      setError(msg);
+      toast.error(msg);
       setTickets([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [email]);
 
   useEffect(() => {
     if (authLoading) return;
@@ -40,7 +43,7 @@ export default function MyCancelledTicketsPage() {
       return;
     }
     fetchCancelled();
-  }, [email, authLoading]);
+  }, [email, authLoading, fetchCancelled]);
 
   return (
     <div className="rounded-2xl border border-slate-700/70 bg-slate-900/70 p-5 shadow-lg shadow-slate-950/30 backdrop-blur">

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import TicketListItem from "../components/TicketListItem";
 import TicketThread from "../components/TicketThread";
 import TicketStatusBadge from "../components/TicketStatusBadge";
@@ -26,7 +27,9 @@ export default function TechnicianTicketsPage() {
       const list = await getTechnicianTickets(email);
       setTickets(list.filter((t) => isActiveStatus(t.status)));
     } catch {
-      setError("Unable to load assigned tickets.");
+      const msg = "Unable to load assigned tickets.";
+      setError(msg);
+      toast.error(msg);
       setTickets([]);
     } finally {
       setLoading(false);
@@ -40,16 +43,26 @@ export default function TechnicianTicketsPage() {
 
   const changeStatus = async (status) => {
     if (!openedTicket) return;
-    const updated = await updateTicketStatus(
-      openedTicket.id,
-      status,
-      null,
-      openedTicket.solutionNote || ""
-    );
-    setTickets((prev) =>
-      prev.map((t) => (t.id === openedTicket.id ? updated : t)).filter((t) => isActiveStatus(t.status))
-    );
-    setOpenTicketId(updated && isActiveStatus(updated.status) ? updated.id : null);
+    try {
+      const updated = await updateTicketStatus(
+        openedTicket.id,
+        status,
+        null,
+        openedTicket.solutionNote || ""
+      );
+      if (!updated) throw new Error("Ticket not found");
+      toast.success(`Status updated to ${status}.`);
+      setTickets((prev) =>
+        prev
+          .map((t) => (t.id === openedTicket.id ? updated : t))
+          .filter((t) => isActiveStatus(t.status))
+      );
+      setOpenTicketId(
+        updated && isActiveStatus(updated.status) ? updated.id : null
+      );
+    } catch {
+      toast.error("Could not update ticket status.");
+    }
   };
 
   return (

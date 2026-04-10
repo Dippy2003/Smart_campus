@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import TicketListItem from "../components/TicketListItem";
 import TicketThread from "../components/TicketThread";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   getMyTickets,
   markTicketNotificationsRead,
@@ -23,7 +24,7 @@ export default function MyTicketsPage() {
 
   const [openTicketId, setOpenTicketId] = useState(null);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     if (!email) return;
     setError("");
     setSubmitted(true);
@@ -33,12 +34,14 @@ export default function MyTicketsPage() {
       const list = await getMyTickets(email);
       setTickets(list.filter((t) => isActiveStatus(t.status)));
     } catch {
-      setError("Unable to load your tickets. Please try again.");
+      const msg = "Unable to load your tickets. Please try again.";
+      setError(msg);
+      toast.error(msg);
       setTickets([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [email]);
 
   React.useEffect(() => {
     if (authLoading) return;
@@ -48,7 +51,7 @@ export default function MyTicketsPage() {
       return;
     }
     fetchTickets();
-  }, [email, authLoading]);
+  }, [email, authLoading, fetchTickets]);
 
   const unreadCount = useMemo(() => {
     return tickets.reduce(

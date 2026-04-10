@@ -22,6 +22,7 @@ import CreateBookingPage from "./features/member2-bookings/pages/CreateBookingPa
 import MyBookingsPage from "./features/member2-bookings/pages/MyBookingsPage";
 import AdminBookingsPage from "./features/member2-bookings/pages/AdminBookingsPage";
 import BookingHomePage from "./features/member2-bookings/pages/BookingHomePage";
+import BookingCalendarPage from "./features/member2-bookings/pages/BookingCalendarPage";
 
 // Member 3 Imports
 import IncidentsHomePage from "./features/member3-incidents/pages/IncidentsHomePage";
@@ -34,6 +35,7 @@ import MyResolvedTicketsPage from "./features/member3-incidents/pages/MyResolved
 import AdminResolvedTicketsPage from "./features/member3-incidents/pages/AdminResolvedTicketsPage";
 import MyCancelledTicketsPage from "./features/member3-incidents/pages/MyCancelledTicketsPage";
 import AdminCancelledTicketsPage from "./features/member3-incidents/pages/AdminCancelledTicketsPage";
+import NonAdminIncidentGuard from "./features/member3-incidents/components/NonAdminIncidentGuard";
 import TechnicianTicketsPage from "./features/member3-incidents/pages/TechnicianTicketsPage";
 import { ToastProvider } from "./shared/components/ToastProvider";
 import AppErrorBoundary from "./features/member4-auth/components/AppErrorBoundary";
@@ -119,12 +121,13 @@ export default function App() {
               <Route path="/unauthorized" element={<SafeComponent component={UnauthorizedPage} name="UnauthorizedPage" />} />
               <Route path="/resources" element={<SafeComponent component={ResourcesPage} name="ResourcesPage" />} />
               <Route path="/resources/:id" element={<SafeComponent component={ResourceDetailsPage} name="ResourceDetailsPage" />} />
+              <Route path="/resources/calendar" element={<SafeComponent component={BookingCalendarPage} name="BookingCalendarPage" />} />
 
               {/* 2. Admin & Technician Managed Routes (Full Bleed) */}
               <Route
                 path="/admin/dashboard"
                 element={
-                  <RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}>
+                  <RoleGuardSafe roles={["ADMIN"]}>
                     <SafeComponent component={AdminDashboard} name="AdminDashboard" />
                   </RoleGuardSafe>
                 }
@@ -132,9 +135,9 @@ export default function App() {
               <Route path="/admin/analytics" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AdminAnalyticsPage} name="AdminAnalyticsPage" /></RoleGuardSafe>} />
               <Route path="/admin/users" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AdminUsersPage} name="AdminUsersPage" /></RoleGuardSafe>} />
               <Route path="/admin/users/new" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AdminAddUserPage} name="AdminAddUserPage" /></RoleGuardSafe>} />
-              <Route path="/admin/resources" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminResourcesPage} name="AdminResourcesPage" /></RoleGuardSafe>} />
+              <Route path="/admin/resources" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AdminResourcesPage} name="AdminResourcesPage" /></RoleGuardSafe>} />
               <Route path="/admin/resources/new" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={AddResourcePage} name="AddResourcePage" /></RoleGuardSafe>} />
-              <Route path="/admin/resources/:id/edit" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={EditResourcePage} name="EditResourcePage" /></RoleGuardSafe>} />
+              <Route path="/admin/resources/:id/edit" element={<RoleGuardSafe roles={["ADMIN"]}><SafeComponent component={EditResourcePage} name="EditResourcePage" /></RoleGuardSafe>} />
 
               {/* 3. Protected Shell Routes */}
               <Route element={<MainShell />}>
@@ -151,18 +154,18 @@ export default function App() {
 
                 {/* Member 3 - Incidents */}
                 <Route path="/incidents" element={<SafeComponent component={IncidentsHomePage} name="IncidentsHomePage" />}>
-                  <Route index element={<SafeComponent component={CreateTicketPage} name="CreateTicketPage" />} />
-                  <Route path="create" element={<SafeComponent component={CreateTicketPage} name="CreateTicketPage" />} />
-                  <Route path="my" element={<AuthGuardSafe><SafeComponent component={MyTicketsPage} name="MyTicketsPage" /></AuthGuardSafe>} />
-                  <Route path="my-resolved" element={<AuthGuardSafe><SafeComponent component={MyResolvedTicketsPage} name="MyResolvedTicketsPage" /></AuthGuardSafe>} />
-                  <Route path="my-cancelled" element={<AuthGuardSafe><SafeComponent component={MyCancelledTicketsPage} name="MyCancelledTicketsPage" /></AuthGuardSafe>} />
+                  <Route index element={<SafeComponent component={IncidentsIndexPage} name="IncidentsIndexPage" />} />
+                  <Route path="create" element={<NonAdminIncidentGuard><SafeComponent component={CreateTicketPage} name="CreateTicketPage" /></NonAdminIncidentGuard>} />
+                  <Route path="my" element={<AuthGuardSafe><NonAdminIncidentGuard><SafeComponent component={MyTicketsPage} name="MyTicketsPage" /></NonAdminIncidentGuard></AuthGuardSafe>} />
+                  <Route path="my-resolved" element={<AuthGuardSafe><NonAdminIncidentGuard><SafeComponent component={MyResolvedTicketsPage} name="MyResolvedTicketsPage" /></NonAdminIncidentGuard></AuthGuardSafe>} />
+                  <Route path="my-cancelled" element={<AuthGuardSafe><NonAdminIncidentGuard><SafeComponent component={MyCancelledTicketsPage} name="MyCancelledTicketsPage" /></NonAdminIncidentGuard></AuthGuardSafe>} />
 
                   <Route path="technician" element={<RoleGuardSafe roles={["TECHNICIAN"]}><SafeComponent component={TechnicianTicketsPage} name="TechnicianTicketsPage" /></RoleGuardSafe>} />
 
-                  <Route path="admin" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminTicketsPage} name="AdminTicketsPage" /></RoleGuardSafe>} />
-                  <Route path="admin-resolved" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminResolvedTicketsPage} name="AdminResolvedTicketsPage" /></RoleGuardSafe>} />
-                  <Route path="admin-cancelled" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminCancelledTicketsPage} name="AdminCancelledTicketsPage" /></RoleGuardSafe>} />
-                  <Route path="admin/:id" element={<RoleGuardSafe roles={["ADMIN", "TECHNICIAN"]}><SafeComponent component={AdminTicketDetailsPage} name="AdminTicketDetailsPage" /></RoleGuardSafe>} />
+                  <Route path="admin" element={<RoleGuardSafe roles={["TECHNICIAN"]}><SafeComponent component={AdminTicketsPage} name="AdminTicketsPage" /></RoleGuardSafe>} />
+                  <Route path="admin-resolved" element={<RoleGuardSafe roles={["TECHNICIAN"]}><SafeComponent component={AdminResolvedTicketsPage} name="AdminResolvedTicketsPage" /></RoleGuardSafe>} />
+                  <Route path="admin-cancelled" element={<RoleGuardSafe roles={["TECHNICIAN"]}><SafeComponent component={AdminCancelledTicketsPage} name="AdminCancelledTicketsPage" /></RoleGuardSafe>} />
+                  <Route path="admin/:id" element={<RoleGuardSafe roles={["TECHNICIAN"]}><SafeComponent component={AdminTicketDetailsPage} name="AdminTicketDetailsPage" /></RoleGuardSafe>} />
                 </Route>
 
                 {/* Module Placeholders */}
