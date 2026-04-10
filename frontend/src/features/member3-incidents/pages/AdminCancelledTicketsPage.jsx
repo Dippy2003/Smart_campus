@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import { getAllTickets } from "../services/ticketService";
 
@@ -16,6 +17,8 @@ export default function AdminCancelledTicketsPage() {
     try {
       const all = await getAllTickets();
       setTickets(all.filter((t) => isCancelledStatus(t.status)));
+    } catch {
+      toast.error("Unable to load cancelled tickets.");
     } finally {
       setLoading(false);
     }

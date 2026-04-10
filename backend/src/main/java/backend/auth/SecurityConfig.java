@@ -68,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/incidents/my").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/incidents/**").hasAnyRole("ADMIN", "TECHNICIAN")
                         .requestMatchers(HttpMethod.PUT, "/api/incidents/**").hasAnyRole("ADMIN", "TECHNICIAN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/incidents/**").authenticated()
 
                         // Notifications (Member 4)
                         .requestMatchers("/api/notifications/**").authenticated()
