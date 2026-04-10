@@ -26,14 +26,14 @@ function pathToNavId(pathname) {
 }
 
 export default function PillNavbar() {
-  const { isAdmin, isAuthenticated, logout } = useAuth();
+  const { isAdmin, isTechnician, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const isLanding = location.pathname === "/";
   const profileMenuRef = useRef(null);
 
-  const dashboardTo = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const dashboardTo = isAdmin ? "/admin/dashboard" : isTechnician ? "/incidents/admin" : "/dashboard";
 
   const activeId = useMemo(() => {
     if (isLanding) {
@@ -52,15 +52,15 @@ export default function PillNavbar() {
         { id: "home", to: "/", label: "Home", end: true, type: "route" },
         { id: "resources", to: "/resources", label: "Resources", end: false, type: "route" },
       ];
-      // Admin navbar should stay focused on admin-relevant areas.
-      if (isAdmin) return base;
+      // Admin / technician portal: keep main nav minimal (no bookings & incidents shortcuts).
+      if (isAdmin || isTechnician) return base;
       return [
         ...base,
         { id: "bookings", to: "/bookings", label: "Bookings", end: false, type: "route" },
         { id: "incidents", to: "/incidents", label: "Incidents", end: false, type: "route" },
       ];
     },
-    [isAdmin]
+    [isAdmin, isTechnician]
   );
 
   const anchorItems = useMemo(

@@ -155,7 +155,7 @@ public class IncidentTicketController {
         }
         boolean staff = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .anyMatch(a -> "ROLE_ADMIN".equals(a) || "ROLE_TECHNICIAN".equals(a));
+                .anyMatch(a -> "ROLE_TECHNICIAN".equals(a));
         try {
             incidentTicketService.deleteResolvedTicket(id, auth.getName(), staff);
             return ResponseEntity.noContent().build();

@@ -62,16 +62,6 @@ export default function AdminDashboard() {
       color: "emerald",
     },
     {
-      title: "Ticket Management",
-      description: "Handle incident tickets and maintenance requests", 
-      icon: AlertTriangle,
-      links: [
-        { label: "Active Tickets", to: "/incidents/admin" },
-        { label: "Resolved Tickets", to: "/incidents/admin-resolved" },
-      ],
-      color: "amber",
-    },
-    {
       title: "User Management",
       description: "Manage user accounts and roles",
       icon: Users,
