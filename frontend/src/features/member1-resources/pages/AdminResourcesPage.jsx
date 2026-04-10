@@ -364,6 +364,9 @@ export default function AdminResourcesPage() {
             </div>
 
             <div className="arp-header-actions">
+              <Link to="/resources/calendar" className="arp-export-btn" title="Open monthly booking calendar">
+                Booking Calendar
+              </Link>
               <button
                 type="button"
                 className="arp-export-btn"

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import ResourceTable from "../components/ResourceTable";
 import ResourceCard from "../components/ResourceCard";
 import { getAllResources } from "../services/resourceApi";
@@ -556,6 +557,9 @@ export default function ResourcesPage() {
           color: #d1d5db;
           transition: background 0.2s, border-color 0.2s, color 0.2s;
           white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          text-decoration: none;
         }
         .rp-export-btn:hover:not(:disabled) {
           background: rgba(99,102,241,0.15);
@@ -781,6 +785,13 @@ export default function ResourcesPage() {
                 Showing <strong>{sortedResources.length}</strong> of <strong>{resources.length}</strong> resources
               </p>
               <div className="rp-export-actions">
+                <Link
+                  to="/resources/calendar"
+                  className="rp-export-btn"
+                  title="Open monthly booking calendar"
+                >
+                  Booking Calendar
+                </Link>
                 <button
                   type="button"
                   className="rp-export-btn rp-export-btn--primary"
