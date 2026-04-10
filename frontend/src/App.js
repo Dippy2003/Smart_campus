@@ -22,6 +22,7 @@ import CreateBookingPage from "./features/member2-bookings/pages/CreateBookingPa
 import MyBookingsPage from "./features/member2-bookings/pages/MyBookingsPage";
 import AdminBookingsPage from "./features/member2-bookings/pages/AdminBookingsPage";
 import BookingHomePage from "./features/member2-bookings/pages/BookingHomePage";
+import BookingCalendarPage from "./features/member2-bookings/pages/BookingCalendarPage";
 
 // Member 3 Imports
 import IncidentsHomePage from "./features/member3-incidents/pages/IncidentsHomePage";
@@ -120,6 +121,7 @@ export default function App() {
               <Route path="/unauthorized" element={<SafeComponent component={UnauthorizedPage} name="UnauthorizedPage" />} />
               <Route path="/resources" element={<SafeComponent component={ResourcesPage} name="ResourcesPage" />} />
               <Route path="/resources/:id" element={<SafeComponent component={ResourceDetailsPage} name="ResourceDetailsPage" />} />
+              <Route path="/resources/calendar" element={<SafeComponent component={BookingCalendarPage} name="BookingCalendarPage" />} />
 
               {/* 2. Admin & Technician Managed Routes (Full Bleed) */}
               <Route

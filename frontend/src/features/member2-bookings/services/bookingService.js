@@ -59,6 +59,11 @@ export const getAllBookings = async (status = "") => {
   return apiFetch(url);
 };
 
+// GET /api/bookings — calendar view helper (client-side month filtering)
+export const getBookingsForCalendar = async () => {
+  return apiFetch(BASE_URL);
+};
+
 // GET /api/bookings/stats — get booking counts by status
 export const getBookingStats = async () => {
   return apiFetch(`${BASE_URL}/stats`);
