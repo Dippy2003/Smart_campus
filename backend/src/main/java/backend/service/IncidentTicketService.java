@@ -105,6 +105,8 @@ public class IncidentTicketService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Assigned technician must be a registered technician account.");
             }
             ticket.setAssignedTechnician(assignedEmail);
+        } else {
+            ticket.setAssignedTechnician(null);
         }
         ticket.setSolutionNote(trimToNull(solutionNote));
 
@@ -268,12 +270,28 @@ public class IncidentTicketService {
                 .append(".");
 
         if (assignedTechnician != null && !assignedTechnician.isBlank()) {
-            notification.append(" Assigned technician: ").append(assignedTechnician).append(".");
+            String technicianName = getTechnicianNameByEmail(assignedTechnician);
+            notification.append(" Assigned technician: ")
+                    .append(technicianName)
+                    .append(" (")
+                    .append(assignedTechnician)
+                    .append(").")
+                    .append(" They will contact you soon.");
         }
         if (solutionNote != null && !solutionNote.isBlank()) {
             notification.append(" Solution: ").append(solutionNote);
         }
         return notification.toString();
+    }
+
+    private String getTechnicianNameByEmail(String email) {
+        if (email == null || email.isBlank()) return "Technician";
+        return getRegisteredTechnicians()
+                .stream()
+                .filter(t -> email.equalsIgnoreCase(t.get("email")))
+                .map(t -> t.getOrDefault("name", "Technician"))
+                .findFirst()
+                .orElse("Technician");
     }
 }
 

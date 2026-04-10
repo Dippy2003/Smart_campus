@@ -32,7 +32,11 @@ export default function RoleGuard({ children, roles = [], fallback = "/unauthori
   }
 
   // 3. If the user is logged in but has the wrong role, send them to unauthorized
-  if (roles.length > 0 && !roles.includes(user?.role)) {
+  const normalizedUserRole = String(user?.role || "").trim().toUpperCase();
+  const normalizedAllowedRoles = roles.map((r) =>
+    String(r || "").trim().toUpperCase()
+  );
+  if (normalizedAllowedRoles.length > 0 && !normalizedAllowedRoles.includes(normalizedUserRole)) {
     return <Navigate to={fallback} replace />;
   }
 

@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, X, LogOut, User } from "lucide-react";
 import { useAuth } from "../../features/member4-auth/Contexts/AuthContext";
 import NotificationBell from "../../features/member4-auth/components/NotificationBell";
+import { canManageAllIncidentTickets } from "../../features/member3-incidents/utils/incidentAccess";
 
 function isRenderableType(t) {
   if (!t) return false;
@@ -26,14 +27,20 @@ function pathToNavId(pathname) {
 }
 
 export default function PillNavbar() {
-  const { isAdmin, isTechnician, isAuthenticated, logout } = useAuth();
+  const { isAdmin, isTechnician, isAuthenticated, logout, user } = useAuth();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const isLanding = location.pathname === "/";
   const profileMenuRef = useRef(null);
 
-  const dashboardTo = isAdmin ? "/admin/dashboard" : isTechnician ? "/incidents/admin" : "/dashboard";
+  const dashboardTo = isAdmin
+    ? "/admin/dashboard"
+    : isTechnician
+      ? canManageAllIncidentTickets(user)
+        ? "/incidents/admin"
+        : "/incidents/technician"
+      : "/dashboard";
 
   const activeId = useMemo(() => {
     if (isLanding) {

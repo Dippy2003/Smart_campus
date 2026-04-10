@@ -2,9 +2,10 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 import CreateTicketPage from "./CreateTicketPage";
+import { canManageAllIncidentTickets } from "../utils/incidentAccess";
 
 export default function IncidentsIndexPage() {
-  const { isTechnician, loading } = useAuth();
+  const { isTechnician, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -14,6 +15,13 @@ export default function IncidentsIndexPage() {
     );
   }
 
-  if (isTechnician) return <Navigate to="/incidents/admin" replace />;
+  if (isTechnician) {
+    return (
+      <Navigate
+        to={canManageAllIncidentTickets(user) ? "/incidents/admin" : "/incidents/technician"}
+        replace
+      />
+    );
+  }
   return <CreateTicketPage />;
 }

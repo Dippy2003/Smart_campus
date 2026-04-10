@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../member4-auth/Contexts/AuthContext";
+import { canManageAllIncidentTickets } from "../utils/incidentAccess";
 
 /**
  * Allows guests and normal users; redirects TECHNICIAN to the ticket console (they do not use the requester flows).
@@ -16,8 +17,9 @@ export default function NonAdminIncidentGuard({ children, fallback = "/incidents
     );
   }
 
-  if (isAuthenticated && user?.role === "TECHNICIAN") {
-    return <Navigate to={fallback} replace />;
+  if (isAuthenticated && String(user?.role || "").trim().toUpperCase() === "TECHNICIAN") {
+    const target = canManageAllIncidentTickets(user) ? fallback : "/incidents/technician";
+    return <Navigate to={target} replace />;
   }
 
   return children;
