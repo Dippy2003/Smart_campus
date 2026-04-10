@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
+import { canManageAllIncidentTickets } from "../../member3-incidents/utils/incidentAccess";
 
 /* ────────────────────────────────────────────────────────────────────
    Shared small components
@@ -149,9 +150,16 @@ function SignInForm({ onForgot, onSwitch }) {
       return;
     }
 
+    const normalizedRole = String(result.role || "").trim().toUpperCase();
     const from =
       searchParams.get("from") ||
-      (result.role === "ADMIN" ? "/admin/dashboard" : result.role === "TECHNICIAN" ? "/incidents/admin" : "/");
+      (normalizedRole === "ADMIN"
+        ? "/admin/dashboard"
+        : normalizedRole === "TECHNICIAN"
+          ? canManageAllIncidentTickets({ role: normalizedRole, email })
+            ? "/incidents/admin"
+            : "/incidents/technician"
+          : "/");
     navigate(from, { replace: true });
   };
 

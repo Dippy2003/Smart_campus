@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -27,6 +28,7 @@ import java.util.Map;
         }
 )
 public class IncidentTicketController {
+    private static final String HEAD_TECH_EMAIL = "tech@paf.com";
 
     private final IncidentTicketService incidentTicketService;
 
@@ -79,15 +81,31 @@ public class IncidentTicketController {
 
     // GET /api/incidents — admin view (all tickets)
     @GetMapping
-    public ResponseEntity<List<IncidentTicket>> getAllTickets() {
-        return ResponseEntity.ok(incidentTicketService.getAllTickets());
+    public ResponseEntity<List<IncidentTicket>> getAllTickets(Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (canManageAllIncidentTickets(auth)) {
+            return ResponseEntity.ok(incidentTicketService.getAllTickets());
+        }
+        return ResponseEntity.ok(incidentTicketService.getTechnicianTickets(auth.getName()));
     }
 
     // GET /api/incidents/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTicketById(@PathVariable Long id) {
+    public ResponseEntity<?> getTicketById(@PathVariable Long id, Authentication auth) {
         try {
-            return ResponseEntity.ok(incidentTicketService.getTicketById(id));
+            IncidentTicket ticket = incidentTicketService.getTicketById(id);
+            if (auth != null && !canManageAllIncidentTickets(auth)) {
+                String actor = normalizeEmail(auth.getName());
+                String assigned = normalizeEmail(ticket.getAssignedTechnician());
+                String requester = normalizeEmail(ticket.getRequesterEmail());
+                if (!actor.equals(assigned) && !actor.equals(requester)) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(Map.of("error", "You can only view your own or assigned tickets."));
+                }
+            }
+            return ResponseEntity.ok(ticket);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", e.getMessage()));
@@ -98,9 +116,27 @@ public class IncidentTicketController {
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
-            @RequestBody IncidentTicketStatusUpdateRequest req
+            @RequestBody IncidentTicketStatusUpdateRequest req,
+            Authentication auth
     ) {
         try {
+            if (auth == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            IncidentTicket ticket = incidentTicketService.getTicketById(id);
+            if (!canManageAllIncidentTickets(auth)) {
+                String actor = normalizeEmail(auth.getName());
+                String assigned = normalizeEmail(ticket.getAssignedTechnician());
+                if (!actor.equals(assigned)) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(Map.of("error", "You can only update tickets assigned to you."));
+                }
+                String requestedAssignee = normalizeEmail(req.getAssignedTechnician());
+                if (!requestedAssignee.isEmpty() && !requestedAssignee.equals(actor)) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(Map.of("error", "Only head tech/admin can re-assign technicians."));
+                }
+            }
             TicketStatus status = TicketStatus.valueOf(req.getStatus().toUpperCase());
             return ResponseEntity.ok(
                     incidentTicketService.updateStatus(
@@ -120,9 +156,22 @@ public class IncidentTicketController {
     @PostMapping("/{id}/reply")
     public ResponseEntity<?> replyToTicket(
             @PathVariable Long id,
-            @RequestBody IncidentTicketReplyRequest req
+            @RequestBody IncidentTicketReplyRequest req,
+            Authentication auth
     ) {
         try {
+            if (auth == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+            if (!canManageAllIncidentTickets(auth)) {
+                IncidentTicket ticket = incidentTicketService.getTicketById(id);
+                String actor = normalizeEmail(auth.getName());
+                String assigned = normalizeEmail(ticket.getAssignedTechnician());
+                if (!actor.equals(assigned)) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(Map.of("error", "You can only reply to tickets assigned to you."));
+                }
+            }
             boolean sendNotification = req.getSendNotification() != null && req.getSendNotification();
             return ResponseEntity.ok(
                     incidentTicketService.replyAndMaybeNotify(id, req.getReplyMessage(), sendNotification)
@@ -163,6 +212,19 @@ public class IncidentTicketController {
             String reason = e.getReason() != null ? e.getReason() : e.getStatusCode().toString();
             return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", reason));
         }
+    }
+
+    private boolean canManageAllIncidentTickets(Authentication auth) {
+        if (auth == null) return false;
+        boolean isAdmin = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> "ROLE_ADMIN".equals(a));
+        return isAdmin || HEAD_TECH_EMAIL.equals(normalizeEmail(auth.getName()));
+    }
+
+    private String normalizeEmail(String email) {
+        if (email == null) return "";
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 }
 

@@ -13,9 +13,21 @@ public class AuthDataInitializer {
         return args -> {
             seed(users, encoder, "admin@paf.com", "Admin User", "Admin123", UserRole.ADMIN);
             seed(users, encoder, "tech@paf.com", "Tech User", "Tech1234", UserRole.TECHNICIAN);
+            seed(users, encoder, "electrician@campus.lk", "Campus Electrician", "Tech1234", UserRole.TECHNICIAN);
+            seed(users, encoder, "plumber@campus.lk", "Campus Plumber", "Tech1234", UserRole.TECHNICIAN);
+            seed(users, encoder, "engineer@campus.lk", "Building Engineer", "Tech1234", UserRole.TECHNICIAN);
             seed(users, encoder, "student@paf.com", "Student User", "Student1A", UserRole.USER);
 
             users.findByEmail("tech@paf.com").ifPresent(u -> {
+                techs.findByUserEmail(u.getEmail()).orElseGet(() -> techs.save(new TechnicianProfile(u)));
+            });
+            users.findByEmail("electrician@campus.lk").ifPresent(u -> {
+                techs.findByUserEmail(u.getEmail()).orElseGet(() -> techs.save(new TechnicianProfile(u)));
+            });
+            users.findByEmail("plumber@campus.lk").ifPresent(u -> {
+                techs.findByUserEmail(u.getEmail()).orElseGet(() -> techs.save(new TechnicianProfile(u)));
+            });
+            users.findByEmail("engineer@campus.lk").ifPresent(u -> {
                 techs.findByUserEmail(u.getEmail()).orElseGet(() -> techs.save(new TechnicianProfile(u)));
             });
         };
