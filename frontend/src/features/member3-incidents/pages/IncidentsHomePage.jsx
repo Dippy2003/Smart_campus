@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../member4-auth/Contexts/AuthContext";
+import { canManageAllIncidentTickets } from "../utils/incidentAccess";
 
 function tabStyle(active) {
   return (
@@ -13,7 +14,8 @@ function tabStyle(active) {
 
 export default function IncidentsHomePage() {
   const location = useLocation();
-  const { isTechnician } = useAuth();
+  const { isTechnician, user } = useAuth();
+  const canManageAll = canManageAllIncidentTickets(user);
 
   const isActive = (path) =>
     location.pathname === `/incidents${path}` ||
@@ -54,15 +56,19 @@ export default function IncidentsHomePage() {
               <Link to="/incidents/technician" className={tabStyle(isActive("/technician"))}>
                 Technician
               </Link>
-              <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
-                Ticket Management
-              </Link>
-              <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
-                Resolved
-              </Link>
-              <Link to="/incidents/admin-cancelled" className={tabStyle(isActive("/admin-cancelled"))}>
-                Cancelled
-              </Link>
+              {canManageAll && (
+                <>
+                  <Link to="/incidents/admin" className={tabStyle(isActive("/admin"))}>
+                    Ticket Management
+                  </Link>
+                  <Link to="/incidents/admin-resolved" className={tabStyle(isActive("/admin-resolved"))}>
+                    Resolved
+                  </Link>
+                  <Link to="/incidents/admin-cancelled" className={tabStyle(isActive("/admin-cancelled"))}>
+                    Cancelled
+                  </Link>
+                </>
+              )}
             </>
           )}
         </>
