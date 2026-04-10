@@ -158,12 +158,18 @@ function updateTicketStatusLocal(id, status, assignedTechnician, solutionNote) {
   const ticketId = Number(id);
   const idx = tickets.findIndex((t) => Number(t.id) === ticketId);
   if (idx === -1) return null;
+  const normalizedTechnician = assignedTechnician?.trim() || null;
+  const normalizedSolutionNote = solutionNote?.trim() || null;
+  const now = new Date().toISOString();
+  const contactMessage = normalizedTechnician
+    ? ` Assigned technician: ${normalizedTechnician}. They will contact you soon.`
+    : "";
 
   tickets[idx] = {
     ...tickets[idx],
     status,
-    assignedTechnician: assignedTechnician?.trim() || null,
-    solutionNote: solutionNote?.trim() || null,
+    assignedTechnician: normalizedTechnician,
+    solutionNote: normalizedSolutionNote,
     updates: [
       ...(tickets[idx].updates || []),
       {
@@ -171,11 +177,23 @@ function updateTicketStatusLocal(id, status, assignedTechnician, solutionNote) {
         authorType: "ADMIN",
         message:
           `Status changed to ${status}.` +
-          (assignedTechnician?.trim()
-            ? ` Technician assigned: ${assignedTechnician.trim()}.`
+          (normalizedTechnician
+            ? ` Technician assigned: ${normalizedTechnician}.`
             : "") +
-          (solutionNote?.trim() ? ` Solution: ${solutionNote.trim()}` : ""),
-        createdAt: new Date().toISOString(),
+          (normalizedSolutionNote ? ` Solution: ${normalizedSolutionNote}` : ""),
+        createdAt: now,
+      },
+    ],
+    notifications: [
+      ...(tickets[idx].notifications || []),
+      {
+        id: nextNotificationId(tickets[idx]),
+        message:
+          `Ticket #${ticketId} status changed to ${status}.` +
+          contactMessage +
+          (normalizedSolutionNote ? ` Solution: ${normalizedSolutionNote}` : ""),
+        createdAt: now,
+        read: false,
       },
     ],
   };

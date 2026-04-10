@@ -53,6 +53,14 @@ export default function MyTicketsPage() {
     fetchTickets();
   }, [email, authLoading, fetchTickets]);
 
+  React.useEffect(() => {
+    if (authLoading || !email) return undefined;
+    const intervalId = window.setInterval(() => {
+      fetchTickets();
+    }, 15000);
+    return () => window.clearInterval(intervalId);
+  }, [email, authLoading, fetchTickets]);
+
   const unreadCount = useMemo(() => {
     return tickets.reduce(
       (acc, t) => acc + (t.notifications || []).filter((n) => !n.read).length,
@@ -124,7 +132,7 @@ export default function MyTicketsPage() {
               {tickets.length} ticket(s)
             </p>
             {unreadCount > 0 && (
-              <div className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+              <div className="rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-200">
                 {unreadCount} new notification(s)
               </div>
             )}
@@ -141,43 +149,46 @@ export default function MyTicketsPage() {
               ))}
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
               {!openedTicket ? (
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-slate-300">
                   Select a ticket to view its updates and notifications.
                 </p>
               ) : (
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-base font-semibold text-slate-900">
+                      <h3 className="text-base font-semibold text-slate-50">
                         {openedTicket.title}
                       </h3>
                       <TicketStatusBadge status={openedTicket.status} />
-                      <span className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700">
+                      <span className="rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-200">
                         {openedTicket.category}
                       </span>
-                      <span className="rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-700">
+                      <span className="rounded-full border border-slate-600 bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-200">
                         #{openedTicket.id}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-slate-300">
                       Location: <span className="font-semibold">{openedTicket.location}</span>
                     </p>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-xs text-slate-300">
                       Submitted:{" "}
                       {new Date(openedTicket.createdAt).toLocaleString()}
                     </p>
                     {openedTicket.assignedTechnician && (
-                      <p className="text-xs text-slate-600">
-                        Technician:{" "}
-                        <span className="font-semibold">
-                          {openedTicket.assignedTechnician}
-                        </span>
-                      </p>
+                      <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-200">
+                        <p>
+                          Technician:{" "}
+                          <span className="font-semibold">
+                            {openedTicket.assignedTechnician}
+                          </span>
+                        </p>
+                        <p className="mt-1">They will contact you soon.</p>
+                      </div>
                     )}
                     {openedTicket.solutionNote && (
-                      <p className="text-xs text-slate-600">
+                      <p className="text-xs text-slate-300">
                         Solution:{" "}
                         <span className="font-semibold">
                           {openedTicket.solutionNote}
@@ -188,7 +199,7 @@ export default function MyTicketsPage() {
 
                   {openedTicket.attachments?.length > 0 && (
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                         Attachments
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
@@ -197,7 +208,7 @@ export default function MyTicketsPage() {
                             <img
                               src={img}
                               alt={`Attachment ${idx + 1}`}
-                              className="h-14 w-14 rounded-md border border-slate-300 object-cover"
+                              className="h-14 w-14 rounded-md border border-slate-600 object-cover"
                             />
                           </a>
                         ))}
