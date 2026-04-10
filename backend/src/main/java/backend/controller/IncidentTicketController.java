@@ -6,6 +6,8 @@ import backend.service.IncidentTicketService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +15,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/incidents")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(
+        origins = "http://localhost:3000",
+        methods = {
+                RequestMethod.GET,
+                RequestMethod.POST,
+                RequestMethod.PUT,
+                RequestMethod.DELETE,
+                RequestMethod.OPTIONS,
+                RequestMethod.PATCH
+        }
+)
 public class IncidentTicketController {
 
     private final IncidentTicketService incidentTicketService;
@@ -132,6 +144,24 @@ public class IncidentTicketController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // DELETE /api/incidents/{id} — resolved / closed / rejected only; staff or requester
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTicket(@PathVariable Long id, Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        boolean staff = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> "ROLE_ADMIN".equals(a) || "ROLE_TECHNICIAN".equals(a));
+        try {
+            incidentTicketService.deleteResolvedTicket(id, auth.getName(), staff);
+            return ResponseEntity.noContent().build();
+        } catch (ResponseStatusException e) {
+            String reason = e.getReason() != null ? e.getReason() : e.getStatusCode().toString();
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", reason));
         }
     }
 }

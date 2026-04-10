@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { createTicket } from "../services/ticketService";
 import { useAuth } from "../../member4-auth/Contexts/AuthContext";
 
@@ -61,7 +62,9 @@ export default function CreateTicketPage() {
     setSuccessId(null);
 
     if (!canSubmit) {
-      setError("Please complete all required fields before submitting.");
+      const msg = "Please complete all required fields before submitting.";
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -79,6 +82,7 @@ export default function CreateTicketPage() {
           attachments,
         });
         setSuccessId(created.id);
+        toast.success(`Ticket #${created.id} submitted successfully.`);
         setForm({
           requesterEmail: sessionEmail,
           title: "",
@@ -89,8 +93,11 @@ export default function CreateTicketPage() {
           priority: "NORMAL",
         });
         setAttachments([]);
-      } catch {
-        setError("Could not create the ticket. Please try again.");
+      } catch (e) {
+        const msg =
+          e?.message || "Could not create the ticket. Please try again.";
+        setError(msg);
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
@@ -100,7 +107,9 @@ export default function CreateTicketPage() {
   const handleAttachments = (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 3) {
-      setError("You can upload up to 3 images only.");
+      const msg = "You can upload up to 3 images only.";
+      setError(msg);
+      toast.error(msg);
       return;
     }
     setError("");
@@ -120,7 +129,11 @@ export default function CreateTicketPage() {
       )
     )
       .then((results) => setAttachments(results.slice(0, 3)))
-      .catch(() => setError("Could not read selected image(s). Try again."));
+      .catch(() => {
+        const msg = "Could not read selected image(s). Try again.";
+        setError(msg);
+        toast.error(msg);
+      });
   };
 
   return (

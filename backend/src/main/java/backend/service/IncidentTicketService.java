@@ -167,6 +167,34 @@ public class IncidentTicketService {
         return saved;
     }
 
+    public void deleteResolvedTicket(Long id, String actorEmail, boolean actorIsStaff) {
+        IncidentTicket ticket = getTicketById(id);
+        if (!isResolvedDeletableStatus(ticket.getStatus())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Only resolved, closed, or rejected tickets can be deleted."
+            );
+        }
+        String normActor = normalizeEmail(actorEmail);
+        if (actorIsStaff) {
+            incidentTicketRepository.delete(ticket);
+            return;
+        }
+        if (ticket.getRequesterEmail() == null || !ticket.getRequesterEmail().equalsIgnoreCase(normActor)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You can only delete your own resolved tickets."
+            );
+        }
+        incidentTicketRepository.delete(ticket);
+    }
+
+    private boolean isResolvedDeletableStatus(TicketStatus status) {
+        return status == TicketStatus.RESOLVED
+                || status == TicketStatus.CLOSED
+                || status == TicketStatus.REJECTED;
+    }
+
     public IncidentTicket markNotificationsRead(Long id, String email) {
         IncidentTicket ticket = getTicketById(id);
         String norm = normalizeEmail(email);

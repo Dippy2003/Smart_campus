@@ -3,6 +3,7 @@ import TicketListItem from "../components/TicketListItem";
 import TicketThread from "../components/TicketThread";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   getMyTickets,
   markTicketNotificationsRead,
@@ -33,7 +34,9 @@ export default function MyTicketsPage() {
       const list = await getMyTickets(email);
       setTickets(list.filter((t) => isActiveStatus(t.status)));
     } catch {
-      setError("Unable to load your tickets. Please try again.");
+      const msg = "Unable to load your tickets. Please try again.";
+      setError(msg);
+      toast.error(msg);
       setTickets([]);
     } finally {
       setLoading(false);

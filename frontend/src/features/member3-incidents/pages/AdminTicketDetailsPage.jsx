@@ -1,15 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import TicketStatusBadge from "../components/TicketStatusBadge";
 import TicketThread from "../components/TicketThread";
 import {
   addAdminReply,
+  deleteResolvedTicket,
   getTicketById,
   getRegisteredTechnicians,
   updateTicketStatus,
 } from "../services/ticketService";
 
 const STATUSES = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED", "CANCELLED", "REJECTED"];
+
+function isResolvedDeletableStatus(s) {
+  return s === "RESOLVED" || s === "CLOSED" || s === "REJECTED";
+}
 
 export default function AdminTicketDetailsPage() {
   const { id } = useParams();
@@ -25,6 +31,7 @@ export default function AdminTicketDetailsPage() {
   const [sendNotification, setSendNotification] = useState(true);
   const [savingStatus, setSavingStatus] = useState(false);
   const [sendingReply, setSendingReply] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
   const unreadCount = useMemo(() => {
@@ -59,6 +66,7 @@ export default function AdminTicketDetailsPage() {
       );
       if (!updated) throw new Error("Ticket not found");
       setTicket(updated);
+      toast.success(`Status updated to ${updated.status}.`);
       if (
         updated.status === "RESOLVED" ||
         updated.status === "CLOSED" ||
@@ -69,16 +77,50 @@ export default function AdminTicketDetailsPage() {
         navigate("/incidents/admin-cancelled");
       }
     } catch (err) {
-      setError("Could not update status.");
+      const msg = "Could not update status.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSavingStatus(false);
+    }
+  };
+
+  const handleDeleteResolved = async () => {
+    if (!ticket || !isResolvedDeletableStatus(ticket.status)) return;
+    setError("");
+    if (
+      !window.confirm(
+        "Permanently delete this ticket? This cannot be undone."
+      )
+    ) {
+      return;
+    }
+    setDeleting(true);
+    try {
+      const ok = await deleteResolvedTicket(ticketId);
+      if (!ok) {
+        const msg = "Could not delete ticket. It may not be resolved yet.";
+        setError(msg);
+        toast.error(msg);
+        return;
+      }
+      toast.success("Ticket deleted.");
+      navigate("/incidents/admin-resolved");
+    } catch {
+      const msg = "Could not delete ticket. It may not be resolved yet.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setDeleting(false);
     }
   };
 
   const handleSendReply = async () => {
     setError("");
     if (!replyMessage.trim()) {
-      setError("Reply message cannot be empty.");
+      const msg = "Reply message cannot be empty.";
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -92,8 +134,11 @@ export default function AdminTicketDetailsPage() {
       if (!updated) throw new Error("Ticket not found");
       setTicket(updated);
       setReplyMessage("");
+      toast.success("Reply sent.");
     } catch {
-      setError("Could not send reply.");
+      const msg = "Could not send reply.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setSendingReply(false);
     }
@@ -138,7 +183,7 @@ export default function AdminTicketDetailsPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/incidents/admin"
               className="rounded-full border border-slate-600 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-200 transition hover:bg-slate-700"
@@ -151,6 +196,16 @@ export default function AdminTicketDetailsPage() {
             >
               Resolved Section
             </Link>
+            {isResolvedDeletableStatus(ticket.status) && (
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleDeleteResolved}
+                className="rounded-full border border-rose-500/50 bg-rose-500/10 px-4 py-2 text-xs font-semibold text-rose-200 transition hover:bg-rose-500/20 disabled:opacity-50"
+              >
+                {deleting ? "Deleting…" : "Delete ticket"}
+              </button>
+            )}
           </div>
         </div>
 

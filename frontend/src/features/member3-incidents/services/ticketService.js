@@ -1,8 +1,22 @@
 const STORAGE_KEY = "smart-campus-incident-tickets-v1";
 const LAST_EMAIL_KEY = "smart-campus-last-incident-email-v1";
-const API_BASE =
-  (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_BASE_URL) || "";
-const API_BASE_URL = `${API_BASE}/api/incidents`;
+// Dev: relative /api → src/setupProxy.js → :8080. Prod: set REACT_APP_API_BASE_URL or default below.
+function resolveIncidentApiBase() {
+  if (typeof process === "undefined") return "http://localhost:8080";
+  const explicit = process.env.REACT_APP_API_BASE_URL;
+  if (explicit != null && String(explicit).trim() !== "") {
+    return String(explicit).trim().replace(/\/$/, "");
+  }
+  if (process.env.NODE_ENV === "development") {
+    return "";
+  }
+  return "http://localhost:8080";
+}
+
+const API_BASE = resolveIncidentApiBase();
+const API_BASE_URL = API_BASE
+  ? `${API_BASE}/api/incidents`.replace(/([^:])\/{2,}/g, "$1/")
+  : "/api/incidents";
 
 function getAuthToken() {
   if (typeof window === "undefined") return "";
@@ -207,6 +221,21 @@ function addAdminReplyLocal({ id, replyMessage, sendNotification }) {
   return nextTicket;
 }
 
+function isResolvedDeletableStatus(status) {
+  return status === "RESOLVED" || status === "CLOSED" || status === "REJECTED";
+}
+
+function deleteTicketLocal(id) {
+  const tickets = readTickets();
+  const ticketId = Number(id);
+  const idx = tickets.findIndex((t) => Number(t.id) === ticketId);
+  if (idx === -1) return false;
+  if (!isResolvedDeletableStatus(tickets[idx].status)) return false;
+  const next = tickets.filter((_, i) => i !== idx);
+  writeTickets(next);
+  return true;
+}
+
 function markTicketNotificationsReadLocal({ id, email }) {
   const tickets = readTickets();
   const ticketId = Number(id);
@@ -389,6 +418,21 @@ export async function addAdminReply({ id, replyMessage, sendNotification }) {
   } catch (e) {
     if (e?.isAuthFailure) throw e;
     return addAdminReplyLocal({ id, replyMessage, sendNotification });
+  }
+}
+
+export async function deleteResolvedTicket(id) {
+  try {
+    const res = await authFetch(`${API_BASE_URL}/${id}`, { method: "DELETE" });
+    if (res.status === 204) return true;
+    if (!res.ok) {
+      await res.json().catch(() => null);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    if (e?.isAuthFailure) throw e;
+    return deleteTicketLocal(id);
   }
 }
 

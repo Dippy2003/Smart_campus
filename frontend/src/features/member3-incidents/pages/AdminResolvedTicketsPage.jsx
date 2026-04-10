@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import TicketStatusBadge from "../components/TicketStatusBadge";
-import { getAllTickets } from "../services/ticketService";
+import { deleteResolvedTicket, getAllTickets } from "../services/ticketService";
 
 function isResolvedStatus(status) {
   return status === "RESOLVED" || status === "CLOSED" || status === "REJECTED";
@@ -10,12 +11,16 @@ function isResolvedStatus(status) {
 export default function AdminResolvedTicketsPage() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
 
   const load = async () => {
     setLoading(true);
     try {
       const all = await getAllTickets();
       setTickets(all.filter((t) => isResolvedStatus(t.status)));
+    } catch {
+      toast.error("Unable to load resolved tickets.");
+      setTickets([]);
     } finally {
       setLoading(false);
     }
@@ -24,6 +29,28 @@ export default function AdminResolvedTicketsPage() {
   useEffect(() => {
     load();
   }, []);
+
+  const handleDelete = async (ticketId) => {
+    if (
+      !window.confirm(
+        "Permanently delete this resolved ticket? This cannot be undone."
+      )
+    ) {
+      return;
+    }
+    setDeletingId(ticketId);
+    try {
+      const ok = await deleteResolvedTicket(ticketId);
+      if (ok) {
+        toast.success("Ticket deleted.");
+        await load();
+      } else {
+        toast.error("Could not delete this ticket.");
+      }
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg shadow-slate-950/60">
@@ -66,7 +93,7 @@ export default function AdminResolvedTicketsPage() {
                     {t.requesterEmail} • {t.location}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap justify-end">
                   <TicketStatusBadge status={t.status} />
                   <Link
                     to={`/incidents/admin/${t.id}`}
@@ -74,6 +101,14 @@ export default function AdminResolvedTicketsPage() {
                   >
                     View
                   </Link>
+                  <button
+                    type="button"
+                    disabled={deletingId === t.id}
+                    onClick={() => handleDelete(t.id)}
+                    className="rounded-full border border-rose-500/50 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-200 transition hover:bg-rose-500/20 disabled:opacity-50"
+                  >
+                    {deletingId === t.id ? "Deleting…" : "Delete"}
+                  </button>
                 </div>
               </div>
             </div>
