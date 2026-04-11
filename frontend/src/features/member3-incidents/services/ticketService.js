@@ -315,7 +315,17 @@ export async function createTicket({
     return data;
   } catch (e) {
     if (e?.isAuthFailure) throw e;
-    return createTicketLocal(payload);
+    // Only use local fallback when backend is unreachable (network/offline).
+    const msg = String(e?.message || "").toLowerCase();
+    const isNetworkFailure =
+      e instanceof TypeError ||
+      msg.includes("failed to fetch") ||
+      msg.includes("networkerror") ||
+      msg.includes("load failed");
+    if (isNetworkFailure) {
+      return createTicketLocal(payload);
+    }
+    throw e;
   }
 }
 
