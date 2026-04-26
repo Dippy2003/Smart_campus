@@ -1,0 +1,214 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram id="usecase-1" name="Use Case Diagram">
+    <mxGraphModel dx="1500" dy="887" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="University Resource &amp; Incident Management System - Use Case Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#374151;" parent="1" vertex="1">
+          <mxGeometry x="520" y="20" width="1200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sys" value="System Boundary" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#111827;fillColor=none;fontSize=12;align=left;verticalAlign=top;spacing=8;" parent="1" vertex="1">
+          <mxGeometry x="430" y="90" width="1280" height="1160" as="geometry" />
+        </mxCell>
+        <mxCell id="actorStaff" value="Staff / Lecturer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="180" y="300" width="60" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="actorAdmin" value="Admin" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dcfce7;strokeColor=#4ade80;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="180" y="700" width="60" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="actorTech" value="Technician" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#fef3c7;strokeColor=#facc15;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="180" y="980" width="60" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="actorGoogle" value="Google OAuth" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#fee2e2;strokeColor=#f87171;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1780" y="170" width="70" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="actorNotif" value="Notification Service" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#f3e8ff;strokeColor=#c084fc;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1780" y="790" width="70" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="ucLogin" value="Login" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e9d5ff;strokeColor=#8b5cf6;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="150" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucAuthEmail" value="Authenticate via Email" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#a78bfa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="120" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucAuthGoogle" value="Authenticate via Google" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#a78bfa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="220" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucShowLoginError" value="Show Login Error Message" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="120" width="260" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucInvalidCredentials" value="Invalid Credentials" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#ef4444;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1200" y="205" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ucForgotPassword" value="Forgot Password" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#a78bfa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="320" width="230" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ucBrowseResources" value="Browse Resources" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="280" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucViewResourceDetails" value="View Resource Details" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="280" width="250" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucCreateBooking" value="Create Booking" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="380" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucCheckConflicts" value="Check Booking Conflicts" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="380" width="250" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucManageMyBookings" value="Manage My Bookings" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="480" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucEditBooking" value="Edit Booking" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="470" width="230" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucCancelBooking" value="Cancel Booking" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="545" width="230" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucReportIncident" value="Report Incident" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="590" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucManageMyIncidents" value="Manage My Incidents" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="690" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucDeleteIncident" value="Delete Incident" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="690" width="230" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucViewNotifications" value="View Notifications" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="790" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucMarkAsRead" value="Mark Notification as Read" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#60a5fa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="790" width="260" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucManageAllBookings" value="Manage All Bookings" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#4ade80;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="900" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucApproveRejectBooking" value="Approve/Reject Booking" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#4ade80;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="885" width="250" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucManageAllIncidents" value="Manage All Incidents" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#4ade80;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="990" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucReplyIncident" value="Reply to Incident" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#4ade80;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="980" width="230" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucManageResources" value="Manage Resources" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#4ade80;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="1080" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucManageUsers" value="Manage Users" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#4ade80;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="1170" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucSearchUsers" value="Search Users" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#facc15;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="1170" width="220" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucViewAssignedTasks" value="View Assigned Tasks" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#facc15;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="560" y="1260" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ucUpdateTicketStatus" value="Update Ticket Status" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#facc15;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="900" y="1260" width="230" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="ucDispatchNotification" value="Dispatch Notification" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ede9fe;strokeColor=#a78bfa;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="930" width="250" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorStaff" target="ucLogin" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorStaff" target="ucBrowseResources" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorStaff" target="ucCreateBooking" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorStaff" target="ucManageMyBookings" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorStaff" target="ucReportIncident" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorStaff" target="ucManageMyIncidents" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorStaff" target="ucViewNotifications" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorAdmin" target="ucManageAllBookings" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorAdmin" target="ucManageAllIncidents" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a10" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorAdmin" target="ucManageResources" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a11" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorAdmin" target="ucManageUsers" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a12" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorTech" target="ucManageAllIncidents" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a13" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorTech" target="ucViewAssignedTasks" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a14" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorTech" target="ucUpdateTicketStatus" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a15" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorGoogle" target="ucAuthGoogle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a16" style="endArrow=none;html=1;strokeWidth=1.4;" parent="1" source="actorNotif" target="ucDispatchNotification" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i1" value="&lt;&lt;include&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucLogin" target="ucAuthEmail" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i2" value="&lt;&lt;include&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucLogin" target="ucAuthGoogle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin1" value="&lt;&lt;extend&gt;&gt; [invalid credentials]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucInvalidCredentials" target="ucLogin" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin2" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucShowLoginError" target="ucLogin" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eLogin3" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucForgotPassword" target="ucLogin" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iLogin4" value="&lt;&lt;include&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucInvalidCredentials" target="ucShowLoginError" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucViewResourceDetails" target="ucBrowseResources" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i3" value="&lt;&lt;include&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucCreateBooking" target="ucCheckConflicts" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucEditBooking" target="ucManageMyBookings" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucCancelBooking" target="ucManageMyBookings" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucDeleteIncident" target="ucManageMyIncidents" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucMarkAsRead" target="ucViewNotifications" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucApproveRejectBooking" target="ucManageAllBookings" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucReplyIncident" target="ucManageAllIncidents" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="&lt;&lt;extend&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucSearchUsers" target="ucManageUsers" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i4" value="&lt;&lt;include&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucManageAllBookings" target="ucDispatchNotification" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="i5" value="&lt;&lt;include&gt;&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=open;strokeColor=#6b7280;fontSize=10;" parent="1" source="ucManageAllIncidents" target="ucDispatchNotification" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
