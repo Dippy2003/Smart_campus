@@ -1,0 +1,381 @@
+<mxfile host="app.diagrams.net" version="21.0.0">
+  <diagram name="Resource Management - Activity Diagram">
+    <mxGraphModel dx="1200" dy="800" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- TITLE -->
+        <mxCell id="100" value="Resource Management - Activity Diagram" style="text;html=1;align=center;verticalAlign=middle;fontSize=14;fontStyle=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="100" y="8" width="650" height="28" as="geometry"/>
+        </mxCell>
+
+        <!-- LANE BACKGROUNDS -->
+        <mxCell id="101" value="" style="rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="50" y="38" width="220" height="1020" as="geometry"/>
+        </mxCell>
+        <mxCell id="102" value="" style="rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="270" y="38" width="230" height="1020" as="geometry"/>
+        </mxCell>
+        <mxCell id="103" value="" style="rounded=0;fillColor=#fff2cc;strokeColor=#d6b656;opacity=40;" vertex="1" parent="1">
+          <mxGeometry x="500" y="38" width="230" height="1020" as="geometry"/>
+        </mxCell>
+
+        <!-- LANE HEADERS -->
+        <mxCell id="104" value="Admin" style="rounded=0;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="38" width="220" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="105" value="System (Backend)" style="rounded=0;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="38" width="230" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="106" value="Database" style="rounded=0;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="500" y="38" width="230" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- START node -->
+        <mxCell id="200" value="" style="ellipse;aspect=fixed;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="150" y="88" width="22" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- 201: View Login Page (Admin) -->
+        <mxCell id="201" value="View Login Page" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="126" width="155" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 202: Enter Login Details (Admin) -->
+        <mxCell id="202" value="Enter Login Details" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="184" width="155" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 203: Validate Credentials (System) -->
+        <mxCell id="203" value="Validate Credentials&#xa;(AuthService)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="290" y="179" width="185" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- 204: Valid? diamond (System) -->
+        <mxCell id="204" value="Valid?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="343" y="250" width="90" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- 205: Show Error (retry) - Database lane -->
+        <mxCell id="205" value="Show Error&#xa;(retry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="520" y="257" width="140" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- 206: Access Resource Management Module (Admin) -->
+        <mxCell id="206" value="Access Resource&#xa;Management Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="73" y="328" width="165" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- 207: FORK BAR -->
+        <mxCell id="207" value="" style="rounded=0;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="393" width="680" height="8" as="geometry"/>
+        </mxCell>
+
+        <!-- 208: Create Resource (Admin left) -->
+        <mxCell id="208" value="Create Resource" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="57" y="416" width="100" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- 209: Read Resources (Admin right) -->
+        <mxCell id="209" value="Read Resources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="163" y="416" width="100" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- 210: Update Resource (System) -->
+        <mxCell id="210" value="Update Resource" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="330" y="416" width="145" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- 211: Delete Resource (Database) -->
+        <mxCell id="211" value="Delete Resource" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="545" y="416" width="150" height="35" as="geometry"/>
+        </mxCell>
+
+        <!-- 212: Fill Resource Form (Admin) -->
+        <mxCell id="212" value="Fill Resource Form&#xa;(name, type, capacity,&#xa;location, status)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="58" y="468" width="200" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- 213: Fetch All / By Id (System) -->
+        <mxCell id="213" value="Fetch All / By Id&#xa;(GET /api/resources)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="280" y="468" width="200" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- 214: Confirm Delete (Database) -->
+        <mxCell id="214" value="Confirm Delete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="545" y="468" width="150" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 215: Validate Input oval (System) -->
+        <mxCell id="215" value="Validate Input&#xa;(@Valid annotation)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="295" y="543" width="170" height="48" as="geometry"/>
+        </mxCell>
+
+        <!-- 216: SELECT * FROM resource (Database - Read) -->
+        <mxCell id="216" value="SELECT * FROM resource" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="515" y="548" width="190" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 217: Load and Edit Resource Form (System) -->
+        <mxCell id="217" value="Load &amp; Edit&#xa;Resource Form" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="295" y="612" width="170" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- 218: UPDATE resource SET (Database) -->
+        <mxCell id="218" value="UPDATE resource SET ..." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="515" y="614" width="190" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 219: Valid? second diamond (System) -->
+        <mxCell id="219" value="Valid?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="343" y="675" width="90" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- 220: Return 400 Bad Request (Admin) -->
+        <mxCell id="220" value="Return 400&#xa;Bad Request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="73" y="681" width="145" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- 221: INSERT INTO resource (Database) -->
+        <mxCell id="221" value="INSERT INTO resource" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="515" y="681" width="190" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 222: DELETE FROM resource (Database) -->
+        <mxCell id="222" value="DELETE FROM resource&#xa;WHERE id=?" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="515" y="745" width="190" height="42" as="geometry"/>
+        </mxCell>
+
+        <!-- 223: JOIN BAR (red) -->
+        <mxCell id="223" value="" style="rounded=0;fillColor=#b85450;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="50" y="805" width="680" height="8" as="geometry"/>
+        </mxCell>
+
+        <!-- 224: Return Response (System) -->
+        <mxCell id="224" value="Return Response&#xa;(ResourceResponseDto /&#xa;204 No Content)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="290" y="824" width="190" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- 225: View Result on UI (Admin) -->
+        <mxCell id="225" value="View Result on UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="78" y="900" width="155" height="38" as="geometry"/>
+        </mxCell>
+
+        <!-- 226: Continue? diamond (System) -->
+        <mxCell id="226" value="Continue?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="338" y="895" width="100" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- END outer ring -->
+        <mxCell id="227" value="" style="ellipse;aspect=fixed;fillColor=#ffffff;strokeColor=#000000;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="147" y="982" width="28" height="28" as="geometry"/>
+        </mxCell>
+        <!-- END inner dot -->
+        <mxCell id="228" value="" style="ellipse;aspect=fixed;fillColor=#000000;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="154" y="989" width="14" height="14" as="geometry"/>
+        </mxCell>
+
+        <!-- ═══════════════ EDGES ═══════════════ -->
+
+        <!-- start -> View Login Page -->
+        <mxCell id="300" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="200" target="201" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- View Login Page -> Enter Login Details -->
+        <mxCell id="301" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="201" target="202" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Enter Login Details -> Validate Credentials -->
+        <mxCell id="302" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="202" target="203" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Validate Credentials -> Valid? -->
+        <mxCell id="303" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="203" target="204" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Valid? No -> Show Error -->
+        <mxCell id="304" value="No" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="204" target="205" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Show Error -> View Login Page (retry loop) -->
+        <mxCell id="305" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" source="205" target="201" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="730" y="278"/>
+              <mxPoint x="730" y="145"/>
+              <mxPoint x="235" y="145"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Valid? Yes -> Access Resource Management Module -->
+        <mxCell id="306" value="Yes" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;" edge="1" source="204" target="206" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="313" y="277"/>
+              <mxPoint x="157" y="277"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Access Resource Management Module -> FORK BAR -->
+        <mxCell id="307" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="206" target="207" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FORK -> Create Resource -->
+        <mxCell id="308" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="207" target="208" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FORK -> Read Resources -->
+        <mxCell id="309" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="207" target="209" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FORK -> Update Resource -->
+        <mxCell id="310" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="207" target="210" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FORK -> Delete Resource -->
+        <mxCell id="311" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="207" target="211" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Create Resource -> Fill Resource Form -->
+        <mxCell id="312" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="208" target="212" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Read Resources -> Fetch All / By Id -->
+        <mxCell id="313" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="209" target="213" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Update Resource -> Fetch All (to load form) -->
+        <mxCell id="314" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="210" target="213" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Delete Resource -> Confirm Delete -->
+        <mxCell id="315" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="211" target="214" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Fill Resource Form -> Validate Input -->
+        <mxCell id="316" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="212" target="215" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Fetch All -> SELECT * FROM resource -->
+        <mxCell id="317" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="213" target="216" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Fetch All -> Load and Edit Resource Form -->
+        <mxCell id="318" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="213" target="217" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Load and Edit Resource Form -> UPDATE resource SET -->
+        <mxCell id="319" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="217" target="218" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Validate Input -> Valid? -->
+        <mxCell id="320" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="215" target="219" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Valid? No -> Return 400 Bad Request -->
+        <mxCell id="321" value="No" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="219" target="220" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Valid? Yes -> INSERT INTO resource -->
+        <mxCell id="322" value="Yes" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="219" target="221" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Confirm Delete -> DELETE FROM resource -->
+        <mxCell id="323" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="214" target="222" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- SELECT * FROM resource -> JOIN BAR -->
+        <mxCell id="324" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="216" target="223" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- UPDATE resource SET -> JOIN BAR -->
+        <mxCell id="325" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="218" target="223" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- INSERT INTO resource -> JOIN BAR -->
+        <mxCell id="326" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="221" target="223" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- DELETE FROM resource -> JOIN BAR -->
+        <mxCell id="327" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="222" target="223" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Return 400 -> JOIN BAR -->
+        <mxCell id="328" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="220" target="223" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- JOIN BAR -> Return Response -->
+        <mxCell id="329" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="223" target="224" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Return Response -> View Result on UI -->
+        <mxCell id="330" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="224" target="225" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Return Response -> Continue? -->
+        <mxCell id="331" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="224" target="226" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Continue? Yes -> FORK BAR (loop) -->
+        <mxCell id="332" value="Yes" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;" edge="1" source="226" target="207" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="468" y="922"/>
+              <mxPoint x="745" y="922"/>
+              <mxPoint x="745" y="397"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Continue? No -> END -->
+        <mxCell id="333" value="No" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;" edge="1" source="226" target="227" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="308" y="922"/>
+              <mxPoint x="161" y="922"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- View Result on UI -> END -->
+        <mxCell id="334" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="225" target="227" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

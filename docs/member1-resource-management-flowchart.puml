@@ -1,0 +1,42 @@
+@startuml
+title Flowchart - Resource Management (User + Admin)
+
+start
+
+partition "User Flow" {
+  :Open Resources page;
+  :View available resources;
+  :Search / filter resources;
+  :Select a resource;
+  :View resource details;
+  if (Need booking?) then (Yes)
+    :Go to booking process;
+  else (No)
+    :Continue browsing;
+  endif
+}
+
+partition "Admin Flow" {
+  :Login as Admin;
+  :Open Resource Management page;
+  :Choose action (Add / Update / Delete);
+  if (Action?) then (Add/Update)
+    :Enter or edit resource details;
+    :Validate details;
+    if (Valid?) then (Yes)
+      :Save resource changes;
+    else (No)
+      :Show error message;
+      :Re-enter details;
+      :Save resource changes;
+    endif
+  else (Delete)
+    :Select resource;
+    :Confirm deletion;
+    :Delete resource;
+  endif
+  :System updates resource list;
+}
+
+stop
+@enduml
