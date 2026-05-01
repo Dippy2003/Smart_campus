@@ -41,6 +41,7 @@ api.interceptors.response.use(
 function toMessage(err) {
   const status = err?.response?.status;
   const data = err?.response?.data;
+  const url = String(err?.config?.url || "");
   const msg =
     data?.message ||
     data?.error ||
@@ -49,6 +50,9 @@ function toMessage(err) {
     "Something went wrong.";
 
   if (status === 401) {
+    if (url.includes("/api/auth/login")) {
+      return "Invalid email or password.";
+    }
     return "Your session expired after 30 minutes of inactivity. Please sign in again.";
   }
   if (status === 403) return "You don’t have permission to access this.";
