@@ -13,3 +13,7 @@ This file tracks small maintenance updates for the repository.
 ## Update 3
 
 - Kept notes focused on process updates without affecting runtime code.
+
+## Update 4
+
+- Added concise wording to keep future review diffs easy to scan.
